@@ -488,7 +488,11 @@ function renderResults() {
     container.innerHTML = '<div class="empty"><div class="empty-icon">🏅</div><div class="empty-title">Seleziona uno sport</div><div class="empty-sub">Scegli dal menu qui sopra per vedere i risultati</div></div>';
     return;
   }
-  const ev = (DATA[cat]||{})[selectedKey] || {teams:[]};
+  // Assicura che la struttura esista anche per categorie vuote
+  if (!DATA[cat]) DATA[cat] = {};
+  if (!DATA[cat][selectedKey]) DATA[cat][selectedKey] = { date:'', time:'', location:'Spiaggia principale', status:'upcoming', teams:[] };
+  if (!DATA[cat][selectedKey].teams) DATA[cat][selectedKey].teams = [];
+  const ev = DATA[cat][selectedKey];
   const sorted = [...(ev.teams||[])].map((t,i)=>({...t,origIdx:i}))
     .sort((a,b)=>(parseFloat(b.score)||-Infinity)-(parseFloat(a.score)||-Infinity));
 
@@ -584,6 +588,8 @@ window.updateTeam = function(cat,key,idx,field,val) {
 };
 
 window.addTeam = function(cat,key) {
+  if(!DATA[cat])DATA[cat]={};
+  if(!DATA[cat][key])DATA[cat][key]={date:'',time:'',location:'Spiaggia principale',status:'upcoming',teams:[]};
   if(!DATA[cat][key].teams)DATA[cat][key].teams=[];
   DATA[cat][key].teams.push({name:'Nuovo partecipante',score:''});
   pushToFirebase(); renderResults();
