@@ -162,6 +162,7 @@
     <div class="logo">Olimpia<span>lidi</span> 🏅</div>
     <nav>
       <button class="active" onclick="showSection('calendario')">Calendario</button>
+      <button onclick="showSection('iscritti')">Iscritti</button>
       <button onclick="showSection('risultati')">Risultati</button>
       <button onclick="showSection('classifica')">Classifica</button>
       <button onclick="showSection('medagliere')">Medagliere</button>
@@ -203,6 +204,38 @@
   <div class="section active" id="sec-calendario">
     <h1 class="page-title">Calendario <span class="accent" id="cal-title">Open</span></h1>
     <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+
+  <!-- ISCRITTI -->
+  <div class="section" id="sec-iscritti">
+    <h1 class="page-title">Iscritti <span class="accent" id="isc-title">Open</span></h1>
+    <div id="addAtletaForm" style="display:none;background:white;border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:24px;box-shadow:var(--shadow)">
+      <div style="font-weight:600;font-size:15px;margin-bottom:16px;color:var(--navy)">&#10133; Aggiungi atleta</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Nome e Cognome</div>
+          <input id="newAtletaNome" type="text" placeholder="Es: Mario Rossi" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;width:200px;outline:none">
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Categoria</div>
+          <select id="newAtletaCat" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+            <option value="open">Open</option>
+            <option value="espoir">Espoir</option>
+            <option value="junior">Junior</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Genere</div>
+          <select id="newAtletaGenere" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+            <option value="M">&#9794; Maschile</option>
+            <option value="F">&#9792; Femminile</option>
+          </select>
+        </div>
+        <button onclick="aggiungiAtleta()" style="background:var(--navy);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Aggiungi</button>
+      </div>
+      <div id="atletaError" style="color:#e53935;font-size:12px;margin-top:8px;display:none">Inserisci un nome valido</div>
+    </div>
+    <div id="iscrittiContainer"></div>
   </div>
 
   <div class="section" id="sec-risultati">
@@ -304,6 +337,111 @@ function buildDefaultData() {
   return d;
 }
 
+
+// Sport esclusi dall'aggiunta automatica atleti
+const SPORT_NO_AUTO = ['calciobalilla'];
+
+// ── ISCRITTI ──
+function renderIscritti() {
+  const container = document.getElementById('iscrittiContainer');
+  const form = document.getElementById('addAtletaForm');
+  if (form) form.style.display = isAdmin ? 'block' : 'none';
+
+  const cat = currentCategory;
+  const atleti = (DATA.iscritti && DATA.iscritti[cat]) ? DATA.iscritti[cat] : {};
+  const lista = Object.entries(atleti).map(([id, a]) => ({id, ...a}));
+
+  // Raggruppa per genere
+  const maschi = lista.filter(a => a.genere === 'M').sort((a,b) => a.nome.localeCompare(b.nome));
+  const femmine = lista.filter(a => a.genere === 'F').sort((a,b) => a.nome.localeCompare(b.nome));
+
+  if (!lista.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div class="empty-title">Nessun iscritto</div><div class="empty-sub">${isAdmin ? 'Usa il form qui sopra per aggiungere atleti' : 'Gli iscritti appariranno qui'}</div></div>`;
+    return;
+  }
+
+  function buildTable(atleti, title, genderIcon) {
+    if (!atleti.length) return '';
+    return `
+      <div style="margin-bottom:28px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--navy);margin-bottom:12px;letter-spacing:1px">${genderIcon} ${title} — ${atleti.length} atleti</div>
+        <table class="results-table">
+          <thead><tr>
+            <th style="width:40px">#</th>
+            <th>Nome e Cognome</th>
+            <th style="width:100px">Categoria</th>
+            ${isAdmin ? '<th style="width:50px"></th>' : ''}
+          </tr></thead>
+          <tbody>${atleti.map((a,i) => `<tr>
+            <td style="color:var(--text-muted);font-weight:600">${i+1}</td>
+            <td><span style="font-weight:600">${a.nome}</span></td>
+            <td><span class="event-badge badge-${cat}">${cat.charAt(0).toUpperCase()+cat.slice(1)}</span></td>
+            ${isAdmin ? `<td><button onclick="rimuoviAtleta('${cat}','${a.id}')" style="background:none;border:none;cursor:pointer;font-size:16px" title="Rimuovi">🗑</button></td>` : ''}
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>`;
+  }
+
+  container.innerHTML = buildTable(maschi, 'Maschile', '♂') + buildTable(femmine, 'Femminile', '♀');
+}
+
+window.aggiungiAtleta = function() {
+  const nome = document.getElementById('newAtletaNome').value.trim();
+  const cat  = document.getElementById('newAtletaCat').value;
+  const genere = document.getElementById('newAtletaGenere').value;
+  const errEl = document.getElementById('atletaError');
+
+  if (!nome) { errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+
+  // Aggiungi a iscritti
+  if (!DATA.iscritti) DATA.iscritti = {};
+  if (!DATA.iscritti[cat]) DATA.iscritti[cat] = {};
+  const id = 'a_' + Date.now();
+  DATA.iscritti[cat][id] = { nome, genere };
+
+  // Aggiungi automaticamente a tutti gli sport compatibili (escluso SPORT_NO_AUTO)
+  if (!DATA[cat]) DATA[cat] = {};
+  SPORTS.forEach(sport => {
+    if (SPORT_NO_AUTO.includes(sport.id)) return;
+    // Determina la chiave giusta
+    const sportKey = sport.genders.includes('tutti') ? sport.id : `${sport.id}_${genere}`;
+    if (!DATA[cat][sportKey]) {
+      DATA[cat][sportKey] = { date:'', time:'', location:'Spiaggia principale', status:'upcoming', teams:[] };
+    }
+    if (!DATA[cat][sportKey].teams) DATA[cat][sportKey].teams = [];
+    // Evita duplicati
+    const exists = DATA[cat][sportKey].teams.some(t => t.name === nome);
+    if (!exists) DATA[cat][sportKey].teams.push({ name: nome, score: '' });
+  });
+
+  document.getElementById('newAtletaNome').value = '';
+  pushToFirebase();
+  renderIscritti();
+};
+
+window.rimuoviAtleta = function(cat, id) {
+  if (!DATA.iscritti?.[cat]?.[id]) return;
+  const nome = DATA.iscritti[cat][id].nome;
+  const genere = DATA.iscritti[cat][id].genere;
+
+  // Rimuovi da iscritti
+  delete DATA.iscritti[cat][id];
+
+  // Rimuovi da tutti gli sport
+  if (DATA[cat]) {
+    SPORTS.forEach(sport => {
+      const sportKey = sport.genders.includes('tutti') ? sport.id : `${sport.id}_${genere}`;
+      if (DATA[cat][sportKey]?.teams) {
+        DATA[cat][sportKey].teams = DATA[cat][sportKey].teams.filter(t => t.name !== nome);
+      }
+    });
+  }
+
+  pushToFirebase();
+  renderIscritti();
+};
+
 function setSyncStatus(status, label) {
   ['syncDot','pubSyncDot'].forEach(id => {
     const el = document.getElementById(id);
@@ -373,7 +511,8 @@ window.showSection = function(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('sec-' + name).classList.add('active');
   document.querySelectorAll('nav button').forEach((b,i) =>
-    b.classList.toggle('active', ['calendario','risultati','classifica','medagliere'][i] === name));
+    b.classList.toggle('active', ['calendario','iscritti','risultati','classifica','medagliere'][i] === name));
+  if(name==='iscritti') renderIscritti();
   renderAll();
 };
 
@@ -395,7 +534,7 @@ window.setGender = function(g) {
 
 function updateTitles() {
   const cap = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
-  ['cal','res','rank','med'].forEach(p => { const el = document.getElementById(p+'-title'); if(el) el.textContent = cap; });
+  ['cal','isc','res','rank','med'].forEach(p => { const el = document.getElementById(p+'-title'); if(el) el.textContent = cap; });
 }
 
 function getVisibleSports() {
