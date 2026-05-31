@@ -7,20 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --gold: #F5C842;
-    --silver: #B8C4D0;
-    --bronze: #CD7F32;
-    --ocean: #0077B6;
-    --ocean-light: #00B4D8;
-    --sand: #FFF8EE;
-    --sand-dark: #F0E8D8;
-    --navy: #03045E;
-    --white: #ffffff;
-    --text: #1a1a2e;
-    --text-muted: #6b7a8d;
+    --gold: #F5C842; --silver: #B8C4D0; --bronze: #CD7F32;
+    --ocean: #0077B6; --ocean-light: #00B4D8;
+    --sand: #FFF8EE; --sand-dark: #F0E8D8;
+    --navy: #03045E; --white: #ffffff;
+    --text: #1a1a2e; --text-muted: #6b7a8d;
     --border: rgba(0,119,182,0.15);
-    --radius: 14px;
-    --shadow: 0 4px 24px rgba(3,4,94,0.10);
+    --radius: 14px; --shadow: 0 4px 24px rgba(3,4,94,0.10);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--sand); color: var(--text); min-height: 100vh; }
@@ -38,7 +31,7 @@
   .admin-btn.logged { border-color: var(--gold); color: var(--gold); }
 
   .cat-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; }
-  .cat-bar-inner { max-width: 1100px; margin: 0 auto; display: flex; gap: 0; align-items: center; }
+  .cat-bar-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; }
   .cat-tab { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 12px 20px; cursor: pointer; color: var(--text-muted); border-bottom: 3px solid transparent; transition: all 0.2s; }
   .cat-tab:hover { color: var(--ocean); }
   .cat-tab.active { color: var(--ocean); border-bottom-color: var(--ocean); }
@@ -53,14 +46,12 @@
   .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--navy); letter-spacing: 1px; margin-bottom: 24px; }
   .page-title .accent { color: var(--ocean); }
 
-  /* SYNC STATUS */
-  .sync-bar { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+  .sync-bar { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
   .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; flex-shrink: 0; transition: background 0.3s; }
   .sync-dot.connected { background: #4caf50; }
   .sync-dot.syncing { background: var(--gold); animation: pulse 1s infinite; }
   .sync-dot.error { background: #e53935; }
 
-  /* CALENDAR */
   .calendar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .event-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s; }
   .event-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(3,4,94,0.15); }
@@ -75,16 +66,15 @@
   .event-body { padding: 14px 16px; }
   .event-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 13px; }
   .event-row:last-child { margin-bottom: 0; }
-  .event-icon { width: 16px; text-align: center; color: var(--ocean); font-size: 14px; }
+  .event-icon { width: 16px; text-align: center; color: var(--ocean); }
   .event-label { color: var(--text-muted); min-width: 48px; }
   .event-value { font-weight: 500; }
   .event-status { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
   .status-upcoming { background: #e8f4fd; color: var(--ocean); }
   .status-live { background: #fce8e8; color: #e53935; animation: pulse 1.5s infinite; }
   .status-done { background: #e8f5e9; color: #2e7d32; }
-  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.6 } }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.6} }
 
-  /* RESULTS */
   .live-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
   .live-dot { width: 10px; height: 10px; border-radius: 50%; background: #e53935; animation: pulse 1.2s infinite; flex-shrink: 0; }
   .results-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
@@ -94,16 +84,15 @@
   .results-table tr:last-child td { border-bottom: none; }
   .results-table tr:hover td { background: var(--sand); }
   .pos-badge { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 13px; }
-  .pos-1 { background: var(--gold); color: var(--navy); }
-  .pos-2 { background: var(--silver); color: var(--navy); }
-  .pos-3 { background: var(--bronze); color: white; }
-  .pos-n { background: var(--sand-dark); color: var(--text-muted); }
-  .score-input { width: 80px; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 14px; font-family: 'DM Sans', sans-serif; text-align: center; transition: border-color 0.2s; }
+  .pos-1{background:var(--gold);color:var(--navy);}
+  .pos-2{background:var(--silver);color:var(--navy);}
+  .pos-3{background:var(--bronze);color:white;}
+  .pos-n{background:var(--sand-dark);color:var(--text-muted);}
+  .score-input { border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 14px; font-family: 'DM Sans', sans-serif; text-align: center; transition: border-color 0.2s; }
   .score-input:focus { outline: none; border-color: var(--ocean); }
   .sport-select { font-family: 'DM Sans', sans-serif; font-size: 14px; border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 14px; background: white; color: var(--text); cursor: pointer; outline: none; margin-bottom: 20px; width: 100%; max-width: 360px; }
   .sport-select:focus { border-color: var(--ocean); }
 
-  /* RANKING */
   .ranking-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 24px; }
   .ranking-table thead { background: linear-gradient(135deg, var(--navy), var(--ocean)); }
   .ranking-table th { padding: 14px 16px; text-align: left; color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
@@ -111,13 +100,12 @@
   .ranking-table tr:last-child td { border-bottom: none; }
   .ranking-table tr:hover td { background: var(--sand); }
   .rank-num { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text-muted); }
-  .rank-1 .rank-num { color: var(--gold); }
-  .rank-2 .rank-num { color: var(--silver); }
-  .rank-3 .rank-num { color: var(--bronze); }
+  .rank-1 .rank-num{color:var(--gold);}
+  .rank-2 .rank-num{color:var(--silver);}
+  .rank-3 .rank-num{color:var(--bronze);}
   .team-name { font-weight: 600; font-size: 15px; }
   .pts { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--ocean); }
 
-  /* MEDAGLIERE */
   .medal-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
   .medal-table thead { background: var(--navy); }
   .medal-table th { padding: 12px 16px; text-align: center; color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
@@ -126,21 +114,17 @@
   .medal-table td:first-child { text-align: left; }
   .medal-table tr:last-child td { border-bottom: none; }
   .medal-table tr:hover td { background: var(--sand); }
-  .gold-cell { color: #b8860b; font-weight: 700; font-size: 16px; }
-  .silver-cell { color: #708090; font-weight: 700; font-size: 16px; }
-  .bronze-cell { color: var(--bronze); font-weight: 700; font-size: 16px; }
+  .gold-cell{color:#b8860b;font-weight:700;font-size:16px;}
+  .silver-cell{color:#708090;font-weight:700;font-size:16px;}
+  .bronze-cell{color:var(--bronze);font-weight:700;font-size:16px;}
 
-  /* ADMIN */
   .admin-bar { background: linear-gradient(135deg, #1a1a2e, var(--navy)); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; display: none; align-items: center; justify-content: space-between; border: 1px solid rgba(245,200,66,0.3); }
   .admin-bar.visible { display: flex; }
   .admin-info { display: flex; align-items: center; gap: 10px; }
   .admin-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
   .admin-text { color: white; font-size: 13px; }
   .admin-text strong { color: var(--gold); }
-  .save-btn { background: var(--gold); color: var(--navy); border: none; border-radius: 8px; padding: 8px 18px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-  .save-btn:hover { background: #e6b800; }
 
-  /* MODAL */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(3,4,94,0.6); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: white; border-radius: 20px; padding: 36px; width: 340px; max-width: 90vw; box-shadow: 0 24px 80px rgba(3,4,94,0.3); }
@@ -153,7 +137,6 @@
   .modal-cancel { width: 100%; background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text-muted); cursor: pointer; padding: 6px; }
   .modal-error { color: #e53935; font-size: 12px; margin-bottom: 10px; display: none; }
 
-  /* TOAST */
   .save-toast { position: fixed; bottom: 24px; right: 24px; background: var(--navy); color: white; padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 500; box-shadow: 0 8px 32px rgba(3,4,94,0.3); transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 300; border-left: 4px solid var(--gold); }
   .save-toast.show { transform: translateY(0); opacity: 1; }
 
@@ -201,33 +184,27 @@
 </div>
 
 <main>
-
   <div class="admin-bar" id="adminBar">
     <div class="admin-info">
       <div class="admin-dot"></div>
       <div class="admin-text">Modalità <strong>Comitato</strong> attiva — puoi modificare risultati e dati</div>
     </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <div class="sync-bar" style="margin-bottom:0">
-        <div class="sync-dot" id="syncDot"></div>
-        <span id="syncLabel">Connessione...</span>
-      </div>
+    <div class="sync-bar" style="margin-bottom:0">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncLabel">Connessione...</span>
     </div>
   </div>
 
-  <!-- SYNC BAR pubblica -->
-  <div class="sync-bar" id="publicSyncBar">
-    <div class="sync-dot" id="publicSyncDot"></div>
-    <span id="publicSyncLabel">Connessione a Firebase...</span>
+  <div class="sync-bar">
+    <div class="sync-dot" id="pubSyncDot"></div>
+    <span id="pubSyncLabel">Connessione a Firebase...</span>
   </div>
 
-  <!-- CALENDARIO -->
   <div class="section active" id="sec-calendario">
     <h1 class="page-title">Calendario <span class="accent" id="cal-title">Open</span></h1>
     <div class="calendar-grid" id="calendarGrid"></div>
   </div>
 
-  <!-- RISULTATI -->
   <div class="section" id="sec-risultati">
     <div class="live-header">
       <div class="live-dot" id="liveDot" style="display:none"></div>
@@ -239,21 +216,17 @@
     <div id="resultsContainer"></div>
   </div>
 
-  <!-- CLASSIFICA -->
   <div class="section" id="sec-classifica">
     <h1 class="page-title">Classifica <span class="accent" id="rank-title">Open</span></h1>
     <div id="rankingContainer"></div>
   </div>
 
-  <!-- MEDAGLIERE -->
   <div class="section" id="sec-medagliere">
     <h1 class="page-title">Medagliere <span class="accent" id="med-title">Open</span></h1>
     <div id="medalContainer"></div>
   </div>
-
 </main>
 
-<!-- LOGIN MODAL -->
 <div class="modal-overlay" id="loginModal">
   <div class="modal">
     <h2>🏅 Accesso Comitato</h2>
@@ -266,14 +239,12 @@
   </div>
 </div>
 
-<div class="save-toast" id="saveToast">✅ Dati sincronizzati!</div>
-
+<div class="save-toast" id="saveToast"></div>
 <footer>Olimpialidi &copy; 2025 — Lido Estivo</footer>
 
-<!-- FIREBASE SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDR23XsaiGEfiEeH7tldQZIOrU3PipDWCw",
@@ -285,42 +256,38 @@ const firebaseConfig = {
   appId: "1:1083817361125:web:11acf90bec455767081e0c"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const fbApp = initializeApp(firebaseConfig);
+const db = getDatabase(fbApp);
 
-// ─── DATI ─────────────────────────────────────────────────────
 const SPORTS = [
-  { id: 'sacchi',    name: 'Corsa con i sacchi',  emoji: '🥊', genders: ['M','F'] },
-  { id: 'biglie',    name: 'Biglie',               emoji: '🔵', genders: ['tutti'] },
-  { id: 'freccette', name: 'Freccette',            emoji: '🎯', genders: ['M','F'] },
-  { id: 'tiro_fune', name: 'Tiro alla fune',       emoji: '💪', genders: ['M','F'] },
-  { id: 'ping_pong', name: 'Ping Pong',            emoji: '🏓', genders: ['M','F'] },
-  { id: 'vela',      name: 'Vela',                 emoji: '⛵', genders: ['tutti'] },
-  { id: 'nuoto',     name: 'Nuoto',                emoji: '🏊', genders: ['M','F'] },
-  { id: 'bocce',     name: 'Bocce',                emoji: '🎱', genders: ['tutti'] },
-  { id: 'acqua',     name: 'Acqua-pallavolo',      emoji: '🏐', genders: ['tutti'] },
-  { id: 'beach',     name: 'Beach Volley',         emoji: '🏖', genders: ['M','F'] },
-  { id: 'limbo',     name: 'Limbo',                emoji: '🕺', genders: ['tutti'] },
-  { id: 'staffetta', name: 'Staffetta',            emoji: '🏃', genders: ['M','F'] },
+  { id: 'sacchi',    name: 'Corsa con i sacchi', emoji: '🥊', genders: ['M','F'] },
+  { id: 'biglie',    name: 'Biglie',              emoji: '🔵', genders: ['tutti'] },
+  { id: 'freccette', name: 'Freccette',           emoji: '🎯', genders: ['M','F'] },
+  { id: 'tiro_fune', name: 'Tiro alla fune',      emoji: '💪', genders: ['M','F'] },
+  { id: 'ping_pong', name: 'Ping Pong',           emoji: '🏓', genders: ['M','F'] },
+  { id: 'vela',      name: 'Vela',                emoji: '⛵', genders: ['tutti'] },
+  { id: 'nuoto',     name: 'Nuoto',               emoji: '🏊', genders: ['M','F'] },
+  { id: 'bocce',     name: 'Bocce',               emoji: '🎱', genders: ['tutti'] },
+  { id: 'acqua',     name: 'Acqua-pallavolo',     emoji: '🏐', genders: ['tutti'] },
+  { id: 'beach',     name: 'Beach Volley',        emoji: '🏖', genders: ['M','F'] },
+  { id: 'limbo',     name: 'Limbo',               emoji: '🕺', genders: ['tutti'] },
+  { id: 'staffetta', name: 'Staffetta',           emoji: '🏃', genders: ['M','F'] },
 ];
-
-const CATEGORIES = ['open', 'espoir', 'junior'];
+const CATEGORIES = ['open','espoir','junior'];
 
 let DATA = {};
 let isAdmin = false;
 let currentCategory = 'open';
 let currentGender = 'tutti';
-let currentSection = 'calendario';
 let dbReady = false;
 
-// ─── DEFAULT DATA ─────────────────────────────────────────────
-function defaultData() {
+function buildDefaultData() {
   const d = {};
   CATEGORIES.forEach(cat => {
     d[cat] = {};
     SPORTS.forEach(sport => {
-      const keys = sport.genders.includes('tutti') ? ['tutti'] : ['M', 'F'];
-      keys.forEach(g => {
+      const gkeys = sport.genders.includes('tutti') ? ['tutti'] : ['M','F'];
+      gkeys.forEach(g => {
         const key = g === 'tutti' ? sport.id : `${sport.id}_${g}`;
         d[cat][key] = {
           date: '', time: '', location: 'Spiaggia principale', status: 'upcoming',
@@ -337,64 +304,16 @@ function defaultData() {
   return d;
 }
 
-// ─── FIREBASE SYNC ────────────────────────────────────────────
 function setSyncStatus(status, label) {
-  ['syncDot','publicSyncDot'].forEach(id => {
+  ['syncDot','pubSyncDot'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) { el.className = 'sync-dot ' + status; }
+    if (el) el.className = 'sync-dot ' + status;
   });
-  ['syncLabel','publicSyncLabel'].forEach(id => {
+  ['syncLabel','pubSyncLabel'].forEach(id => {
     const el = document.getElementById(id);
-    if(el) el.textContent = label;
+    if (el) el.textContent = label;
   });
 }
-
-// Ascolta i cambiamenti in tempo reale
-const dataRef = ref(db, 'olimpialidi');
-onValue(dataRef, (snapshot) => {
-  if (snapshot.exists()) {
-    DATA = snapshot.val();
-  } else {
-    // Prima volta: scrivi i dati di default
-    DATA = defaultData();
-    set(dataRef, DATA);
-  }
-  dbReady = true;
-  setSyncStatus('connected', '🟢 Dati in tempo reale');
-  renderAll();
-  updateLiveDot();
-}, (error) => {
-  setSyncStatus('error', '🔴 Errore connessione');
-  console.error(error);
-});
-
-// Scrive su Firebase (solo admin)
-function pushToFirebase() {
-  if (!isAdmin) return;
-  setSyncStatus('syncing', '🟡 Salvataggio...');
-  set(dataRef, DATA).then(() => {
-    setSyncStatus('connected', '🟢 Salvato!');
-    showToast('✅ Dati sincronizzati su Firebase!');
-    setTimeout(() => setSyncStatus('connected', '🟢 Dati in tempo reale'), 2000);
-  }).catch(() => {
-    setSyncStatus('error', '🔴 Errore salvataggio');
-  });
-}
-
-// Esponi al DOM
-window.pushToFirebase = pushToFirebase;
-
-// ─── HELPER ───────────────────────────────────────────────────
-function getVisibleSports() {
-  return SPORTS.filter(s => {
-    if (currentGender === 'tutti') return true;
-    if (s.genders.includes('tutti')) return true;
-    return s.genders.includes(currentGender);
-  });
-}
-function catLabel(cat) { return cat.charAt(0).toUpperCase() + cat.slice(1); }
-function statusLabel(s) { return { upcoming: 'In programma', live: '🔴 LIVE', done: 'Conclusa' }[s] || s; }
-function formatDate(d) { if (!d) return '—'; const [y,m,day] = d.split('-'); return `${day}/${m}/${y}`; }
 
 function showToast(msg) {
   const t = document.getElementById('saveToast');
@@ -403,14 +322,58 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ─── NAVIGAZIONE ──────────────────────────────────────────────
+function pushToFirebase() {
+  if (!isAdmin) return;
+  setSyncStatus('syncing', '🟡 Salvataggio...');
+  set(ref(db, 'olimpialidi'), DATA)
+    .then(() => { setSyncStatus('connected', '🟢 Salvato!'); showToast('✅ Dati sincronizzati!'); setTimeout(() => setSyncStatus('connected','🟢 Live'), 2000); })
+    .catch(() => setSyncStatus('error', '🔴 Errore salvataggio'));
+}
+window.pushToFirebase = pushToFirebase;
+
+setSyncStatus('syncing', '🟡 Connessione...');
+
+onValue(ref(db, 'olimpialidi'), (snapshot) => {
+  if (snapshot.exists()) {
+    DATA = snapshot.val();
+    // Assicura che tutti gli sport esistano anche se il db è vecchio
+    CATEGORIES.forEach(cat => {
+      if (!DATA[cat]) DATA[cat] = {};
+      SPORTS.forEach(sport => {
+        const gkeys = sport.genders.includes('tutti') ? ['tutti'] : ['M','F'];
+        gkeys.forEach(g => {
+          const key = g === 'tutti' ? sport.id : `${sport.id}_${g}`;
+          if (!DATA[cat][key]) {
+            DATA[cat][key] = { date:'', time:'', location:'Spiaggia principale', status:'upcoming', teams:[
+              {name:'Team Azzurro',score:''},{name:'Team Rosso',score:''},{name:'Team Verde',score:''},{name:'Team Giallo',score:''}
+            ]};
+          }
+          if (!DATA[cat][key].teams) DATA[cat][key].teams = [{name:'Team Azzurro',score:''},{name:'Team Rosso',score:''},{name:'Team Verde',score:''},{name:'Team Giallo',score:''}];
+        });
+      });
+    });
+  } else {
+    DATA = buildDefaultData();
+    set(ref(db, 'olimpialidi'), DATA);
+  }
+  dbReady = true;
+  setSyncStatus('connected', '🟢 Dati in tempo reale');
+  renderAll();
+  updateLiveDot();
+}, (err) => {
+  // Fallback: usa dati locali se Firebase non raggiungibile
+  DATA = buildDefaultData();
+  dbReady = true;
+  setSyncStatus('error', '🔴 Offline — dati locali');
+  renderAll();
+});
+
+// ── NAVIGAZIONE ──
 window.showSection = function(name) {
-  currentSection = name;
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('sec-' + name).classList.add('active');
-  document.querySelectorAll('nav button').forEach((b, i) => {
-    b.classList.toggle('active', ['calendario','risultati','classifica','medagliere'][i] === name);
-  });
+  document.querySelectorAll('nav button').forEach((b,i) =>
+    b.classList.toggle('active', ['calendario','risultati','classifica','medagliere'][i] === name));
   renderAll();
 };
 
@@ -418,56 +381,52 @@ window.setCategory = function(cat) {
   currentCategory = cat;
   document.querySelectorAll('.cat-tab').forEach(b =>
     b.classList.toggle('active', b.textContent.toLowerCase() === cat));
-  updateTitles();
-  renderAll();
+  updateTitles(); renderAll();
 };
 
 window.setGender = function(g) {
   currentGender = g;
   document.querySelectorAll('.gender-btn').forEach(b => {
-    const map = { 'tutti': 'Tutti', 'M': '♂ Maschile', 'F': '♀ Femminile' };
+    const map = {tutti:'Tutti',M:'♂ Maschile',F:'♀ Femminile'};
     b.classList.toggle('active', b.textContent.trim() === map[g]);
   });
   renderAll();
 };
 
 function updateTitles() {
-  const cap = catLabel(currentCategory);
-  ['cal','res','rank','med'].forEach(p => {
-    const el = document.getElementById(p + '-title');
-    if(el) el.textContent = cap;
-  });
+  const cap = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
+  ['cal','res','rank','med'].forEach(p => { const el = document.getElementById(p+'-title'); if(el) el.textContent = cap; });
 }
+
+function getVisibleSports() {
+  return SPORTS.filter(s => currentGender === 'tutti' || s.genders.includes('tutti') || s.genders.includes(currentGender));
+}
+
+function catLabel(c) { return c.charAt(0).toUpperCase()+c.slice(1); }
+function statusLabel(s) { return {upcoming:'In programma',live:'🔴 LIVE',done:'Conclusa'}[s]||s; }
+function formatDate(d) { if(!d) return '—'; const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`; }
 
 function renderAll() {
   if (!dbReady) return;
-  renderCalendar();
-  renderResults();
-  renderRanking();
-  renderMedal();
+  renderCalendar(); renderResults(); renderRanking(); renderMedal();
 }
 
-// ─── CALENDARIO ───────────────────────────────────────────────
+// ── CALENDARIO ──
 function renderCalendar() {
   const grid = document.getElementById('calendarGrid');
-  const sports = getVisibleSports();
   const cat = currentCategory;
   grid.innerHTML = '';
-  sports.forEach(sport => {
-    const keys = sport.genders.includes('tutti')
-      ? [{ key: sport.id, gender: null }]
-      : (currentGender === 'tutti'
-          ? [{ key: `${sport.id}_M`, gender: 'M' }, { key: `${sport.id}_F`, gender: 'F' }]
-          : [{ key: `${sport.id}_${currentGender}`, gender: currentGender }]);
+  getVisibleSports().forEach(sport => {
+    const entries = sport.genders.includes('tutti')
+      ? [{key: sport.id, gender: null}]
+      : currentGender === 'tutti'
+        ? [{key:`${sport.id}_M`,gender:'M'},{key:`${sport.id}_F`,gender:'F'}]
+        : [{key:`${sport.id}_${currentGender}`,gender:currentGender}];
 
-    keys.forEach(({ key, gender }) => {
-      if (!DATA[cat]) return;
-      const ev = DATA[cat][key] || {};
-      const gBadge = gender
-        ? `<span class="event-badge badge-${gender === 'M' ? 'm' : 'f'}">${gender === 'M' ? '♂' : '♀'}</span>`
-        : '';
+    entries.forEach(({key,gender}) => {
+      const ev = (DATA[cat]||{})[key] || {};
+      const gBadge = gender ? `<span class="event-badge badge-${gender==='M'?'m':'f'}">${gender==='M'?'♂':'♀'}</span>` : '';
       const catBadge = `<span class="event-badge badge-${cat}">${catLabel(cat)}</span>`;
-
       const card = document.createElement('div');
       card.className = 'event-card';
       card.innerHTML = `
@@ -477,136 +436,99 @@ function renderCalendar() {
         </div>
         <div class="event-body">
           <div class="event-row">
-            <span class="event-icon">📅</span>
-            <span class="event-label">Data</span>
-            ${isAdmin
-              ? `<input class="score-input" style="width:130px" type="date" value="${ev.date||''}" onchange="updateField('${cat}','${key}','date',this.value)">`
-              : `<span class="event-value">${ev.date ? formatDate(ev.date) : '—'}</span>`}
+            <span class="event-icon">📅</span><span class="event-label">Data</span>
+            ${isAdmin ? `<input class="score-input" style="width:130px" type="date" value="${ev.date||''}" onchange="updateField('${cat}','${key}','date',this.value)">` : `<span class="event-value">${ev.date?formatDate(ev.date):'—'}</span>`}
           </div>
           <div class="event-row">
-            <span class="event-icon">🕐</span>
-            <span class="event-label">Ora</span>
-            ${isAdmin
-              ? `<input class="score-input" style="width:100px" type="time" value="${ev.time||''}" onchange="updateField('${cat}','${key}','time',this.value)">`
-              : `<span class="event-value">${ev.time||'—'}</span>`}
+            <span class="event-icon">🕐</span><span class="event-label">Ora</span>
+            ${isAdmin ? `<input class="score-input" style="width:100px" type="time" value="${ev.time||''}" onchange="updateField('${cat}','${key}','time',this.value)">` : `<span class="event-value">${ev.time||'—'}</span>`}
           </div>
           <div class="event-row">
-            <span class="event-icon">📍</span>
-            <span class="event-label">Luogo</span>
-            ${isAdmin
-              ? `<input class="score-input" style="width:160px;text-align:left" type="text" value="${ev.location||''}" onchange="updateField('${cat}','${key}','location',this.value)">`
-              : `<span class="event-value">${ev.location||'—'}</span>`}
+            <span class="event-icon">📍</span><span class="event-label">Luogo</span>
+            ${isAdmin ? `<input class="score-input" style="width:160px;text-align:left" type="text" value="${ev.location||''}" onchange="updateField('${cat}','${key}','location',this.value)">` : `<span class="event-value">${ev.location||'—'}</span>`}
           </div>
           ${isAdmin ? `
           <div class="event-row" style="margin-top:4px">
-            <span class="event-icon">🔵</span>
-            <span class="event-label">Stato</span>
+            <span class="event-icon">🔵</span><span class="event-label">Stato</span>
             <select class="score-input" style="width:140px" onchange="updateField('${cat}','${key}','status',this.value)">
               <option value="upcoming" ${(ev.status||'upcoming')==='upcoming'?'selected':''}>In programma</option>
               <option value="live" ${ev.status==='live'?'selected':''}>🔴 LIVE</option>
               <option value="done" ${ev.status==='done'?'selected':''}>Conclusa</option>
             </select>
           </div>` : `<span class="event-status status-${ev.status||'upcoming'}">${statusLabel(ev.status||'upcoming')}</span>`}
-        </div>
-      `;
+        </div>`;
       grid.appendChild(card);
     });
   });
 }
 
-// ─── RISULTATI ────────────────────────────────────────────────
+// ── RISULTATI ──
 function renderResults() {
   const sel = document.getElementById('sportSelect');
   const container = document.getElementById('resultsContainer');
   const cat = currentCategory;
-  const sports = getVisibleSports();
-  const currentVal = sel.value;
-
+  const prev = sel.value;
   sel.innerHTML = '<option value="">— Seleziona uno sport —</option>';
-  sports.forEach(sport => {
-    const keys = sport.genders.includes('tutti')
-      ? [{ key: sport.id, label: sport.name }]
-      : (currentGender === 'tutti'
-          ? [{ key: `${sport.id}_M`, label: `${sport.name} ♂` }, { key: `${sport.id}_F`, label: `${sport.name} ♀` }]
-          : [{ key: `${sport.id}_${currentGender}`, label: `${sport.name} ${currentGender === 'M' ? '♂' : '♀'}` }]);
-    keys.forEach(({ key, label }) => {
-      const opt = document.createElement('option');
-      opt.value = key; opt.textContent = `${sport.emoji} ${label}`;
-      if (key === currentVal) opt.selected = true;
-      sel.appendChild(opt);
+  getVisibleSports().forEach(sport => {
+    const entries = sport.genders.includes('tutti')
+      ? [{key:sport.id,label:sport.name}]
+      : currentGender==='tutti'
+        ? [{key:`${sport.id}_M`,label:`${sport.name} ♂`},{key:`${sport.id}_F`,label:`${sport.name} ♀`}]
+        : [{key:`${sport.id}_${currentGender}`,label:`${sport.name} ${currentGender==='M'?'♂':'♀'}`}];
+    entries.forEach(({key,label}) => {
+      const o = document.createElement('option');
+      o.value = key; o.textContent = `${sport.emoji} ${label}`;
+      if (key === prev) o.selected = true;
+      sel.appendChild(o);
     });
   });
 
   const selectedKey = sel.value;
   if (!selectedKey) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🏅</div><div class="empty-title">Seleziona uno sport</div><div class="empty-sub">Scegli dal menu qui sopra per vedere o inserire risultati</div></div>';
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🏅</div><div class="empty-title">Seleziona uno sport</div><div class="empty-sub">Scegli dal menu qui sopra per vedere i risultati</div></div>';
     return;
   }
-
-  if (!DATA[cat] || !DATA[cat][selectedKey]) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Nessun dato</div></div>';
-    return;
-  }
-
-  const ev = DATA[cat][selectedKey];
-  const teams = ev.teams || [];
-  const sorted = [...teams].map((t, i) => ({ ...t, origIdx: i }))
-    .sort((a, b) => (parseFloat(b.score)||−Infinity) - (parseFloat(a.score)||−Infinity));
-
-  // Aggiorna live dot
-  const hasLive = CATEGORIES.some(c => DATA[c] && Object.values(DATA[c]).some(e => e.status === 'live'));
-  document.getElementById('liveDot').style.display = hasLive ? 'block' : 'none';
+  const ev = (DATA[cat]||{})[selectedKey] || {teams:[]};
+  const sorted = [...(ev.teams||[])].map((t,i)=>({...t,origIdx:i}))
+    .sort((a,b)=>(parseFloat(b.score)||-Infinity)-(parseFloat(a.score)||-Infinity));
 
   container.innerHTML = `
     <table class="results-table">
       <thead><tr>
-        <th style="width:48px">Pos</th>
-        <th>Squadra / Partecipante</th>
+        <th style="width:48px">Pos</th><th>Squadra / Partecipante</th>
         <th style="width:160px">Punteggio / Tempo</th>
-        ${isAdmin ? '<th style="width:50px"></th>' : ''}
+        ${isAdmin?'<th style="width:50px"></th>':''}
       </tr></thead>
-      <tbody>
-        ${sorted.map((t, i) => {
-          const pos = i + 1;
-          const medal = pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':'';
-          return `<tr>
-            <td><span class="pos-badge pos-${pos<=3?pos:'n'}">${pos}</span></td>
-            <td>${isAdmin
-              ? `<input class="score-input" style="width:180px;text-align:left" value="${t.name}" onchange="updateTeam('${cat}','${selectedKey}',${t.origIdx},'name',this.value)">`
-              : `<span style="font-weight:600">${medal} ${t.name}</span>`}</td>
-            <td>${isAdmin
-              ? `<input class="score-input" placeholder="es: 12.5" value="${t.score||''}" onchange="updateTeam('${cat}','${selectedKey}',${t.origIdx},'score',this.value)">`
-              : `<span style="font-weight:600;font-size:16px">${t.score||'—'}</span>`}</td>
-            ${isAdmin ? `<td><button onclick="removeTeam('${cat}','${selectedKey}',${t.origIdx})" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>` : ''}
-          </tr>`;
-        }).join('')}
-      </tbody>
+      <tbody>${sorted.map((t,i)=>{
+        const pos=i+1, medal=pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':'';
+        return `<tr>
+          <td><span class="pos-badge pos-${pos<=3?pos:'n'}">${pos}</span></td>
+          <td>${isAdmin?`<input class="score-input" style="width:180px;text-align:left" value="${t.name}" onchange="updateTeam('${cat}','${selectedKey}',${t.origIdx},'name',this.value)">`:`<span style="font-weight:600">${medal} ${t.name}</span>`}</td>
+          <td>${isAdmin?`<input class="score-input" placeholder="es: 12.5" value="${t.score||''}" onchange="updateTeam('${cat}','${selectedKey}',${t.origIdx},'score',this.value)">`:`<span style="font-weight:600;font-size:16px">${t.score||'—'}</span>`}</td>
+          ${isAdmin?`<td><button onclick="removeTeam('${cat}','${selectedKey}',${t.origIdx})" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
+        </tr>`;
+      }).join('')}</tbody>
     </table>
-    ${isAdmin ? `<button onclick="addTeam('${cat}','${selectedKey}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>` : ''}
-  `;
+    ${isAdmin?`<button onclick="addTeam('${cat}','${selectedKey}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>`:''}`;
 }
 
-// ─── CLASSIFICA ───────────────────────────────────────────────
+// ── CLASSIFICA ──
 function renderRanking() {
   const container = document.getElementById('rankingContainer');
   const cat = currentCategory;
-  if (!DATA[cat]) { container.innerHTML = ''; return; }
-  const teamPoints = {};
+  if (!DATA[cat]) { container.innerHTML=''; return; }
+  const pts = {};
   Object.values(DATA[cat]).forEach(ev => {
     if (!ev.teams) return;
-    const sorted = [...ev.teams].filter(t => t.score !== '').sort((a,b) => (parseFloat(b.score)||0)-(parseFloat(a.score)||0));
-    sorted.forEach((t,i) => {
-      const pts = i===0?3:i===1?2:i===2?1:0;
-      if (!teamPoints[t.name]) teamPoints[t.name] = 0;
-      teamPoints[t.name] += pts;
-    });
+    [...ev.teams].filter(t=>t.score!=='').sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0))
+      .forEach((t,i) => { if(!pts[t.name])pts[t.name]=0; pts[t.name]+=[3,2,1][i]||0; });
   });
-  const ranking = Object.entries(teamPoints).map(([name,pts])=>({name,pts})).sort((a,b)=>b.pts-a.pts);
+  const ranking = Object.entries(pts).map(([name,p])=>({name,pts:p})).sort((a,b)=>b.pts-a.pts);
   if (!ranking.length) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Nessun risultato ancora</div><div class="empty-sub">La classifica si aggiornerà man mano che vengono inseriti i punteggi</div></div>';
+    container.innerHTML='<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Nessun risultato ancora</div><div class="empty-sub">La classifica si aggiornerà man mano che vengono inseriti i punteggi</div></div>';
     return;
   }
-  container.innerHTML = `
+  container.innerHTML=`
     <table class="ranking-table">
       <thead><tr><th style="width:48px">#</th><th>Squadra / Partecipante</th><th style="width:80px;text-align:right">Punti</th></tr></thead>
       <tbody>${ranking.map((t,i)=>`<tr class="rank-${i<3?i+1:'n'}"><td class="rank-num">${i+1}</td><td><span class="team-name">${t.name}</span></td><td style="text-align:right"><span class="pts">${t.pts}</span></td></tr>`).join('')}</tbody>
@@ -614,30 +536,30 @@ function renderRanking() {
     <p style="font-size:12px;color:var(--text-muted);margin-top:10px">Punti: 🥇 3pt &nbsp;|&nbsp; 🥈 2pt &nbsp;|&nbsp; 🥉 1pt</p>`;
 }
 
-// ─── MEDAGLIERE ───────────────────────────────────────────────
+// ── MEDAGLIERE ──
 function renderMedal() {
   const container = document.getElementById('medalContainer');
   const cat = currentCategory;
-  if (!DATA[cat]) { container.innerHTML = ''; return; }
+  if (!DATA[cat]) { container.innerHTML=''; return; }
   const medals = {};
   Object.values(DATA[cat]).forEach(ev => {
     if (!ev.teams) return;
-    const sorted = [...ev.teams].filter(t=>t.score!=='').sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0));
-    sorted.forEach((t,i) => {
-      if (i>2) return;
-      if (!medals[t.name]) medals[t.name] = {gold:0,silver:0,bronze:0};
-      if(i===0)medals[t.name].gold++;
-      if(i===1)medals[t.name].silver++;
-      if(i===2)medals[t.name].bronze++;
-    });
+    [...ev.teams].filter(t=>t.score!=='').sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0))
+      .forEach((t,i) => {
+        if(i>2)return;
+        if(!medals[t.name])medals[t.name]={gold:0,silver:0,bronze:0};
+        if(i===0)medals[t.name].gold++;
+        if(i===1)medals[t.name].silver++;
+        if(i===2)medals[t.name].bronze++;
+      });
   });
-  const sorted = Object.entries(medals).map(([name,m])=>({name,...m,total:m.gold+m.silver+m.bronze}))
+  const sorted=Object.entries(medals).map(([name,m])=>({name,...m,total:m.gold+m.silver+m.bronze}))
     .sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
   if (!sorted.length) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🥇</div><div class="empty-title">Nessuna medaglia assegnata</div><div class="empty-sub">Le medaglie appariranno quando verranno inseriti i risultati</div></div>';
+    container.innerHTML='<div class="empty"><div class="empty-icon">🥇</div><div class="empty-title">Nessuna medaglia assegnata</div><div class="empty-sub">Le medaglie appariranno quando verranno inseriti i risultati</div></div>';
     return;
   }
-  container.innerHTML = `
+  container.innerHTML=`
     <table class="medal-table">
       <thead><tr><th>#</th><th>Squadra / Partecipante</th><th>🥇</th><th>🥈</th><th>🥉</th><th>Totale</th></tr></thead>
       <tbody>${sorted.map((t,i)=>`<tr><td style="font-weight:700;color:var(--text-muted)">${i+1}</td><td><span class="team-name">${t.name}</span></td><td class="gold-cell">${t.gold||'—'}</td><td class="silver-cell">${t.silver||'—'}</td><td class="bronze-cell">${t.bronze||'—'}</td><td style="font-weight:600">${t.total}</td></tr>`).join('')}
@@ -645,50 +567,45 @@ function renderMedal() {
     </table>`;
 }
 
-// ─── AGGIORNAMENTO DATI ───────────────────────────────────────
-window.updateField = function(cat, key, field, val) {
-  if (!DATA[cat]) DATA[cat] = {};
-  if (!DATA[cat][key]) DATA[cat][key] = {};
-  DATA[cat][key][field] = val;
+// ── AGGIORNAMENTO DATI ──
+window.updateField = function(cat,key,field,val) {
+  if(!DATA[cat])DATA[cat]={};
+  if(!DATA[cat][key])DATA[cat][key]={};
+  DATA[cat][key][field]=val;
   pushToFirebase();
-  if (field === 'status') { renderCalendar(); updateLiveDot(); }
+  if(field==='status'){renderCalendar();updateLiveDot();}
 };
 
-window.updateTeam = function(cat, key, idx, field, val) {
-  if (!DATA[cat]?.[key]?.teams) return;
-  DATA[cat][key].teams[idx][field] = val;
+window.updateTeam = function(cat,key,idx,field,val) {
+  if(!DATA[cat]?.[key]?.teams)return;
+  DATA[cat][key].teams[idx][field]=val;
   pushToFirebase();
-  setTimeout(renderResults, 100);
-  setTimeout(renderRanking, 100);
-  setTimeout(renderMedal, 100);
+  setTimeout(()=>{renderResults();renderRanking();renderMedal();},100);
 };
 
-window.addTeam = function(cat, key) {
-  if (!DATA[cat][key]) DATA[cat][key] = { teams: [] };
-  if (!DATA[cat][key].teams) DATA[cat][key].teams = [];
-  DATA[cat][key].teams.push({ name: 'Nuovo partecipante', score: '' });
-  pushToFirebase();
-  renderResults();
+window.addTeam = function(cat,key) {
+  if(!DATA[cat][key].teams)DATA[cat][key].teams=[];
+  DATA[cat][key].teams.push({name:'Nuovo partecipante',score:''});
+  pushToFirebase(); renderResults();
 };
 
-window.removeTeam = function(cat, key, idx) {
-  DATA[cat][key].teams.splice(idx, 1);
-  pushToFirebase();
-  renderResults();
+window.removeTeam = function(cat,key,idx) {
+  DATA[cat][key].teams.splice(idx,1);
+  pushToFirebase(); renderResults();
 };
 
 function updateLiveDot() {
-  const hasLive = CATEGORIES.some(c => DATA[c] && Object.values(DATA[c]).some(e => e.status === 'live'));
-  document.getElementById('liveDot').style.display = hasLive ? 'block' : 'none';
+  const hasLive=CATEGORIES.some(c=>DATA[c]&&Object.values(DATA[c]).some(e=>e.status==='live'));
+  document.getElementById('liveDot').style.display=hasLive?'block':'none';
 }
 
-// ─── ADMIN / LOGIN ────────────────────────────────────────────
+// ── ADMIN / LOGIN ──
 window.toggleAdmin = function() {
-  if (isAdmin) {
-    isAdmin = false;
+  if(isAdmin){
+    isAdmin=false;
     document.getElementById('adminBar').classList.remove('visible');
     document.getElementById('adminBtn').classList.remove('logged');
-    document.getElementById('adminBtn').textContent = '⚙ Comitato';
+    document.getElementById('adminBtn').textContent='⚙ Comitato';
     renderAll();
   } else {
     document.getElementById('loginModal').classList.add('open');
@@ -696,36 +613,31 @@ window.toggleAdmin = function() {
 };
 
 window.doLogin = function() {
-  const user = document.getElementById('loginUser').value.trim();
-  const pass = document.getElementById('loginPass').value;
-  if (user === 'comitato' && pass === 'olimpialidi2025') {
-    isAdmin = true;
+  const user=document.getElementById('loginUser').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  if(user==='comitato'&&pass==='olimpialidi2025'){
+    isAdmin=true;
     document.getElementById('loginModal').classList.remove('open');
     document.getElementById('adminBar').classList.add('visible');
     document.getElementById('adminBtn').classList.add('logged');
-    document.getElementById('adminBtn').textContent = '🔓 Esci';
-    document.getElementById('loginError').style.display = 'none';
-    document.getElementById('loginUser').value = '';
-    document.getElementById('loginPass').value = '';
+    document.getElementById('adminBtn').textContent='🔓 Esci';
+    document.getElementById('loginError').style.display='none';
+    document.getElementById('loginUser').value='';
+    document.getElementById('loginPass').value='';
     renderAll();
   } else {
-    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginError').style.display='block';
   }
 };
 
 window.closeModal = function() {
   document.getElementById('loginModal').classList.remove('open');
-  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('loginError').style.display='none';
 };
 
-document.getElementById('loginPass').addEventListener('keydown', e => {
-  if (e.key === 'Enter') window.doLogin();
-});
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter')window.doLogin(); });
 
-// ─── INIT ─────────────────────────────────────────────────────
 updateTitles();
-setSyncStatus('syncing', 'Connessione a Firebase...');
-
 </script>
 </body>
 </html>
