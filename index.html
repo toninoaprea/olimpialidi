@@ -293,18 +293,21 @@ const fbApp = initializeApp(firebaseConfig);
 const db = getDatabase(fbApp);
 
 const SPORTS = [
-  { id: 'sacchi',    name: 'Corsa con i sacchi', emoji: '🥊', genders: ['M','F'] },
-  { id: 'biglie',    name: 'Biglie',              emoji: '🔵', genders: ['tutti'] },
-  { id: 'freccette', name: 'Freccette',           emoji: '🎯', genders: ['M','F'] },
-  { id: 'tiro_fune', name: 'Tiro alla fune',      emoji: '💪', genders: ['M','F'] },
-  { id: 'ping_pong', name: 'Ping Pong',           emoji: '🏓', genders: ['M','F'] },
-  { id: 'vela',      name: 'Vela',                emoji: '⛵', genders: ['tutti'] },
-  { id: 'nuoto',     name: 'Nuoto',               emoji: '🏊', genders: ['M','F'] },
-  { id: 'bocce',     name: 'Bocce',               emoji: '🎱', genders: ['tutti'] },
-  { id: 'acqua',     name: 'Acqua-pallavolo',     emoji: '🏐', genders: ['tutti'] },
-  { id: 'beach',     name: 'Beach Volley',        emoji: '🏖', genders: ['M','F'] },
-  { id: 'limbo',     name: 'Limbo',               emoji: '🕺', genders: ['tutti'] },
-  { id: 'staffetta', name: 'Staffetta',           emoji: '🏃', genders: ['M','F'] },
+  { id: 'sacchi',          name: '100 mt Sacchi',       genders: ['M','F'] },
+  { id: 'nuoto',           name: '100 mt Nuoto',        genders: ['M','F'] },
+  { id: 'basket',          name: 'Basket',              genders: ['M','F'] },
+  { id: 'beach_pong',      name: 'Beach Pong',          genders: ['M','F'] },
+  { id: 'biglie',          name: 'Biglie',              genders: ['M','F'] },
+  { id: 'bocce',           name: 'Bocce',               genders: ['tutti'] },
+  { id: 'calciobbalilla',  name: 'Calciobalilla',       genders: ['tutti'] },
+  { id: 'canoa',           name: 'Canoa',               genders: ['tutti'] },
+  { id: 'freccette',       name: 'Freccette',           genders: ['M','F'] },
+  { id: 'anelli',          name: 'Lancio degli anelli', genders: ['M','F'] },
+  { id: 'golf',            name: 'Golf',                genders: ['M','F'] },
+  { id: 'pallanuoto',      name: 'Pallanuoto',          genders: ['tutti'] },
+  { id: 'racchettoni',     name: 'Racchettoni',         genders: ['M','F'] },
+  { id: 'arco',            name: 'Tiro con l'arco',     genders: ['M','F'] },
+  
 ];
 const CATEGORIES = ['open','espoir','junior'];
 
