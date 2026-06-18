@@ -148,10 +148,17 @@
   footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px; }
 
   @media (max-width: 640px) {
-    .header-inner { flex-wrap: wrap; height: auto; padding: 10px 0; gap: 8px; }
-    nav button { font-size: 11px; padding: 5px 10px; }
-    .logo { font-size: 22px; }
-    .cat-tab { font-size: 12px; padding: 10px 12px; }
+    .header-inner { flex-wrap: nowrap; height: auto; padding: 8px 0; gap: 6px; justify-content: space-between; }
+    .logo { font-size: 18px; flex-shrink: 0; }
+    nav { flex-wrap: nowrap; overflow-x: auto; gap: 2px; }
+    nav button { font-size: 10px; padding: 4px 8px; white-space: nowrap; }
+    .admin-btn { font-size: 10px; padding: 4px 8px; flex-shrink: 0; }
+    .cat-bar-inner { overflow-x: auto; flex-wrap: nowrap; }
+    .cat-tab { font-size: 12px; padding: 10px 12px; white-space: nowrap; }
+    .gender-tabs { flex-shrink: 0; gap: 3px; }
+    .gender-btn { font-size: 11px; padding: 3px 8px; white-space: nowrap; }
+    main { padding: 16px 12px; }
+    .calendar-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
