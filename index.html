@@ -147,6 +147,28 @@
 
   footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px; }
 
+  .hamburger-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; flex-shrink: 0; }
+.hamburger-btn span { display: block; width: 22px; height: 2px; background: white; margin: 5px 0; border-radius: 2px; transition: all 0.3s; }
+
+.drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(3,4,94,0.6); z-index: 250; }
+.drawer-overlay.open { display: block; }
+.drawer {
+  position: fixed; top: 0; left: 0; height: 100vh; width: 260px;
+  background: var(--navy); z-index: 260;
+  transform: translateX(-100%); transition: transform 0.3s ease;
+  display: flex; flex-direction: column; padding: 20px 0;
+}
+.drawer.open { transform: translateX(0); }
+.drawer-header { padding: 0 20px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px; }
+.drawer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold); letter-spacing: 1px; }
+.drawer-logo span { color: white; }
+.drawer-close { background: none; border: none; color: white; font-size: 22px; cursor: pointer; padding: 4px 8px; }
+.drawer nav { display: flex; flex-direction: column; gap: 2px; padding: 0 12px; }
+.drawer nav button { text-align: left; background: none; border: none; color: rgba(255,255,255,0.8); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; padding: 12px 16px; border-radius: 8px; cursor: pointer; }
+.drawer nav button:hover { background: rgba(255,255,255,0.08); }
+.drawer nav button.active { background: var(--gold); color: var(--navy); }
+.drawer-admin { margin: 16px 12px 0; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+.drawer-admin button { width: 100%; background: none; border: 1.5px solid rgba(255,255,255,0.3); color: white; font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 10px; border-radius: 8px; cursor: pointer; }
   @media (max-width: 640px) {
     .header-inner { flex-wrap: nowrap; height: auto; padding: 8px 0; gap: 6px; justify-content: space-between; }
     .logo { font-size: 18px; flex-shrink: 0; }
@@ -159,6 +181,8 @@
     .gender-btn { font-size: 11px; padding: 3px 8px; white-space: nowrap; }
     main { padding: 16px 12px; }
     .calendar-grid { grid-template-columns: 1fr; }
+    .hamburger-btn { display: block; }
+nav.desktop-nav { display: none; }
   }
 </style>
 </head>
@@ -166,28 +190,36 @@
 
 <header>
   <div class="header-inner">
+    <button class="hamburger-btn" onclick="toggleDrawer()">
+      <span></span><span></span><span></span>
+    </button>
     <div class="logo">Olimpia<span>lidi</span> 🏅</div>
-    <nav>
+    <nav class="desktop-nav">
       <button class="active" onclick="showSection('calendario')">Calendario</button>
       <button onclick="showSection('iscritti')">Iscritti</button>
       <button onclick="showSection('risultati')">Risultati</button>
       <button onclick="showSection('classifica')">Classifica</button>
       <button onclick="showSection('medagliere')">Medagliere</button>
     </nav>
-    <button class="admin-btn" id="adminBtn" onclick="toggleAdmin()">⚙ Comitato</button>
+    <button class="admin-btn desktop-nav" id="adminBtn" onclick="toggleAdmin()">⚙ Comitato</button>
   </div>
 </header>
 
-<div class="cat-bar">
-  <div class="cat-bar-inner">
-    <button class="cat-tab active" onclick="setCategory('open')">Open</button>
-    <button class="cat-tab" onclick="setCategory('espoir')">Espoir</button>
-    <button class="cat-tab" onclick="setCategory('junior')">Junior</button>
-    <div class="gender-tabs">
-      <button class="gender-btn active" onclick="setGender('tutti')">Tutti</button>
-      <button class="gender-btn" onclick="setGender('M')">♂ Maschile</button>
-      <button class="gender-btn" onclick="setGender('F')">♀ Femminile</button>
-    </div>
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-logo">Olimpia<span>lidi</span> 🏅</div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <nav>
+    <button class="active" onclick="showSection('calendario');closeDrawer()">Calendario</button>
+    <button onclick="showSection('iscritti');closeDrawer()">Iscritti</button>
+    <button onclick="showSection('risultati');closeDrawer()">Risultati</button>
+    <button onclick="showSection('classifica');closeDrawer()">Classifica</button>
+    <button onclick="showSection('medagliere');closeDrawer()">Medagliere</button>
+  </nav>
+  <div class="drawer-admin">
+    <button id="adminBtnMobile" onclick="toggleAdmin()">⚙ Comitato</button>
   </div>
 </div>
 
@@ -543,11 +575,22 @@ onValue(ref(db, 'olimpialidi'), (snapshot) => {
 });
 
 // ── NAVIGAZIONE ──
+  window.toggleDrawer = function() {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+};
+window.closeDrawer = function() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+};
 window.showSection = function(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('sec-' + name).classList.add('active');
-  document.querySelectorAll('nav button').forEach((b,i) =>
-    b.classList.toggle('active', ['calendario','iscritti','risultati','classifica','medagliere'][i] === name));
+ document.querySelectorAll('nav button').forEach((b,i) => {
+    const sections = ['calendario','iscritti','risultati','classifica','medagliere'];
+    const idx = i % sections.length;
+    b.classList.toggle('active', sections[idx] === name);
+  });
   if(name==='iscritti') renderIscritti();
   renderAll();
 };
@@ -785,8 +828,9 @@ window.toggleAdmin = function() {
   if(isAdmin){
     isAdmin=false;
     document.getElementById('adminBar').classList.remove('visible');
-    document.getElementById('adminBtn').classList.remove('logged');
-    document.getElementById('adminBtn').textContent='⚙ Comitato';
+   document.getElementById('adminBtn').classList.remove('logged');
+document.getElementById('adminBtn').textContent='⚙ Comitato';
+document.getElementById('adminBtnMobile').textContent='⚙ Comitato';
     renderAll();
   } else {
     document.getElementById('loginModal').classList.add('open');
@@ -801,7 +845,8 @@ window.doLogin = function() {
     document.getElementById('loginModal').classList.remove('open');
     document.getElementById('adminBar').classList.add('visible');
     document.getElementById('adminBtn').classList.add('logged');
-    document.getElementById('adminBtn').textContent='🔓 Esci';
+document.getElementById('adminBtn').textContent='🔓 Esci';
+document.getElementById('adminBtnMobile').textContent='🔓 Esci';
     document.getElementById('loginError').style.display='none';
     document.getElementById('loginUser').value='';
     document.getElementById('loginPass').value='';
