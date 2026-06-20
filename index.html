@@ -334,14 +334,14 @@ const db = getDatabase(fbApp);
 const SPORTS = [
   { id: 'sacchi',          name: '100 mt Sacchi',       emoji: '',genders: ['M','F'] },
   { id: 'nuoto',           name: '100 mt Nuoto',        emoji: '',genders: ['M','F'] },
-  { id: 'basket',          name: 'Basket',              emoji: '',genders: ['M','F'] },
+  { id: 'basket',          name: 'Basket',              emoji: '',genders: ['M','F'] },  multiScore: true },
   { id: 'beach_pong',      name: 'Beach Pong',          emoji: '',genders: ['M','F'] },
   { id: 'biglie',          name: 'Biglie',              emoji: '',genders: ['M','F'] },
   { id: 'bocce',           name: 'Bocce',               emoji: '',genders: ['tutti'] },
   { id: 'calciobalilla',   name: 'Calciobalilla',       emoji: '',genders: ['tutti'] },
   { id: 'canoa',           name: 'Canoa',               emoji: '',genders: ['tutti'] },
-  { id: 'freccette',       name: 'Freccette',           emoji: '',genders: ['M','F'] },
-  { id: 'anelli',          name: 'Lancio degli anelli', emoji: '',genders: ['M','F'] },
+  { id: 'freccette',       name: 'Freccette',           emoji: '',genders: ['M','F'] },  multiScore: true }
+  { id: 'anelli',          name: 'Lancio degli anelli', emoji: '',genders: ['M','F'] },  multiScore: true }
   { id: 'golf',            name: 'Golf',                emoji: '',genders: ['M','F'] },
   { id: 'pallanuoto',      name: 'Pallanuoto',          emoji: '',genders: ['tutti'] },
   { id: 'racchettoni',     name: 'Racchettoni',         emoji: '',genders: ['M','F'] },
@@ -681,6 +681,15 @@ function renderCalendar() {
 }
 
 // ── RISULTATI ──
+  function isMultiScoreSport(sportId) {
+  const sport = SPORTS.find(s => s.id === sportId);
+  return sport && sport.multiScore;
+}
+
+function getSportIdFromKey(key) {
+  // rimuove eventuale suffisso _M o _F dalla chiave per risalire all'id sport
+  return key.replace(/_M$|_F$/, '');
+}
 function renderResults() {
   const sel = document.getElementById('sportSelect');
   const container = document.getElementById('resultsContainer');
@@ -700,6 +709,97 @@ function renderResults() {
       sel.appendChild(o);
     });
   });
+
+  const selectedKey = sel.value;
+  if (!selectedKey) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🏅</div><div class="empty-title">Seleziona uno sport</div><div class="empty-sub">Scegli dal menu qui sopra per vedere i risultati</div></div>';
+    return;
+  }
+
+  if (!DATA[cat]) DATA[cat] = {};
+  if (!DATA[cat][selectedKey]) DATA[cat][selectedKey] = { date:'', time:'', location:'Spiaggia principale', status:'upcoming', teams:[] };
+  if (!DATA[cat][selectedKey].teams) DATA[cat][selectedKey].teams = [];
+
+  const sportId = getSportIdFromKey(selectedKey);
+
+  if (isMultiScoreSport(sportId)) {
+    renderMultiScoreTable(cat, selectedKey, container);
+  } else {
+    renderSimpleResults(cat, selectedKey, container);
+  }
+}
+
+// Tabella semplice (quella di sempre)
+function renderSimpleResults(cat, selectedKey, container) {
+  const ev = DATA[cat][selectedKey];
+  const sorted = [...(ev.teams||[])].map((t,i)=>({...t,origIdx:i}))
+    .sort((a,b)=>(parseFloat(b.score)||-Infinity)-(parseFloat(a.score)||-Infinity));
+
+  container.innerHTML = `
+    <table class="results-table">
+      <thead><tr>
+        <th style="width:48px">Pos</th><th>Squadra / Partecipante</th>
+        <th style="width:160px">Punteggio / Tempo</th>
+        ${isAdmin?'<th style="width:50px"></th>':''}
+      </tr></thead>
+      <tbody>${sorted.map((t,i)=>{
+        const pos=i+1, medal=pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':'';
+        return `<tr>
+          <td><span class="pos-badge pos-${pos<=3?pos:'n'}">${pos}</span></td>
+          <td>${isAdmin?`<input class="score-input" style="width:180px;text-align:left" value="${t.name}" onchange="updateTeam('${cat}','${selectedKey}',${t.origIdx},'name',this.value)">`:`<span style="font-weight:600">${medal} ${t.name}</span>`}</td>
+          <td>${isAdmin?`<input class="score-input" placeholder="es: 12.5" value="${t.score||''}" onchange="updateTeam('${cat}','${selectedKey}',${t.origIdx},'score',this.value)">`:`<span style="font-weight:600;font-size:16px">${t.score||'—'}</span>`}</td>
+          ${isAdmin?`<td><button onclick="removeTeam('${cat}','${selectedKey}',${t.origIdx})" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
+        </tr>`;
+      }).join('')}</tbody>
+    </table>
+    ${isAdmin?`<button onclick="addTeam('${cat}','${selectedKey}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>`:''}`;
+}
+
+// Tabella a 15 colonne (Basket, Freccette, ecc.)
+function renderMultiScoreTable(cat, selectedKey, container) {
+  const ev = DATA[cat][selectedKey];
+  const teams = ev.teams || [];
+  const N = 15;
+
+  // Calcola il totale per ogni atleta dalle sue 15 colonne (array "tiri")
+  const withTotals = teams.map((t, i) => {
+    const tiri = t.tiri || Array(N).fill('');
+    const total = tiri.reduce((sum, v) => sum + (parseFloat(v) || 0), 0);
+    return { ...t, tiri, total, origIdx: i };
+  }).sort((a,b) => b.total - a.total);
+
+  const headerCols = Array.from({length: N}, (_, i) => `<th style="width:48px;text-align:center">${i+1}</th>`).join('');
+
+  container.innerHTML = `
+    <div style="overflow-x:auto">
+    <table class="results-table" style="min-width:1000px">
+      <thead><tr>
+        <th style="width:48px">Pos</th>
+        <th style="min-width:160px">Partecipante</th>
+        ${headerCols}
+        <th style="width:70px;text-align:center">Tot</th>
+        ${isAdmin?'<th style="width:50px"></th>':''}
+      </tr></thead>
+      <tbody>${withTotals.map((t,i) => {
+        const pos = i+1, medal = pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':'';
+        const cols = t.tiri.map((v, ci) => `
+          <td style="text-align:center;padding:6px">
+            ${isAdmin
+              ? `<input class="score-input" style="width:40px;padding:4px" value="${v||''}" onchange="updateTiro('${cat}','${selectedKey}',${t.origIdx},${ci},this.value)">`
+              : `<span>${v||'—'}</span>`}
+          </td>`).join('');
+        return `<tr>
+          <td><span class="pos-badge pos-${pos<=3?pos:'n'}">${pos}</span></td>
+          <td>${isAdmin?`<input class="score-input" style="width:150px;text-align:left" value="${t.name}" onchange="updateTeam('${cat}','${selectedKey}',${t.origIdx},'name',this.value)">`:`<span style="font-weight:600">${medal} ${t.name}</span>`}</td>
+          ${cols}
+          <td style="text-align:center;font-weight:700;font-size:15px;color:var(--ocean)">${t.total}</td>
+          ${isAdmin?`<td><button onclick="removeTeam('${cat}','${selectedKey}',${t.origIdx})" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
+        </tr>`;
+      }).join('')}</tbody>
+    </table>
+    </div>
+    ${isAdmin?`<button onclick="addTeam('${cat}','${selectedKey}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>`:''}`;
+}
 
   const selectedKey = sel.value;
   if (!selectedKey) {
@@ -804,7 +904,18 @@ window.updateTeam = function(cat,key,idx,field,val) {
   pushToFirebase();
   setTimeout(()=>{renderResults();renderRanking();renderMedal();},100);
 };
+window.updateTiro = function(cat, key, idx, tiroIdx, val) {
+  if (!DATA[cat]?.[key]?.teams?.[idx]) return;
+  if (!DATA[cat][key].teams[idx].tiri) DATA[cat][key].teams[idx].tiri = Array(15).fill('');
+  DATA[cat][key].teams[idx].tiri[tiroIdx] = val;
 
+  // Aggiorna anche lo score totale (serve per Classifica/Medagliere che usano "score")
+  const total = DATA[cat][key].teams[idx].tiri.reduce((sum, v) => sum + (parseFloat(v) || 0), 0);
+  DATA[cat][key].teams[idx].score = total;
+
+  pushToFirebase();
+  setTimeout(() => { renderResults(); renderRanking(); renderMedal(); }, 100);
+};
 window.addTeam = function(cat,key) {
   if(!DATA[cat])DATA[cat]={};
   if(!DATA[cat][key])DATA[cat][key]={date:'',time:'',location:'Spiaggia principale',status:'upcoming',teams:[]};
