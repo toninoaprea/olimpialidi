@@ -380,17 +380,43 @@ function renderIscritti() {
             <th style="width:40px">#</th>
             <th>Nome e Cognome</th>
             <th style="width:100px">Categoria</th>
-            ${isAdmin ? '<th style="width:50px"></th>' : ''}
+            ${isAdmin ? '<th style="width:80px"></th>' : ''}
           </tr></thead>
           <tbody>${atleti.map((a,i) => `<tr>
             <td style="color:var(--text-muted);font-weight:600">${i+1}</td>
-            <td><span style="font-weight:600">${a.nome}</span></td>
+            <td>${isAdmin
+              ? `<input class="score-input" style="width:200px;text-align:left" value="${a.nome}" onchange="modificaNomeAtleta('${cat}','${a.id}',this.value)">`
+              : `<span style="font-weight:600">${a.nome}</span>`}</td>
             <td><span class="event-badge badge-${cat}">${cat.charAt(0).toUpperCase()+cat.slice(1)}</span></td>
             ${isAdmin ? `<td><button onclick="rimuoviAtleta('${cat}','${a.id}')" style="background:none;border:none;cursor:pointer;font-size:16px" title="Rimuovi">🗑</button></td>` : ''}
           </tr>`).join('')}</tbody>
         </table>
       </div>`;
   }
+  window.modificaNomeAtleta = function(cat, id, nuovoNome) {
+  nuovoNome = nuovoNome.trim();
+  if (!nuovoNome || !DATA.iscritti?.[cat]?.[id]) return;
+
+  const vecchioNome = DATA.iscritti[cat][id].nome;
+  const genere = DATA.iscritti[cat][id].genere;
+
+  // Aggiorna il nome in iscritti
+  DATA.iscritti[cat][id].nome = nuovoNome;
+
+  // Aggiorna il nome in tutti gli sport dove compare
+  if (DATA[cat]) {
+    SPORTS.forEach(sport => {
+      const sportKey = sport.genders.includes('tutti') ? sport.id : `${sport.id}_${genere}`;
+      const teams = DATA[cat][sportKey]?.teams;
+      if (teams) {
+        teams.forEach(t => { if (t.name === vecchioNome) t.name = nuovoNome; });
+      }
+    });
+  }
+
+  pushToFirebase();
+  renderIscritti();
+};
 
   container.innerHTML = buildTable(maschi, 'Maschile', '♂') + buildTable(femmine, 'Femminile', '♀');
 }
