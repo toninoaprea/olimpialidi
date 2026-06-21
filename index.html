@@ -237,28 +237,6 @@ nav.desktop-nav { display: none; }
       </div>
     </div>
   </div>
-  window.pulisciTeamFinti = function() {
-  if (!isAdmin) return;
-  const nomiFinti = ['Team Azzurro', 'Team Rosso', 'Team Verde', 'Team Giallo'];
-  let rimossi = 0;
-
-  CATEGORIES.forEach(cat => {
-    if (!DATA[cat]) return;
-    Object.keys(DATA[cat]).forEach(key => {
-      const ev = DATA[cat][key];
-      if (ev.teams) {
-        const before = ev.teams.length;
-        ev.teams = ev.teams.filter(t => !nomiFinti.includes(t.name));
-        rimossi += (before - ev.teams.length);
-      }
-    });
-  });
-
-  pushToFirebase();
-  renderAll();
-  showToast(`🧹 Rimossi ${rimossi} Team finti!`);
-};
-
   <div class="sync-bar">
     <div class="sync-dot" id="pubSyncDot"></div>
     <span id="pubSyncLabel">Connessione a Firebase...</span>
@@ -916,6 +894,27 @@ window.addTeam = function(cat,key) {
 window.removeTeam = function(cat,key,idx) {
   DATA[cat][key].teams.splice(idx,1);
   pushToFirebase(); renderResults();
+};
+  window.pulisciTeamFinti = function() {
+  if (!isAdmin) return;
+  const nomiFinti = ['Team Azzurro', 'Team Rosso', 'Team Verde', 'Team Giallo'];
+  let rimossi = 0;
+
+  CATEGORIES.forEach(cat => {
+    if (!DATA[cat]) return;
+    Object.keys(DATA[cat]).forEach(key => {
+      const ev = DATA[cat][key];
+      if (ev.teams) {
+        const before = ev.teams.length;
+        ev.teams = ev.teams.filter(t => !nomiFinti.includes(t.name));
+        rimossi += (before - ev.teams.length);
+      }
+    });
+  });
+
+  pushToFirebase();
+  renderAll();
+  showToast(`🧹 Rimossi ${rimossi} Team finti!`);
 };
 
 function updateLiveDot() {
