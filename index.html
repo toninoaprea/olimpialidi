@@ -550,11 +550,9 @@ onValue(ref(db, 'olimpialidi'), (snapshot) => {
         gkeys.forEach(g => {
           const key = g === 'tutti' ? sport.id : `${sport.id}_${g}`;
           if (!DATA[cat][key]) {
-            DATA[cat][key] = { date:'', time:'', location:'Spiaggia principale', status:'upcoming', teams:[
-              {name:'Team Azzurro',score:''},{name:'Team Rosso',score:''},{name:'Team Verde',score:''},{name:'Team Giallo',score:''}
-            ]};
+            DATA[cat][key] = { date:'', time:'', location:'Spiaggia principale', status:'upcoming', teams:[] };
           }
-          if (!DATA[cat][key].teams) DATA[cat][key].teams = [{name:'Team Azzurro',score:''},{name:'Team Rosso',score:''},{name:'Team Verde',score:''},{name:'Team Giallo',score:''}];
+          if (!DATA[cat][key].teams) DATA[cat][key].teams = [];
         });
       });
     });
