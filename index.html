@@ -229,9 +229,12 @@ nav.desktop-nav { display: none; }
       <div class="admin-dot"></div>
       <div class="admin-text">Modalità <strong>Comitato</strong> attiva — puoi modificare risultati e dati</div>
     </div>
-    <div class="sync-bar" style="margin-bottom:0">
-      <div class="sync-dot" id="syncDot"></div>
-      <span id="syncLabel">Connessione...</span>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button onclick="pulisciTeamFinti()" style="background:#e53935;color:white;border:none;border-radius:8px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">🧹 Pulisci Team finti</button>
+      <div class="sync-bar" style="margin-bottom:0">
+        <div class="sync-dot" id="syncDot"></div>
+        <span id="syncLabel">Connessione...</span>
+      </div>
     </div>
   </div>
 
