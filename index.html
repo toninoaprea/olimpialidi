@@ -118,7 +118,7 @@
   .silver-cell{color:#708090;font-weight:700;font-size:16px;}
   .bronze-cell{color:var(--bronze);font-weight:700;font-size:16px;}
 
-  .admin-bar { background: linear-gradient(135deg, #1a1a2e, var(--navy)); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; display: none; align-items: center; justify-content: space-between; border: 1px solid rgba(245,200,66,0.3); }
+  .admin-bar { background: linear-gradient(135deg, #1a1a2e, var(--navy)); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; display: none; align-items: center; justify-content: space-between; border: 1px solid rgba(245,200,66,0.3); flex-wrap: wrap; gap: 12px; }
   .admin-bar.visible { display: flex; }
   .admin-info { display: flex; align-items: center; gap: 10px; }
   .admin-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
@@ -148,27 +148,27 @@
   footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px; }
 
   .hamburger-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; flex-shrink: 0; }
-.hamburger-btn span { display: block; width: 22px; height: 2px; background: white; margin: 5px 0; border-radius: 2px; transition: all 0.3s; }
+  .hamburger-btn span { display: block; width: 22px; height: 2px; background: white; margin: 5px 0; border-radius: 2px; transition: all 0.3s; }
 
-.drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(3,4,94,0.6); z-index: 250; }
-.drawer-overlay.open { display: block; }
-.drawer {
-  position: fixed; top: 0; left: 0; height: 100vh; width: 260px;
-  background: var(--navy); z-index: 260;
-  transform: translateX(-100%); transition: transform 0.3s ease;
-  display: flex; flex-direction: column; padding: 20px 0;
-}
-.drawer.open { transform: translateX(0); }
-.drawer-header { padding: 0 20px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px; }
-.drawer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold); letter-spacing: 1px; }
-.drawer-logo span { color: white; }
-.drawer-close { background: none; border: none; color: white; font-size: 22px; cursor: pointer; padding: 4px 8px; }
-.drawer nav { display: flex; flex-direction: column; gap: 2px; padding: 0 12px; }
-.drawer nav button { text-align: left; background: none; border: none; color: rgba(255,255,255,0.8); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; padding: 12px 16px; border-radius: 8px; cursor: pointer; }
-.drawer nav button:hover { background: rgba(255,255,255,0.08); }
-.drawer nav button.active { background: var(--gold); color: var(--navy); }
-.drawer-admin { margin: 16px 12px 0; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
-.drawer-admin button { width: 100%; background: none; border: 1.5px solid rgba(255,255,255,0.3); color: white; font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 10px; border-radius: 8px; cursor: pointer; }
+  .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(3,4,94,0.6); z-index: 250; }
+  .drawer-overlay.open { display: block; }
+  .drawer {
+    position: fixed; top: 0; left: 0; height: 100vh; width: 260px;
+    background: var(--navy); z-index: 260;
+    transform: translateX(-100%); transition: transform 0.3s ease;
+    display: flex; flex-direction: column; padding: 20px 0;
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-header { padding: 0 20px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px; }
+  .drawer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold); letter-spacing: 1px; }
+  .drawer-logo span { color: white; }
+  .drawer-close { background: none; border: none; color: white; font-size: 22px; cursor: pointer; padding: 4px 8px; }
+  .drawer nav { display: flex; flex-direction: column; gap: 2px; padding: 0 12px; }
+  .drawer nav button { text-align: left; background: none; border: none; color: rgba(255,255,255,0.8); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; padding: 12px 16px; border-radius: 8px; cursor: pointer; }
+  .drawer nav button:hover { background: rgba(255,255,255,0.08); }
+  .drawer nav button.active { background: var(--gold); color: var(--navy); }
+  .drawer-admin { margin: 16px 12px 0; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+  .drawer-admin button { width: 100%; background: none; border: 1.5px solid rgba(255,255,255,0.3); color: white; font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 10px; border-radius: 8px; cursor: pointer; }
   @media (max-width: 640px) {
     .header-inner { flex-wrap: nowrap; height: auto; padding: 8px 0; gap: 6px; justify-content: space-between; }
     .logo { font-size: 18px; flex-shrink: 0; }
@@ -182,7 +182,7 @@
     main { padding: 16px 12px; }
     .calendar-grid { grid-template-columns: 1fr; }
     .hamburger-btn { display: block; }
-nav.desktop-nav { display: none; }
+    nav.desktop-nav { display: none; }
   }
 </style>
 </head>
@@ -247,11 +247,10 @@ nav.desktop-nav { display: none; }
     <div class="calendar-grid" id="calendarGrid"></div>
   </div>
 
-  <!-- ISCRITTI -->
   <div class="section" id="sec-iscritti">
     <h1 class="page-title">Iscritti <span class="accent" id="isc-title">Open</span></h1>
     <div id="addAtletaForm" style="display:none;background:white;border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:24px;box-shadow:var(--shadow)">
-      <div style="font-weight:600;font-size:15px;margin-bottom:16px;color:var(--navy)">&#10133; Aggiungi atleta</div>
+      <div style="font-weight:600;font-size:15px;margin-bottom:16px;color:var(--navy)">➕ Aggiungi atleta</div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
         <div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Nome e Cognome</div>
@@ -268,8 +267,8 @@ nav.desktop-nav { display: none; }
         <div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Genere</div>
           <select id="newAtletaGenere" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
-            <option value="M">&#9794; Maschile</option>
-            <option value="F">&#9792; Femminile</option>
+            <option value="M">♂ Maschile</option>
+            <option value="F">♀ Femminile</option>
           </select>
         </div>
         <button onclick="aggiungiAtleta()" style="background:var(--navy);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Aggiungi</button>
@@ -349,7 +348,7 @@ const SPORTS = [
   { id: 'racchettoni',     name: 'Racchettoni',         emoji: '', genders: ['M','F'] },
   { id: 'arco',            name: "Tiro con l'arco",     emoji: '', genders: ['M','F'] },
 ];
-  
+
 const CATEGORIES = ['open','espoir','junior'];
 
 let DATA = {};
@@ -368,12 +367,7 @@ function buildDefaultData() {
         const key = g === 'tutti' ? sport.id : `${sport.id}_${g}`;
         d[cat][key] = {
           date: '', time: '', location: 'Spiaggia principale', status: 'upcoming',
-          teams: [
-            { name: 'Team Azzurro', score: '' },
-            { name: 'Team Rosso',   score: '' },
-            { name: 'Team Verde',   score: '' },
-            { name: 'Team Giallo',  score: '' },
-          ]
+          teams: []
         };
       });
     });
@@ -381,11 +375,8 @@ function buildDefaultData() {
   return d;
 }
 
-
-// Sport esclusi dall'aggiunta automatica atleti
 const SPORT_NO_AUTO = ['calciobalilla'];
 
-// ── ISCRITTI ──
 function renderIscritti() {
   const container = document.getElementById('iscrittiContainer');
   const form = document.getElementById('addAtletaForm');
@@ -395,7 +386,6 @@ function renderIscritti() {
   const atleti = (DATA.iscritti && DATA.iscritti[cat]) ? DATA.iscritti[cat] : {};
   const lista = Object.entries(atleti).map(([id, a]) => ({id, ...a}));
 
-  // Raggruppa per genere
   const maschi = lista.filter(a => a.genere === 'M').sort((a,b) => a.nome.localeCompare(b.nome));
   const femmine = lista.filter(a => a.genere === 'F').sort((a,b) => a.nome.localeCompare(b.nome));
 
@@ -427,17 +417,19 @@ function renderIscritti() {
         </table>
       </div>`;
   }
-  window.modificaNomeAtleta = function(cat, id, nuovoNome) {
+
+  container.innerHTML = buildTable(maschi, 'Maschile', '♂') + buildTable(femmine, 'Femminile', '♀');
+}
+
+window.modificaNomeAtleta = function(cat, id, nuovoNome) {
   nuovoNome = nuovoNome.trim();
   if (!nuovoNome || !DATA.iscritti?.[cat]?.[id]) return;
 
   const vecchioNome = DATA.iscritti[cat][id].nome;
   const genere = DATA.iscritti[cat][id].genere;
 
-  // Aggiorna il nome in iscritti
   DATA.iscritti[cat][id].nome = nuovoNome;
 
-  // Aggiorna il nome in tutti gli sport dove compare
   if (DATA[cat]) {
     SPORTS.forEach(sport => {
       const sportKey = sport.genders.includes('tutti') ? sport.id : `${sport.id}_${genere}`;
@@ -452,9 +444,6 @@ function renderIscritti() {
   renderIscritti();
 };
 
-  container.innerHTML = buildTable(maschi, 'Maschile', '♂') + buildTable(femmine, 'Femminile', '♀');
-}
-
 window.aggiungiAtleta = function() {
   const nome = document.getElementById('newAtletaNome').value.trim();
   const cat  = document.getElementById('newAtletaCat').value;
@@ -464,23 +453,19 @@ window.aggiungiAtleta = function() {
   if (!nome) { errEl.style.display = 'block'; return; }
   errEl.style.display = 'none';
 
-  // Aggiungi a iscritti
   if (!DATA.iscritti) DATA.iscritti = {};
   if (!DATA.iscritti[cat]) DATA.iscritti[cat] = {};
   const id = 'a_' + Date.now();
   DATA.iscritti[cat][id] = { nome, genere };
 
-  // Aggiungi automaticamente a tutti gli sport compatibili (escluso SPORT_NO_AUTO)
   if (!DATA[cat]) DATA[cat] = {};
   SPORTS.forEach(sport => {
     if (SPORT_NO_AUTO.includes(sport.id)) return;
-    // Determina la chiave giusta
     const sportKey = sport.genders.includes('tutti') ? sport.id : `${sport.id}_${genere}`;
     if (!DATA[cat][sportKey]) {
       DATA[cat][sportKey] = { date:'', time:'', location:'Spiaggia principale', status:'upcoming', teams:[] };
     }
     if (!DATA[cat][sportKey].teams) DATA[cat][sportKey].teams = [];
-    // Evita duplicati
     const exists = DATA[cat][sportKey].teams.some(t => t.name === nome);
     if (!exists) DATA[cat][sportKey].teams.push({ name: nome, score: '' });
   });
@@ -495,10 +480,8 @@ window.rimuoviAtleta = function(cat, id) {
   const nome = DATA.iscritti[cat][id].nome;
   const genere = DATA.iscritti[cat][id].genere;
 
-  // Rimuovi da iscritti
   delete DATA.iscritti[cat][id];
 
-  // Rimuovi da tutti gli sport
   if (DATA[cat]) {
     SPORTS.forEach(sport => {
       const sportKey = sport.genders.includes('tutti') ? sport.id : `${sport.id}_${genere}`;
@@ -544,7 +527,6 @@ setSyncStatus('syncing', '🟡 Connessione...');
 onValue(ref(db, 'olimpialidi'), (snapshot) => {
   if (snapshot.exists()) {
     DATA = snapshot.val();
-    // Assicura che tutti gli sport esistano anche se il db è vecchio
     CATEGORIES.forEach(cat => {
       if (!DATA[cat]) DATA[cat] = {};
       SPORTS.forEach(sport => {
@@ -567,15 +549,13 @@ onValue(ref(db, 'olimpialidi'), (snapshot) => {
   renderAll();
   updateLiveDot();
 }, (err) => {
-  // Fallback: usa dati locali se Firebase non raggiungibile
   DATA = buildDefaultData();
   dbReady = true;
   setSyncStatus('error', '🔴 Offline — dati locali');
   renderAll();
 });
 
-// ── NAVIGAZIONE ──
-  window.toggleDrawer = function() {
+window.toggleDrawer = function() {
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawerOverlay').classList.add('open');
 };
@@ -586,7 +566,7 @@ window.closeDrawer = function() {
 window.showSection = function(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('sec-' + name).classList.add('active');
- document.querySelectorAll('nav button').forEach((b,i) => {
+  document.querySelectorAll('nav button').forEach((b,i) => {
     const sections = ['calendario','iscritti','risultati','classifica','medagliere'];
     const idx = i % sections.length;
     b.classList.toggle('active', sections[idx] === name);
@@ -629,7 +609,6 @@ function renderAll() {
   renderCalendar(); renderResults(); renderRanking(); renderMedal();
 }
 
-// ── CALENDARIO ──
 function renderCalendar() {
   const grid = document.getElementById('calendarGrid');
   const cat = currentCategory;
@@ -680,16 +659,15 @@ function renderCalendar() {
   });
 }
 
-// ── RISULTATI ──
-  function isMultiScoreSport(sportId) {
+function isMultiScoreSport(sportId) {
   const sport = SPORTS.find(s => s.id === sportId);
   return sport && sport.multiScore;
 }
 
 function getSportIdFromKey(key) {
-  // rimuove eventuale suffisso _M o _F dalla chiave per risalire all'id sport
   return key.replace(/_M$|_F$/, '');
 }
+
 function renderResults() {
   const sel = document.getElementById('sportSelect');
   const container = document.getElementById('resultsContainer');
@@ -729,7 +707,6 @@ function renderResults() {
   }
 }
 
-// Tabella semplice (quella di sempre)
 function renderSimpleResults(cat, selectedKey, container) {
   const ev = DATA[cat][selectedKey];
   const sorted = [...(ev.teams||[])].map((t,i)=>({...t,origIdx:i}))
@@ -755,13 +732,11 @@ function renderSimpleResults(cat, selectedKey, container) {
     ${isAdmin?`<button onclick="addTeam('${cat}','${selectedKey}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>`:''}`;
 }
 
-// Tabella a 15 colonne (Basket, Freccette, ecc.)
 function renderMultiScoreTable(cat, selectedKey, container) {
   const ev = DATA[cat][selectedKey];
   const teams = ev.teams || [];
   const N = 15;
 
-  // Calcola il totale per ogni atleta dalle sue 15 colonne (array "tiri")
   const withTotals = teams.map((t, i) => {
     const tiri = t.tiri || Array(N).fill('');
     const total = tiri.reduce((sum, v) => sum + (parseFloat(v) || 0), 0);
@@ -801,7 +776,6 @@ function renderMultiScoreTable(cat, selectedKey, container) {
     ${isAdmin?`<button onclick="addTeam('${cat}','${selectedKey}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>`:''}`;
 }
 
-// ── CLASSIFICA ──
 function renderRanking() {
   const container = document.getElementById('rankingContainer');
   const cat = currentCategory;
@@ -825,7 +799,6 @@ function renderRanking() {
     <p style="font-size:12px;color:var(--text-muted);margin-top:10px">Punti: 🥇 3pt &nbsp;|&nbsp; 🥈 2pt &nbsp;|&nbsp; 🥉 1pt</p>`;
 }
 
-// ── MEDAGLIERE ──
 function renderMedal() {
   const container = document.getElementById('medalContainer');
   const cat = currentCategory;
@@ -856,7 +829,6 @@ function renderMedal() {
     </table>`;
 }
 
-// ── AGGIORNAMENTO DATI ──
 window.updateField = function(cat,key,field,val) {
   if(!DATA[cat])DATA[cat]={};
   if(!DATA[cat][key])DATA[cat][key]={};
@@ -871,18 +843,19 @@ window.updateTeam = function(cat,key,idx,field,val) {
   pushToFirebase();
   setTimeout(()=>{renderResults();renderRanking();renderMedal();},100);
 };
+
 window.updateTiro = function(cat, key, idx, tiroIdx, val) {
   if (!DATA[cat]?.[key]?.teams?.[idx]) return;
   if (!DATA[cat][key].teams[idx].tiri) DATA[cat][key].teams[idx].tiri = Array(15).fill('');
   DATA[cat][key].teams[idx].tiri[tiroIdx] = val;
 
-  // Aggiorna anche lo score totale (serve per Classifica/Medagliere che usano "score")
   const total = DATA[cat][key].teams[idx].tiri.reduce((sum, v) => sum + (parseFloat(v) || 0), 0);
   DATA[cat][key].teams[idx].score = total;
 
   pushToFirebase();
   setTimeout(() => { renderResults(); renderRanking(); renderMedal(); }, 100);
 };
+
 window.addTeam = function(cat,key) {
   if(!DATA[cat])DATA[cat]={};
   if(!DATA[cat][key])DATA[cat][key]={date:'',time:'',location:'Spiaggia principale',status:'upcoming',teams:[]};
@@ -895,7 +868,8 @@ window.removeTeam = function(cat,key,idx) {
   DATA[cat][key].teams.splice(idx,1);
   pushToFirebase(); renderResults();
 };
-  window.pulisciTeamFinti = function() {
+
+window.pulisciTeamFinti = function() {
   if (!isAdmin) return;
   const nomiFinti = ['Team Azzurro', 'Team Rosso', 'Team Verde', 'Team Giallo'];
   let rimossi = 0;
@@ -922,14 +896,13 @@ function updateLiveDot() {
   document.getElementById('liveDot').style.display=hasLive?'block':'none';
 }
 
-// ── ADMIN / LOGIN ──
 window.toggleAdmin = function() {
   if(isAdmin){
     isAdmin=false;
     document.getElementById('adminBar').classList.remove('visible');
-   document.getElementById('adminBtn').classList.remove('logged');
-document.getElementById('adminBtn').textContent='⚙ Comitato';
-document.getElementById('adminBtnMobile').textContent='⚙ Comitato';
+    document.getElementById('adminBtn').classList.remove('logged');
+    document.getElementById('adminBtn').textContent='⚙ Comitato';
+    document.getElementById('adminBtnMobile').textContent='⚙ Comitato';
     renderAll();
   } else {
     document.getElementById('loginModal').classList.add('open');
@@ -944,8 +917,8 @@ window.doLogin = function() {
     document.getElementById('loginModal').classList.remove('open');
     document.getElementById('adminBar').classList.add('visible');
     document.getElementById('adminBtn').classList.add('logged');
-document.getElementById('adminBtn').textContent='🔓 Esci';
-document.getElementById('adminBtnMobile').textContent='🔓 Esci';
+    document.getElementById('adminBtn').textContent='🔓 Esci';
+    document.getElementById('adminBtnMobile').textContent='🔓 Esci';
     document.getElementById('loginError').style.display='none';
     document.getElementById('loginUser').value='';
     document.getElementById('loginPass').value='';
