@@ -193,6 +193,7 @@
       <button onclick="showSection('risultati')">Risultati</button>
       <button onclick="showSection('classifica')">Classifica</button>
       <button onclick="showSection('medagliere')">Medagliere</button>
+      <button onclick="showSection('record')">Record</button>
     </nav>
     <button class="admin-btn desktop-nav" id="adminBtn" onclick="toggleAdmin()">⚙ Comitato</button>
   </div>
@@ -223,6 +224,7 @@
     <button onclick="showSection('risultati');closeDrawer()">Risultati</button>
     <button onclick="showSection('classifica');closeDrawer()">Classifica</button>
     <button onclick="showSection('medagliere');closeDrawer()">Medagliere</button>
+    <button onclick="showSection('record');closeDrawer()">Record</button>
   </nav>
   <div class="drawer-admin">
     <button id="adminBtnMobile" onclick="toggleAdmin();closeDrawer()">⚙ Comitato</button>
@@ -309,6 +311,58 @@
   <div class="section" id="sec-medagliere">
     <h1 class="page-title">Medagliere <span class="accent" id="med-title">Open</span></h1>
     <div id="medalContainer"></div>
+  </div>
+  <!-- RECORD -->
+  <div class="section" id="sec-record">
+    <h1 class="page-title">Record <span class="accent" id="rec-title">Open</span></h1>
+    <div id="addRecordForm" style="display:none;background:white;border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:24px;box-shadow:var(--shadow)">
+      <div style="font-weight:600;font-size:15px;margin-bottom:16px;color:var(--navy)">🏆 Inserisci / Aggiorna Record</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Sport</div>
+          <select id="recSport" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white;min-width:180px">
+          </select>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Genere</div>
+          <select id="recGenere" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+            <option value="M">♂ Maschile</option>
+            <option value="F">♀ Femminile</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Categoria</div>
+          <select id="recCat" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+            <option value="open">Open</option>
+            <option value="espoir">Espoir</option>
+            <option value="junior">Junior</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Nome Atleta</div>
+          <input id="recNome" type="text" placeholder="Es: Mario Rossi" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;width:180px;outline:none">
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Squadra</div>
+          <input id="recSquadra" type="text" placeholder="Es: Blu" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;width:120px;outline:none">
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Record</div>
+          <input id="recValore" type="text" placeholder="Es: 12.5" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;width:100px;outline:none">
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">U.M.</div>
+          <select id="recUM" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+            <option value="sec">sec</option>
+            <option value="punti">punti</option>
+            <option value="mt">mt</option>
+            <option value="km/h">km/h</option>
+          </select>
+        </div>
+        <button onclick="salvaRecord()" style="background:var(--navy);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">💾 Salva</button>
+      </div>
+    </div>
+    <div id="recordContainer"></div>
   </div>
 </main>
 
@@ -459,9 +513,10 @@ window.showSection = function(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('sec-' + name).classList.add('active');
   document.querySelectorAll('nav button').forEach((b,i) => {
-    b.classList.toggle('active', ['calendario','iscritti','risultati','classifica','medagliere'][i] === name);
+   b.classList.toggle('active', ['calendario','iscritti','risultati','classifica','medagliere','record'][i] === name);
   });
-  if (name === 'iscritti') renderIscritti();
+ if (name === 'iscritti') renderIscritti();
+if (name === 'record') renderRecord();
   renderAll();
 };
 
@@ -469,6 +524,123 @@ window.setCategory = function(cat) {
   currentCategory = cat;
   document.querySelectorAll('.cat-tab').forEach(b =>
     b.classList.toggle('active', b.textContent.toLowerCase() === cat));
+  // ── RECORD ──
+function initRecordSelect() {
+  const sel = document.getElementById('recSport');
+  if (!sel || sel.options.length > 1) return;
+  SPORTS.forEach(sport => {
+    const o = document.createElement('option');
+    o.value = sport.id;
+    o.textContent = `${sport.emoji} ${sport.name}`;
+    sel.appendChild(o);
+  });
+}
+
+function renderRecord() {
+  const container = document.getElementById('recordContainer');
+  const form = document.getElementById('addRecordForm');
+  if (!container) return;
+  if (form) { form.style.display = isAdmin ? 'block' : 'none'; initRecordSelect(); }
+
+  const cat = currentCategory;
+  const records = DATA.records?.[cat] || {};
+
+  container.innerHTML = SPORTS.map(sport => {
+    const rm = records[`${sport.id}_M`] || null;
+    const rf = records[`${sport.id}_F`] || null;
+    const hasGender = !sport.genders.includes('tutti');
+
+    if (!rm && !rf && !isAdmin) return '';
+
+    const rowM = rm ? `
+      <tr>
+        <td><span style="font-size:18px">♂</span></td>
+        <td style="font-weight:600">${rm.nome||'—'}</td>
+        <td>${rm.squadra||'—'}</td>
+        <td><span class="badge badge-${rm.cat||'open'}">${(rm.cat||'open').charAt(0).toUpperCase()+(rm.cat||'open').slice(1)}</span></td>
+        <td style="font-weight:700;font-size:16px;color:var(--ocean)">${rm.valore||'—'} <span style="font-size:12px;color:var(--text-muted)">${rm.um||''}</span></td>
+        ${isAdmin?`<td><button onclick="eliminaRecord('${cat}','${sport.id}_M')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
+      </tr>` : (hasGender && isAdmin ? `<tr><td><span style="font-size:18px">♂</span></td><td colspan="4" style="color:var(--text-muted);font-style:italic">Nessun record</td>${isAdmin?'<td></td>':''}</tr>` : '');
+
+    const rowF = hasGender ? (rf ? `
+      <tr>
+        <td><span style="font-size:18px;color:#e91e8c">♀</span></td>
+        <td style="font-weight:600">${rf.nome||'—'}</td>
+        <td>${rf.squadra||'—'}</td>
+        <td><span class="badge badge-${rf.cat||'open'}">${(rf.cat||'open').charAt(0).toUpperCase()+(rf.cat||'open').slice(1)}</span></td>
+        <td style="font-weight:700;font-size:16px;color:var(--ocean)">${rf.valore||'—'} <span style="font-size:12px;color:var(--text-muted)">${rf.um||''}</span></td>
+        ${isAdmin?`<td><button onclick="eliminaRecord('${cat}','${sport.id}_F')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
+      </tr>` : (isAdmin ? `<tr><td><span style="font-size:18px;color:#e91e8c">♀</span></td><td colspan="4" style="color:var(--text-muted);font-style:italic">Nessun record</td>${isAdmin?'<td></td>':''}</tr>` : '')) : '';
+
+    const rowUnico = !hasGender ? (rm ? `
+      <tr>
+        <td><span style="font-size:18px">👥</span></td>
+        <td style="font-weight:600">${rm.nome||'—'}</td>
+        <td>${rm.squadra||'—'}</td>
+        <td><span class="badge badge-${rm.cat||'open'}">${(rm.cat||'open').charAt(0).toUpperCase()+(rm.cat||'open').slice(1)}</span></td>
+        <td style="font-weight:700;font-size:16px;color:var(--ocean)">${rm.valore||'—'} <span style="font-size:12px;color:var(--text-muted)">${rm.um||''}</span></td>
+        ${isAdmin?`<td><button onclick="eliminaRecord('${cat}','${sport.id}_M')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
+      </tr>` : (isAdmin ? `<tr><td><span style="font-size:18px">👥</span></td><td colspan="4" style="color:var(--text-muted);font-style:italic">Nessun record</td>${isAdmin?'<td></td>':''}</tr>` : '')) : '';
+
+    const rows = rowM + rowF + rowUnico;
+    if (!rows) return '';
+
+    return `
+      <div style="margin-bottom:24px;background:white;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)">
+        <div style="background:var(--navy);padding:10px 16px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:22px">${sport.emoji}</span>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:white;letter-spacing:1px">${sport.name}</span>
+          <span style="margin-left:auto;background:rgba(245,200,66,0.2);color:#F5C842;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase">Record</span>
+        </div>
+        <table class="results-table" style="box-shadow:none">
+          <thead><tr>
+            <th style="width:40px"></th>
+            <th>Atleta</th>
+            <th style="width:120px">Squadra</th>
+            <th style="width:100px">Categoria</th>
+            <th style="width:140px">Record</th>
+            ${isAdmin?'<th style="width:50px"></th>':''}
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }).join('');
+
+  if (!container.innerHTML.trim()) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div><div class="empty-title">Nessun record ancora</div><div class="empty-sub">I record appariranno dopo essere stati inseriti dal comitato</div></div>';
+  }
+}
+
+window.salvaRecord = function() {
+  const sportId = document.getElementById('recSport').value;
+  const genere = document.getElementById('recGenere').value;
+  const cat = document.getElementById('recCat').value;
+  const nome = document.getElementById('recNome').value.trim();
+  const squadra = document.getElementById('recSquadra').value.trim();
+  const valore = document.getElementById('recValore').value.trim();
+  const um = document.getElementById('recUM').value;
+
+  if (!nome || !valore) { showToast('⚠️ Inserisci nome e valore del record'); return; }
+
+  // Per sport senza distinzione genere, usa sempre _M come chiave
+  const sport = SPORTS.find(s => s.id === sportId);
+  const key = sport?.genders.includes('tutti') ? `${sportId}_M` : `${sportId}_${genere}`;
+
+  if (!DATA.records) DATA.records = {};
+  if (!DATA.records[cat]) DATA.records[cat] = {};
+  DATA.records[cat][key] = { nome, squadra, cat, valore, um };
+
+  pushToFirebase();
+  renderRecord();
+  showToast('🏆 Record salvato!');
+};
+
+window.eliminaRecord = function(cat, key) {
+  if (!DATA.records?.[cat]?.[key]) return;
+  delete DATA.records[cat][key];
+  pushToFirebase();
+  renderRecord();
+};
   updateTitles(); renderAll();
   if (document.getElementById('sec-iscritti').classList.contains('active')) renderIscritti();
 };
