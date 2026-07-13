@@ -314,7 +314,7 @@
   </div>
   <!-- RECORD -->
   <div class="section" id="sec-record">
-    <h1 class="page-title">Record <span class="accent" id="rec-title">Open</span></h1>
+    <h1 class="page-title">Record</h1>
     <div id="addRecordForm" style="display:none;background:white;border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:24px;box-shadow:var(--shadow)">
       <div style="font-weight:600;font-size:15px;margin-bottom:16px;color:var(--navy)">🏆 Inserisci / Aggiorna Record</div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
@@ -524,6 +524,10 @@ window.setCategory = function(cat) {
   currentCategory = cat;
   document.querySelectorAll('.cat-tab').forEach(b =>
     b.classList.toggle('active', b.textContent.toLowerCase() === cat));
+  updateTitles(); renderAll();
+  if (document.getElementById('sec-iscritti').classList.contains('active')) renderIscritti();
+  if (document.getElementById('sec-record').classList.contains('active')) renderRecord();
+};
   // ── RECORD ──
 function initRecordSelect() {
   const sel = document.getElementById('recSport');
@@ -542,55 +546,51 @@ function renderRecord() {
   if (!container) return;
   if (form) { form.style.display = isAdmin ? 'block' : 'none'; initRecordSelect(); }
 
-  const cat = currentCategory;
-  const records = DATA.records?.[cat] || {};
+  const allRecords = DATA.records || {};
 
   container.innerHTML = SPORTS.map(sport => {
-    const rm = records[`${sport.id}_M`] || null;
-    const rf = records[`${sport.id}_F`] || null;
-    const hasGender = !sport.genders.includes('tutti');
+    // Raccoglie tutti i record di questo sport da tutte le categorie e generi
+    const righe = [];
+    CATEGORIES.forEach(cat => {
+      ['M','F'].forEach(g => {
+        if (sport.genders.includes('tutti') && g === 'F') return; // sport misti: solo una riga
+        const key = sport.genders.includes('tutti') ? `${sport.id}_M` : `${sport.id}_${g}`;
+        const r = allRecords[cat]?.[key];
+        if (r) {
+          righe.push({ ...r, cat, genere: g, key, sportGender: sport.genders.includes('tutti') });
+        }
+      });
+    });
 
-    if (!rm && !rf && !isAdmin) return '';
+    if (!righe.length && !isAdmin) return '';
 
-    const rowM = rm ? `
+    const genIcon = (g) => g === 'M'
+      ? `<span style="color:var(--ocean);font-size:18px">♂</span>`
+      : `<span style="color:#e91e8c;font-size:18px">♀</span>`;
+
+    const righeHTML = righe.map(r => `
       <tr>
-        <td><span style="font-size:18px">♂</span></td>
-        <td style="font-weight:600">${rm.nome||'—'}</td>
-        <td>${rm.squadra||'—'}</td>
-        <td><span class="badge badge-${rm.cat||'open'}">${(rm.cat||'open').charAt(0).toUpperCase()+(rm.cat||'open').slice(1)}</span></td>
-        <td style="font-weight:700;font-size:16px;color:var(--ocean)">${rm.valore||'—'} <span style="font-size:12px;color:var(--text-muted)">${rm.um||''}</span></td>
-        ${isAdmin?`<td><button onclick="eliminaRecord('${cat}','${sport.id}_M')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
-      </tr>` : (hasGender && isAdmin ? `<tr><td><span style="font-size:18px">♂</span></td><td colspan="4" style="color:var(--text-muted);font-style:italic">Nessun record</td>${isAdmin?'<td></td>':''}</tr>` : '');
+        <td>${r.sportGender ? '<span style="font-size:18px">👥</span>' : genIcon(r.genere)}</td>
+        <td style="font-weight:600">${r.nome||'—'}</td>
+        <td>${r.squadra||'—'}</td>
+        <td><span class="badge badge-${r.cat}">${r.cat.charAt(0).toUpperCase()+r.cat.slice(1)}</span></td>
+        <td style="font-weight:700;font-size:16px;color:var(--ocean)">${r.valore||'—'} <span style="font-size:12px;color:var(--text-muted)">${r.um||''}</span></td>
+        ${isAdmin?`<td><button onclick="eliminaRecord('${r.cat}','${r.key}')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
+      </tr>`).join('');
 
-    const rowF = hasGender ? (rf ? `
+    const emptyRow = isAdmin ? `
       <tr>
-        <td><span style="font-size:18px;color:#e91e8c">♀</span></td>
-        <td style="font-weight:600">${rf.nome||'—'}</td>
-        <td>${rf.squadra||'—'}</td>
-        <td><span class="badge badge-${rf.cat||'open'}">${(rf.cat||'open').charAt(0).toUpperCase()+(rf.cat||'open').slice(1)}</span></td>
-        <td style="font-weight:700;font-size:16px;color:var(--ocean)">${rf.valore||'—'} <span style="font-size:12px;color:var(--text-muted)">${rf.um||''}</span></td>
-        ${isAdmin?`<td><button onclick="eliminaRecord('${cat}','${sport.id}_F')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
-      </tr>` : (isAdmin ? `<tr><td><span style="font-size:18px;color:#e91e8c">♀</span></td><td colspan="4" style="color:var(--text-muted);font-style:italic">Nessun record</td>${isAdmin?'<td></td>':''}</tr>` : '')) : '';
-
-    const rowUnico = !hasGender ? (rm ? `
-      <tr>
-        <td><span style="font-size:18px">👥</span></td>
-        <td style="font-weight:600">${rm.nome||'—'}</td>
-        <td>${rm.squadra||'—'}</td>
-        <td><span class="badge badge-${rm.cat||'open'}">${(rm.cat||'open').charAt(0).toUpperCase()+(rm.cat||'open').slice(1)}</span></td>
-        <td style="font-weight:700;font-size:16px;color:var(--ocean)">${rm.valore||'—'} <span style="font-size:12px;color:var(--text-muted)">${rm.um||''}</span></td>
-        ${isAdmin?`<td><button onclick="eliminaRecord('${cat}','${sport.id}_M')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
-      </tr>` : (isAdmin ? `<tr><td><span style="font-size:18px">👥</span></td><td colspan="4" style="color:var(--text-muted);font-style:italic">Nessun record</td>${isAdmin?'<td></td>':''}</tr>` : '')) : '';
-
-    const rows = rowM + rowF + rowUnico;
-    if (!rows) return '';
+        <td colspan="${isAdmin?6:5}" style="color:var(--text-muted);font-style:italic;font-size:13px;text-align:center;padding:12px">
+          Nessun record — usa il form sopra per aggiungere
+        </td>
+      </tr>` : '';
 
     return `
       <div style="margin-bottom:24px;background:white;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)">
         <div style="background:var(--navy);padding:10px 16px;display:flex;align-items:center;gap:10px">
           <span style="font-size:22px">${sport.emoji}</span>
           <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:white;letter-spacing:1px">${sport.name}</span>
-          <span style="margin-left:auto;background:rgba(245,200,66,0.2);color:#F5C842;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase">Record</span>
+          <span style="margin-left:auto;background:rgba(245,200,66,0.2);color:#F5C842;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase">🏆 Record</span>
         </div>
         <table class="results-table" style="box-shadow:none">
           <thead><tr>
@@ -601,7 +601,7 @@ function renderRecord() {
             <th style="width:140px">Record</th>
             ${isAdmin?'<th style="width:50px"></th>':''}
           </tr></thead>
-          <tbody>${rows}</tbody>
+          <tbody>${righe.length ? righeHTML : emptyRow}</tbody>
         </table>
       </div>`;
   }).join('');
