@@ -758,7 +758,15 @@ function renderResults() {
 function renderSimpleResults(cat, key, container) {
   const ev = DATA[cat][key];
   const sorted = [...(ev.teams || [])].map((t, i) => ({ ...t, origIdx: i }))
-    .sort((a, b) => (parseFloat(b.score) || -Infinity) - (parseFloat(a.score) || -Infinity));
+    .sort((a,b) => {
+  const sa = parseFloat(a.score) || null;
+  const sb = parseFloat(b.score) || null;
+  if (sa === null && sb === null) return 0;
+  if (sa === null) return 1;
+  if (sb === null) return -1;
+  const sport = SPORTS.find(s => s.id === getBaseSportId(key));
+  return sport?.asc ? sa - sb : sb - sa;
+});
   container.innerHTML = `
     <table class="results-table">
       <thead><tr><th style="width:48px">Pos</th><th>Partecipante</th><th style="width:160px">Punteggio</th>${isAdmin ? '<th style="width:50px"></th>' : ''}</tr></thead>
