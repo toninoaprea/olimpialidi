@@ -139,6 +139,52 @@
   .badge-espoir { background: rgba(0,180,216,0.12); color: #0096c7; }
   .badge-junior { background: rgba(76,175,80,0.12); color: #2e7d32; }
 
+  /* Record */
+  .record-card { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 20px; }
+  .record-card-header { background: var(--navy); padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+  .record-card-header .sport-emoji { font-size: 22px; }
+  .record-card-header .sport-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: white; letter-spacing: 1px; }
+  .record-badge { margin-left: auto; background: rgba(245,200,66,0.2); color: var(--gold); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+
+  /* Tornei */
+  .sport-pill { background: var(--white); border: 1.5px solid var(--border); border-radius: 20px; padding: 7px 16px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; color: var(--text); transition: all 0.2s; }
+  .sport-pill:hover { border-color: var(--ocean); color: var(--ocean); }
+  .sport-pill.active { background: var(--ocean); color: white; border-color: var(--ocean); }
+
+  .torneo-section { margin-bottom: 32px; }
+  .torneo-block { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 20px; }
+  .torneo-block-header { background: var(--navy); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .torneo-block-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: white; letter-spacing: 1px; }
+  .torneo-block-body { padding: 16px; }
+
+  .info-box { background: #e8f4fd; border-left: 4px solid var(--ocean); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: var(--navy); }
+
+  .girone-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px; }
+  .girone-card { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); }
+  .girone-header { background: linear-gradient(135deg, var(--navy), var(--ocean)); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+  .girone-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: white; letter-spacing: 1px; }
+  .girone-body { padding: 12px; }
+
+  .atleta-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .atleta-num { width: 22px; height: 22px; border-radius: 50%; background: var(--ocean); color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .match-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .match-row:last-child { border-bottom: none; }
+  .match-team { flex: 1; font-weight: 500; text-align: center; }
+  .match-vs { color: var(--text-muted); font-size: 11px; font-weight: 600; padding: 0 4px; }
+  .match-score { display: flex; gap: 4px; align-items: center; }
+
+  .bracket-round { margin-bottom: 24px; }
+  .bracket-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--navy); letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--border); }
+  .bracket-matches { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bracket-match { background: white; border-radius: 10px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 2px 8px rgba(3,4,94,0.06); }
+  .bracket-match-header { background: var(--navy); padding: 6px 12px; font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .bracket-team { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .bracket-team:last-child { border-bottom: none; }
+  .bracket-team-name { font-weight: 500; font-size: 14px; }
+  .bracket-team.winner { background: #f0fdf4; }
+  .bracket-team.winner .bracket-team-name { color: #2e7d32; font-weight: 700; }
+
   footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px; }
 
   .hamburger-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; flex-shrink: 0; }
@@ -158,13 +204,6 @@
   .drawer-admin { margin: 16px 12px 0; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
   .drawer-admin button { width: 100%; background: none; border: 1.5px solid rgba(255,255,255,0.3); color: white; font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 10px; border-radius: 8px; cursor: pointer; }
 
-  /* Record card */
-  .record-card { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 20px; }
-  .record-card-header { background: var(--navy); padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
-  .record-card-header .sport-emoji { font-size: 22px; }
-  .record-card-header .sport-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: white; letter-spacing: 1px; }
-  .record-badge { margin-left: auto; background: rgba(245,200,66,0.2); color: var(--gold); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
-
   @media (max-width: 640px) {
     .header-inner { flex-wrap: nowrap; height: auto; padding: 8px 0; gap: 6px; }
     .logo { font-size: 18px; flex-shrink: 0; }
@@ -180,6 +219,8 @@
     .hamburger-btn { display: block; }
     nav.desktop-nav { display: none; }
     .admin-btn.desktop-nav { display: none; }
+    .bracket-matches { grid-template-columns: 1fr; }
+    .girone-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -198,6 +239,7 @@
       <button onclick="showSection('classifica')">Classifica</button>
       <button onclick="showSection('medagliere')">Medagliere</button>
       <button onclick="showSection('record')">Record</button>
+      <button onclick="showSection('tornei')">Tornei</button>
     </nav>
     <button class="admin-btn desktop-nav" id="adminBtn" onclick="toggleAdmin()">⚙ Comitato</button>
   </div>
@@ -229,6 +271,7 @@
     <button onclick="showSection('classifica');closeDrawer()">Classifica</button>
     <button onclick="showSection('medagliere');closeDrawer()">Medagliere</button>
     <button onclick="showSection('record');closeDrawer()">Record</button>
+    <button onclick="showSection('tornei');closeDrawer()">Tornei</button>
   </nav>
   <div class="drawer-admin">
     <button id="adminBtnMobile" onclick="toggleAdmin();closeDrawer()">⚙ Comitato</button>
@@ -368,6 +411,14 @@
     </div>
     <div id="recordContainer"></div>
   </div>
+
+  <!-- TORNEI -->
+  <div class="section" id="sec-tornei">
+    <h1 class="page-title">Tornei <span class="accent" id="tor-title">Open</span></h1>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px" id="torSportTabs"></div>
+    <div id="torneiContainer"></div>
+  </div>
+
 </main>
 
 <div class="modal-overlay" id="loginModal">
@@ -419,14 +470,18 @@ const SPORTS = [
   { id: 'arco',          name: "Tiro con l'arco",     emoji: '🏹', genders: ['M','F'] },
 ];
 
+// Sport con sistema a gironi
+const SPORTS_TORNEI = ['pallanuoto','racchettoni','beach_pong','bocce','calciobalilla'];
+
 const CATEGORIES = ['open','espoir','junior'];
 const SPORT_NO_AUTO = ['calciobalilla'];
-const NAV_SECTIONS = ['calendario','iscritti','risultati','classifica','medagliere','record'];
+const NAV_SECTIONS = ['calendario','iscritti','risultati','classifica','medagliere','record','tornei'];
 
 let DATA = {};
 let isAdmin = false;
 let currentCategory = 'open';
 let currentGender = 'tutti';
+let currentTorneoSport = SPORTS_TORNEI[0];
 let dbReady = false;
 let saveTimer = null;
 
@@ -444,8 +499,7 @@ function setSyncStatus(status, label) {
 
 function showToast(msg) {
   const t = document.getElementById('saveToast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
@@ -455,17 +509,12 @@ function pushToFirebase() {
   setSyncStatus('syncing', '🟡 Salvataggio...');
   saveTimer = setTimeout(() => {
     set(ref(db, 'olimpialidi'), DATA)
-      .then(() => {
-        setSyncStatus('connected', '🟢 Salvato!');
-        showToast('✅ Sincronizzato!');
-        setTimeout(() => setSyncStatus('connected', '🟢 Live'), 2000);
-      })
+      .then(() => { setSyncStatus('connected', '🟢 Salvato!'); showToast('✅ Sincronizzato!'); setTimeout(() => setSyncStatus('connected','🟢 Live'), 2000); })
       .catch(() => setSyncStatus('error', '🔴 Errore'));
   }, 800);
 }
 window.pushToFirebase = pushToFirebase;
 
-// ── FIREBASE LISTENER ──
 setSyncStatus('syncing', '🟡 Connessione...');
 
 onValue(ref(db, 'olimpialidi'), (snapshot) => {
@@ -473,14 +522,12 @@ onValue(ref(db, 'olimpialidi'), (snapshot) => {
     DATA = snapshot.val();
     if (!DATA.calendario) DATA.calendario = {};
     SPORTS.forEach(sport => {
-      if (!DATA.calendario[sport.id]) {
-        DATA.calendario[sport.id] = { date: '', time: '', location: 'Spiaggia principale', status: 'upcoming' };
-      }
+      if (!DATA.calendario[sport.id]) DATA.calendario[sport.id] = { date:'', time:'', location:'Spiaggia principale', status:'upcoming' };
     });
     CATEGORIES.forEach(cat => {
       if (!DATA[cat]) DATA[cat] = {};
       SPORTS.forEach(sport => {
-        const gkeys = sport.genders.includes('tutti') ? ['tutti'] : ['M', 'F'];
+        const gkeys = sport.genders.includes('tutti') ? ['tutti'] : ['M','F'];
         gkeys.forEach(g => {
           const key = g === 'tutti' ? sport.id : `${sport.id}_${g}`;
           if (!DATA[cat][key]) DATA[cat][key] = { teams: [] };
@@ -489,11 +536,10 @@ onValue(ref(db, 'olimpialidi'), (snapshot) => {
       });
     });
     if (!DATA.records) DATA.records = {};
+    if (!DATA.tornei) DATA.tornei = {};
   } else {
-    DATA = { calendario: {}, open: {}, espoir: {}, junior: {}, iscritti: {}, records: {} };
-    SPORTS.forEach(sport => {
-      DATA.calendario[sport.id] = { date: '', time: '', location: 'Spiaggia principale', status: 'upcoming' };
-    });
+    DATA = { calendario: {}, open: {}, espoir: {}, junior: {}, iscritti: {}, records: {}, tornei: {} };
+    SPORTS.forEach(sport => { DATA.calendario[sport.id] = { date:'', time:'', location:'Spiaggia principale', status:'upcoming' }; });
     set(ref(db, 'olimpialidi'), DATA);
   }
   dbReady = true;
@@ -501,7 +547,7 @@ onValue(ref(db, 'olimpialidi'), (snapshot) => {
   renderAll();
   updateLiveDot();
 }, () => {
-  DATA = { calendario: {}, open: {}, espoir: {}, junior: {}, iscritti: {}, records: {} };
+  DATA = { calendario:{}, open:{}, espoir:{}, junior:{}, iscritti:{}, records:{}, tornei:{} };
   dbReady = true;
   setSyncStatus('error', '🔴 Offline');
   renderAll();
@@ -525,22 +571,22 @@ window.showSection = function(name) {
   });
   if (name === 'iscritti') renderIscritti();
   if (name === 'record') renderRecord();
+  if (name === 'tornei') renderTornei();
   renderAll();
 };
 
 window.setCategory = function(cat) {
   currentCategory = cat;
-  document.querySelectorAll('.cat-tab').forEach(b =>
-    b.classList.toggle('active', b.textContent.toLowerCase() === cat));
-  updateTitles();
-  renderAll();
+  document.querySelectorAll('.cat-tab').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === cat));
+  updateTitles(); renderAll();
   if (document.getElementById('sec-iscritti').classList.contains('active')) renderIscritti();
+  if (document.getElementById('sec-tornei').classList.contains('active')) renderTornei();
 };
 
 window.setGender = function(g) {
   currentGender = g;
   document.querySelectorAll('.gender-btn').forEach(b => {
-    const map = { tutti: 'Tutti', M: '♂ Maschile', F: '♀ Femminile' };
+    const map = { tutti:'Tutti', M:'♂ Maschile', F:'♀ Femminile' };
     b.classList.toggle('active', b.textContent.trim() === map[g]);
   });
   renderAll();
@@ -548,7 +594,7 @@ window.setGender = function(g) {
 
 function updateTitles() {
   const cap = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
-  ['isc', 'res', 'rank', 'med'].forEach(p => {
+  ['isc','res','rank','med','tor'].forEach(p => {
     const el = document.getElementById(p + '-title');
     if (el) el.textContent = cap;
   });
@@ -559,18 +605,16 @@ function getVisibleSports() {
 }
 
 function catLabel(c) { return c.charAt(0).toUpperCase() + c.slice(1); }
-function statusLabel(s) { return { upcoming: 'In programma', live: '🔴 LIVE', done: 'Conclusa' }[s] || s; }
-function formatDate(d) { if (!d) return '—'; const [y, m, day] = d.split('-'); return `${day}/${m}/${y}`; }
+function statusLabel(s) { return { upcoming:'In programma', live:'🔴 LIVE', done:'Conclusa' }[s] || s; }
+function formatDate(d) { if (!d) return '—'; const [y,m,day] = d.split('-'); return `${day}/${m}/${y}`; }
+function sportById(id) { return SPORTS.find(s => s.id === id); }
 
 function renderAll() {
   if (!dbReady) return;
-  renderCalendar();
-  renderResults();
-  renderRanking();
-  renderMedal();
+  renderCalendar(); renderResults(); renderRanking(); renderMedal();
 }
 
-// ── CALENDARIO (unico per tutti) ──
+// ── CALENDARIO ──
 function renderCalendar() {
   const grid = document.getElementById('calendarGrid');
   grid.innerHTML = '';
@@ -581,28 +625,28 @@ function renderCalendar() {
     card.innerHTML = `
       <div class="event-header">
         <div class="event-sport">${sport.emoji} ${sport.name}</div>
-        <span class="event-status status-${ev.status || 'upcoming'}">${statusLabel(ev.status || 'upcoming')}</span>
+        <span class="event-status status-${ev.status||'upcoming'}">${statusLabel(ev.status||'upcoming')}</span>
       </div>
       <div class="event-body">
         <div class="event-row">
           <span class="event-icon">📅</span><span class="event-label">Data</span>
-          ${isAdmin ? `<input class="score-input" style="width:130px" type="date" value="${ev.date || ''}" onchange="updateCal('${sport.id}','date',this.value)">` : `<span class="event-value">${ev.date ? formatDate(ev.date) : '—'}</span>`}
+          ${isAdmin ? `<input class="score-input" style="width:130px" type="date" value="${ev.date||''}" onchange="updateCal('${sport.id}','date',this.value)">` : `<span class="event-value">${ev.date?formatDate(ev.date):'—'}</span>`}
         </div>
         <div class="event-row">
           <span class="event-icon">🕐</span><span class="event-label">Ora</span>
-          ${isAdmin ? `<input class="score-input" style="width:100px" type="time" value="${ev.time || ''}" onchange="updateCal('${sport.id}','time',this.value)">` : `<span class="event-value">${ev.time || '—'}</span>`}
+          ${isAdmin ? `<input class="score-input" style="width:100px" type="time" value="${ev.time||''}" onchange="updateCal('${sport.id}','time',this.value)">` : `<span class="event-value">${ev.time||'—'}</span>`}
         </div>
         <div class="event-row">
           <span class="event-icon">📍</span><span class="event-label">Luogo</span>
-          ${isAdmin ? `<input class="score-input" style="width:160px;text-align:left" type="text" value="${ev.location || ''}" onchange="updateCal('${sport.id}','location',this.value)">` : `<span class="event-value">${ev.location || 'Spiaggia principale'}</span>`}
+          ${isAdmin ? `<input class="score-input" style="width:160px;text-align:left" type="text" value="${ev.location||''}" onchange="updateCal('${sport.id}','location',this.value)">` : `<span class="event-value">${ev.location||'Spiaggia principale'}</span>`}
         </div>
         ${isAdmin ? `
         <div class="event-row" style="margin-top:4px">
           <span class="event-icon">🔵</span><span class="event-label">Stato</span>
           <select class="score-input" style="width:140px" onchange="updateCal('${sport.id}','status',this.value)">
-            <option value="upcoming" ${(ev.status || 'upcoming') === 'upcoming' ? 'selected' : ''}>In programma</option>
-            <option value="live" ${ev.status === 'live' ? 'selected' : ''}>🔴 LIVE</option>
-            <option value="done" ${ev.status === 'done' ? 'selected' : ''}>Conclusa</option>
+            <option value="upcoming" ${(ev.status||'upcoming')==='upcoming'?'selected':''}>In programma</option>
+            <option value="live" ${ev.status==='live'?'selected':''}>🔴 LIVE</option>
+            <option value="done" ${ev.status==='done'?'selected':''}>Conclusa</option>
           </select>
         </div>` : ''}
         <div style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap">
@@ -631,11 +675,11 @@ function renderIscritti() {
   const cat = currentCategory;
   const atleti = (DATA.iscritti && DATA.iscritti[cat]) ? DATA.iscritti[cat] : {};
   const lista = Object.entries(atleti).map(([id, a]) => ({ id, ...a }));
-  const maschi = lista.filter(a => a.genere === 'M').sort((a, b) => a.nome.localeCompare(b.nome));
-  const femmine = lista.filter(a => a.genere === 'F').sort((a, b) => a.nome.localeCompare(b.nome));
+  const maschi = lista.filter(a => a.genere === 'M').sort((a,b) => a.nome.localeCompare(b.nome));
+  const femmine = lista.filter(a => a.genere === 'F').sort((a,b) => a.nome.localeCompare(b.nome));
 
   if (!lista.length) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div class="empty-title">Nessun iscritto</div><div class="empty-sub">${isAdmin ? 'Usa il form qui sopra per aggiungere atleti' : 'Gli iscritti appariranno qui'}</div></div>`;
+    container.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div class="empty-title">Nessun iscritto</div><div class="empty-sub">${isAdmin?'Usa il form qui sopra per aggiungere atleti':'Gli iscritti appariranno qui'}</div></div>`;
     return;
   }
 
@@ -644,19 +688,16 @@ function renderIscritti() {
     return `<div style="margin-bottom:28px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--navy);margin-bottom:12px;letter-spacing:1px">${icon} ${title} — ${list.length} atleti</div>
       <table class="results-table">
-        <thead><tr>
-          <th style="width:40px">#</th><th>Nome e Cognome</th><th style="width:100px">Categoria</th>
-          ${isAdmin ? '<th style="width:80px"></th>' : ''}
-        </tr></thead>
-        <tbody>${list.map((a, i) => `<tr>
-          <td style="color:var(--text-muted);font-weight:600">${i + 1}</td>
-          <td>${isAdmin ? `<input class="score-input" style="width:200px;text-align:left" value="${a.nome}" onchange="modificaNomeAtleta('${cat}','${a.id}',this.value)">` : `<span style="font-weight:600">${a.nome}</span>`}</td>
+        <thead><tr><th style="width:40px">#</th><th>Nome e Cognome</th><th style="width:100px">Categoria</th>${isAdmin?'<th style="width:80px"></th>':''}</tr></thead>
+        <tbody>${list.map((a,i) => `<tr>
+          <td style="color:var(--text-muted);font-weight:600">${i+1}</td>
+          <td>${isAdmin?`<input class="score-input" style="width:200px;text-align:left" value="${a.nome}" onchange="modificaNomeAtleta('${cat}','${a.id}',this.value)">`:`<span style="font-weight:600">${a.nome}</span>`}</td>
           <td><span class="badge badge-${cat}">${catLabel(cat)}</span></td>
-          ${isAdmin ? `<td><button onclick="rimuoviAtleta('${cat}','${a.id}')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>` : ''}
+          ${isAdmin?`<td><button onclick="rimuoviAtleta('${cat}','${a.id}')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
         </tr>`).join('')}</tbody>
       </table></div>`;
   }
-  container.innerHTML = buildTable(maschi, 'Maschile', '♂') + buildTable(femmine, 'Femminile', '♀');
+  container.innerHTML = buildTable(maschi,'Maschile','♂') + buildTable(femmine,'Femminile','♀');
 }
 
 window.modificaNomeAtleta = function(cat, id, nuovoNome) {
@@ -671,8 +712,7 @@ window.modificaNomeAtleta = function(cat, id, nuovoNome) {
       DATA[cat][key]?.teams?.forEach(t => { if (t.name === vecchio) t.name = nuovoNome; });
     });
   }
-  pushToFirebase();
-  renderIscritti();
+  pushToFirebase(); renderIscritti();
 };
 
 window.aggiungiAtleta = function() {
@@ -680,14 +720,12 @@ window.aggiungiAtleta = function() {
   const cat = document.getElementById('newAtletaCat').value;
   const genere = document.getElementById('newAtletaGenere').value;
   const errEl = document.getElementById('atletaError');
-  if (!nome) { errEl.style.display = 'block'; return; }
+  if (!nome) { errEl.style.display='block'; return; }
   errEl.style.display = 'none';
-
   if (!DATA.iscritti) DATA.iscritti = {};
   if (!DATA.iscritti[cat]) DATA.iscritti[cat] = {};
   const id = 'a_' + Date.now();
   DATA.iscritti[cat][id] = { nome, genere };
-
   if (!DATA[cat]) DATA[cat] = {};
   SPORTS.forEach(sport => {
     if (SPORT_NO_AUTO.includes(sport.id)) return;
@@ -696,10 +734,8 @@ window.aggiungiAtleta = function() {
     if (!DATA[cat][key].teams) DATA[cat][key].teams = [];
     if (!DATA[cat][key].teams.some(t => t.name === nome)) DATA[cat][key].teams.push({ name: nome, score: '' });
   });
-
   document.getElementById('newAtletaNome').value = '';
-  pushToFirebase();
-  renderIscritti();
+  pushToFirebase(); renderIscritti();
 };
 
 window.rimuoviAtleta = function(cat, id) {
@@ -713,8 +749,7 @@ window.rimuoviAtleta = function(cat, id) {
       if (DATA[cat][key]?.teams) DATA[cat][key].teams = DATA[cat][key].teams.filter(t => t.name !== nome);
     });
   }
-  pushToFirebase();
-  renderIscritti();
+  pushToFirebase(); renderIscritti();
 };
 
 // ── RISULTATI ──
@@ -729,27 +764,25 @@ function renderResults() {
   sel.innerHTML = '<option value="">— Seleziona uno sport —</option>';
   getVisibleSports().forEach(sport => {
     const entries = sport.genders.includes('tutti')
-      ? [{ key: sport.id, label: sport.name }]
-      : currentGender === 'tutti'
-        ? [{ key: `${sport.id}_M`, label: `${sport.name} ♂` }, { key: `${sport.id}_F`, label: `${sport.name} ♀` }]
-        : [{ key: `${sport.id}_${currentGender}`, label: `${sport.name} ${currentGender === 'M' ? '♂' : '♀'}` }];
-    entries.forEach(({ key, label }) => {
+      ? [{key:sport.id,label:sport.name}]
+      : currentGender==='tutti'
+        ? [{key:`${sport.id}_M`,label:`${sport.name} ♂`},{key:`${sport.id}_F`,label:`${sport.name} ♀`}]
+        : [{key:`${sport.id}_${currentGender}`,label:`${sport.name} ${currentGender==='M'?'♂':'♀'}`}];
+    entries.forEach(({key,label}) => {
       const o = document.createElement('option');
-      o.value = key; o.textContent = `${sport.emoji} ${label}`;
-      if (key === prev) o.selected = true;
+      o.value=key; o.textContent=`${sport.emoji} ${label}`;
+      if (key===prev) o.selected=true;
       sel.appendChild(o);
     });
   });
-
   const selectedKey = sel.value;
   if (!selectedKey) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🏅</div><div class="empty-title">Seleziona uno sport</div><div class="empty-sub">Scegli dal menu qui sopra</div></div>';
+    container.innerHTML='<div class="empty"><div class="empty-icon">🏅</div><div class="empty-title">Seleziona uno sport</div><div class="empty-sub">Scegli dal menu qui sopra</div></div>';
     return;
   }
-  if (!DATA[cat]) DATA[cat] = {};
-  if (!DATA[cat][selectedKey]) DATA[cat][selectedKey] = { teams: [] };
-  if (!DATA[cat][selectedKey].teams) DATA[cat][selectedKey].teams = [];
-
+  if (!DATA[cat]) DATA[cat]={};
+  if (!DATA[cat][selectedKey]) DATA[cat][selectedKey]={teams:[]};
+  if (!DATA[cat][selectedKey].teams) DATA[cat][selectedKey].teams=[];
   isMultiScore(getBaseSportId(selectedKey))
     ? renderMultiScoreTable(cat, selectedKey, container)
     : renderSimpleResults(cat, selectedKey, container);
@@ -757,80 +790,77 @@ function renderResults() {
 
 function renderSimpleResults(cat, key, container) {
   const ev = DATA[cat][key];
-  const sorted = [...(ev.teams || [])].map((t, i) => ({ ...t, origIdx: i }))
+  const sorted = [...(ev.teams||[])].map((t,i)=>({...t,origIdx:i}))
     .sort((a,b) => {
-  const sa = parseFloat(a.score) || null;
-  const sb = parseFloat(b.score) || null;
-  if (sa === null && sb === null) return 0;
-  if (sa === null) return 1;
-  if (sb === null) return -1;
-  const sport = SPORTS.find(s => s.id === getBaseSportId(key));
-  return sport?.asc ? sa - sb : sb - sa;
-});
+      const sa = parseFloat(a.score)||null;
+      const sb = parseFloat(b.score)||null;
+      if (sa===null && sb===null) return 0;
+      if (sa===null) return 1;
+      if (sb===null) return -1;
+      const sport = SPORTS.find(s => s.id === getBaseSportId(key));
+      return sport?.asc ? sa-sb : sb-sa;
+    });
   container.innerHTML = `
     <table class="results-table">
-      <thead><tr><th style="width:48px">Pos</th><th>Partecipante</th><th style="width:160px">Punteggio</th>${isAdmin ? '<th style="width:50px"></th>' : ''}</tr></thead>
-      <tbody>${sorted.map((t, i) => {
-        const pos = i + 1, medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : '';
+      <thead><tr><th style="width:48px">Pos</th><th>Partecipante</th><th style="width:160px">Punteggio</th>${isAdmin?'<th style="width:50px"></th>':''}</tr></thead>
+      <tbody>${sorted.map((t,i)=>{
+        const pos=i+1, medal=pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':'';
         return `<tr>
-          <td><span class="pos-badge pos-${pos <= 3 ? pos : 'n'}">${pos}</span></td>
-          <td>${isAdmin ? `<input class="score-input" style="width:180px;text-align:left" value="${t.name}" onchange="updateTeam('${cat}','${key}',${t.origIdx},'name',this.value)">` : `<span style="font-weight:600">${medal} ${t.name}</span>`}</td>
-          <td>${isAdmin ? `<input class="score-input" placeholder="es: 12.5" value="${t.score || ''}" onchange="updateTeam('${cat}','${key}',${t.origIdx},'score',this.value)">` : `<span style="font-weight:600;font-size:16px">${t.score || '—'}</span>`}</td>
-          ${isAdmin ? `<td><button onclick="removeTeam('${cat}','${key}',${t.origIdx})" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>` : ''}
+          <td><span class="pos-badge pos-${pos<=3?pos:'n'}">${pos}</span></td>
+          <td>${isAdmin?`<input class="score-input" style="width:180px;text-align:left" value="${t.name}" onchange="updateTeam('${cat}','${key}',${t.origIdx},'name',this.value)">`:`<span style="font-weight:600">${medal} ${t.name}</span>`}</td>
+          <td>${isAdmin?`<input class="score-input" placeholder="es: 12.5" value="${t.score||''}" onchange="updateTeam('${cat}','${key}',${t.origIdx},'score',this.value)">`:`<span style="font-weight:600;font-size:16px">${t.score||'—'}</span>`}</td>
+          ${isAdmin?`<td><button onclick="removeTeam('${cat}','${key}',${t.origIdx})" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
         </tr>`;
       }).join('')}</tbody>
     </table>
-    ${isAdmin ? `<button onclick="addTeam('${cat}','${key}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>` : ''}`;
+    ${isAdmin?`<button onclick="addTeam('${cat}','${key}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>`:''}`;
 }
 
 function renderMultiScoreTable(cat, key, container) {
   const N = 15;
-  const teams = DATA[cat][key].teams || [];
-  const withTotals = teams.map((t, i) => {
-    const tiri = t.tiri || Array(N).fill('');
-    const total = tiri.reduce((s, v) => s + (parseFloat(v) || 0), 0);
-    return { ...t, tiri, total, origIdx: i };
-  }).sort((a, b) => b.total - a.total);
-  const hcols = Array.from({ length: N }, (_, i) => `<th style="width:48px;text-align:center">${i + 1}</th>`).join('');
+  const teams = DATA[cat][key].teams||[];
+  const withTotals = teams.map((t,i) => {
+    const tiri = t.tiri||Array(N).fill('');
+    const total = tiri.reduce((s,v)=>s+(parseFloat(v)||0),0);
+    return {...t,tiri,total,origIdx:i};
+  }).sort((a,b)=>b.total-a.total);
+  const hcols = Array.from({length:N},(_,i)=>`<th style="width:48px;text-align:center">${i+1}</th>`).join('');
   container.innerHTML = `
     <div style="overflow-x:auto">
     <table class="results-table" style="min-width:1000px">
-      <thead><tr><th style="width:48px">Pos</th><th style="min-width:160px">Partecipante</th>${hcols}<th style="width:70px;text-align:center">Tot</th>${isAdmin ? '<th style="width:50px"></th>' : ''}</tr></thead>
-      <tbody>${withTotals.map((t, i) => {
-        const pos = i + 1, medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : '';
-        const cols = t.tiri.map((v, ci) => `<td style="text-align:center;padding:6px">${isAdmin ? `<input class="score-input" style="width:40px;padding:4px" value="${v || ''}" onchange="updateTiro('${cat}','${key}',${t.origIdx},${ci},this.value)">` : `<span>${v || '—'}</span>`}</td>`).join('');
+      <thead><tr><th style="width:48px">Pos</th><th style="min-width:160px">Partecipante</th>${hcols}<th style="width:70px;text-align:center">Tot</th>${isAdmin?'<th style="width:50px"></th>':''}</tr></thead>
+      <tbody>${withTotals.map((t,i)=>{
+        const pos=i+1,medal=pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':'';
+        const cols=t.tiri.map((v,ci)=>`<td style="text-align:center;padding:6px">${isAdmin?`<input class="score-input" style="width:40px;padding:4px" value="${v||''}" onchange="updateTiro('${cat}','${key}',${t.origIdx},${ci},this.value)">`:`<span>${v||'—'}</span>`}</td>`).join('');
         return `<tr>
-          <td><span class="pos-badge pos-${pos <= 3 ? pos : 'n'}">${pos}</span></td>
-          <td>${isAdmin ? `<input class="score-input" style="width:150px;text-align:left" value="${t.name}" onchange="updateTeam('${cat}','${key}',${t.origIdx},'name',this.value)">` : `<span style="font-weight:600">${medal} ${t.name}</span>`}</td>
+          <td><span class="pos-badge pos-${pos<=3?pos:'n'}">${pos}</span></td>
+          <td>${isAdmin?`<input class="score-input" style="width:150px;text-align:left" value="${t.name}" onchange="updateTeam('${cat}','${key}',${t.origIdx},'name',this.value)">`:`<span style="font-weight:600">${medal} ${t.name}</span>`}</td>
           ${cols}
           <td style="text-align:center;font-weight:700;font-size:15px;color:var(--ocean)">${t.total}</td>
-          ${isAdmin ? `<td><button onclick="removeTeam('${cat}','${key}',${t.origIdx})" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>` : ''}
+          ${isAdmin?`<td><button onclick="removeTeam('${cat}','${key}',${t.origIdx})" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
         </tr>`;
       }).join('')}</tbody>
     </table></div>
-    ${isAdmin ? `<button onclick="addTeam('${cat}','${key}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>` : ''}`;
+    ${isAdmin?`<button onclick="addTeam('${cat}','${key}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>`:''}`;
 }
 
 // ── CLASSIFICA ──
 function renderRanking() {
   const container = document.getElementById('rankingContainer');
   const cat = currentCategory;
-  if (!DATA[cat]) { container.innerHTML = ''; return; }
+  if (!DATA[cat]) { container.innerHTML=''; return; }
   const pts = {};
   Object.values(DATA[cat]).forEach(ev => {
     if (!ev.teams) return;
-    [...ev.teams].filter(t => t.score !== '').sort((a, b) => (parseFloat(b.score) || 0) - (parseFloat(a.score) || 0))
-      .forEach((t, i) => { if (!pts[t.name]) pts[t.name] = 0; pts[t.name] += [3, 2, 1][i] || 0; });
+    [...ev.teams].filter(t=>t.score!=='').sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0))
+      .forEach((t,i)=>{ if(!pts[t.name])pts[t.name]=0; pts[t.name]+=[3,2,1][i]||0; });
   });
-  const ranking = Object.entries(pts).map(([name, p]) => ({ name, pts: p })).sort((a, b) => b.pts - a.pts);
-  if (!ranking.length) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Nessun risultato ancora</div></div>';
-    return;
-  }
-  container.innerHTML = `
+  const ranking = Object.entries(pts).map(([name,p])=>({name,pts:p})).sort((a,b)=>b.pts-a.pts);
+  if (!ranking.length) { container.innerHTML='<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Nessun risultato ancora</div></div>'; return; }
+  container.innerHTML=`
     <table class="ranking-table">
       <thead><tr><th style="width:48px">#</th><th>Atleta</th><th style="width:80px;text-align:right">Punti</th></tr></thead>
-      <tbody>${ranking.map((t, i) => `<tr class="rank-${i < 3 ? i + 1 : 'n'}"><td class="rank-num">${i + 1}</td><td><span class="team-name">${t.name}</span></td><td style="text-align:right"><span class="pts">${t.pts}</span></td></tr>`).join('')}</tbody>
+      <tbody>${ranking.map((t,i)=>`<tr class="rank-${i<3?i+1:'n'}"><td class="rank-num">${i+1}</td><td><span class="team-name">${t.name}</span></td><td style="text-align:right"><span class="pts">${t.pts}</span></td></tr>`).join('')}</tbody>
     </table>
     <p style="font-size:12px;color:var(--text-muted);margin-top:10px">🥇 3pt &nbsp;|&nbsp; 🥈 2pt &nbsp;|&nbsp; 🥉 1pt</p>`;
 }
@@ -839,29 +869,26 @@ function renderRanking() {
 function renderMedal() {
   const container = document.getElementById('medalContainer');
   const cat = currentCategory;
-  if (!DATA[cat]) { container.innerHTML = ''; return; }
+  if (!DATA[cat]) { container.innerHTML=''; return; }
   const medals = {};
   Object.values(DATA[cat]).forEach(ev => {
     if (!ev.teams) return;
-    [...ev.teams].filter(t => t.score !== '').sort((a, b) => (parseFloat(b.score) || 0) - (parseFloat(a.score) || 0))
-      .forEach((t, i) => {
-        if (i > 2) return;
-        if (!medals[t.name]) medals[t.name] = { gold: 0, silver: 0, bronze: 0 };
-        if (i === 0) medals[t.name].gold++;
-        if (i === 1) medals[t.name].silver++;
-        if (i === 2) medals[t.name].bronze++;
+    [...ev.teams].filter(t=>t.score!=='').sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0))
+      .forEach((t,i)=>{
+        if(i>2) return;
+        if(!medals[t.name]) medals[t.name]={gold:0,silver:0,bronze:0};
+        if(i===0) medals[t.name].gold++;
+        if(i===1) medals[t.name].silver++;
+        if(i===2) medals[t.name].bronze++;
       });
   });
-  const sorted = Object.entries(medals).map(([name, m]) => ({ name, ...m, total: m.gold + m.silver + m.bronze }))
-    .sort((a, b) => b.gold - a.gold || b.silver - a.silver || b.bronze - a.bronze);
-  if (!sorted.length) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🥇</div><div class="empty-title">Nessuna medaglia assegnata</div></div>';
-    return;
-  }
-  container.innerHTML = `
+  const sorted=Object.entries(medals).map(([name,m])=>({name,...m,total:m.gold+m.silver+m.bronze}))
+    .sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
+  if (!sorted.length) { container.innerHTML='<div class="empty"><div class="empty-icon">🥇</div><div class="empty-title">Nessuna medaglia assegnata</div></div>'; return; }
+  container.innerHTML=`
     <table class="medal-table">
       <thead><tr><th>#</th><th>Atleta</th><th>🥇</th><th>🥈</th><th>🥉</th><th>Tot</th></tr></thead>
-      <tbody>${sorted.map((t, i) => `<tr><td style="font-weight:700;color:var(--text-muted)">${i + 1}</td><td><span class="team-name">${t.name}</span></td><td class="gold-cell">${t.gold || '—'}</td><td class="silver-cell">${t.silver || '—'}</td><td class="bronze-cell">${t.bronze || '—'}</td><td style="font-weight:600">${t.total}</td></tr>`).join('')}
+      <tbody>${sorted.map((t,i)=>`<tr><td style="font-weight:700;color:var(--text-muted)">${i+1}</td><td><span class="team-name">${t.name}</span></td><td class="gold-cell">${t.gold||'—'}</td><td class="silver-cell">${t.silver||'—'}</td><td class="bronze-cell">${t.bronze||'—'}</td><td style="font-weight:600">${t.total}</td></tr>`).join('')}
       </tbody></table>`;
 }
 
@@ -871,8 +898,7 @@ function initRecordSelect() {
   if (!sel || sel.options.length > 1) return;
   SPORTS.forEach(sport => {
     const o = document.createElement('option');
-    o.value = sport.id;
-    o.textContent = `${sport.emoji} ${sport.name}`;
+    o.value=sport.id; o.textContent=`${sport.emoji} ${sport.name}`;
     sel.appendChild(o);
   });
 }
@@ -881,40 +907,32 @@ function renderRecord() {
   const container = document.getElementById('recordContainer');
   const form = document.getElementById('addRecordForm');
   if (!container) return;
-  if (form) { form.style.display = isAdmin ? 'block' : 'none'; initRecordSelect(); }
-
+  if (form) { form.style.display = isAdmin?'block':'none'; initRecordSelect(); }
   const allRecords = DATA.records || {};
-
   const html = SPORTS.map(sport => {
     const righe = [];
     CATEGORIES.forEach(cat => {
-      const generi = sport.genders.includes('tutti') ? ['M'] : ['M', 'F'];
+      const generi = sport.genders.includes('tutti') ? ['M'] : ['M','F'];
       generi.forEach(g => {
         const key = `${sport.id}_${g}`;
         const r = allRecords[cat]?.[key];
-        if (r) righe.push({ ...r, cat, genere: g, key, isMisto: sport.genders.includes('tutti') });
+        if (r) righe.push({...r, cat, genere:g, key, isMisto:sport.genders.includes('tutti')});
       });
     });
-
     if (!righe.length && !isAdmin) return '';
-
-    const genIcon = (g, misto) => misto
-      ? `<span style="font-size:18px">👥</span>`
-      : g === 'M'
-        ? `<span style="color:var(--ocean);font-size:18px;font-weight:700">♂</span>`
-        : `<span style="color:#e91e8c;font-size:18px;font-weight:700">♀</span>`;
-
+    const genIcon = (g, misto) => misto ? '<span style="font-size:18px">👥</span>'
+      : g==='M' ? '<span style="color:var(--ocean);font-size:18px;font-weight:700">♂</span>'
+      : '<span style="color:#e91e8c;font-size:18px;font-weight:700">♀</span>';
     const righeHTML = righe.length
-      ? righe.map(r => `<tr>
-          <td style="text-align:center">${genIcon(r.genere, r.isMisto)}</td>
-          <td style="font-weight:600">${r.nome || '—'}</td>
-          <td>${r.squadra || '—'}</td>
+      ? righe.map(r=>`<tr>
+          <td style="text-align:center">${genIcon(r.genere,r.isMisto)}</td>
+          <td style="font-weight:600">${r.nome||'—'}</td>
+          <td>${r.squadra||'—'}</td>
           <td><span class="badge badge-${r.cat}">${catLabel(r.cat)}</span></td>
-          <td style="font-weight:700;font-size:16px;color:var(--ocean)">${r.valore || '—'} <span style="font-size:12px;color:var(--text-muted);font-weight:400">${r.um || ''}</span></td>
-          ${isAdmin ? `<td><button onclick="eliminaRecord('${r.cat}','${r.key}')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>` : ''}
+          <td style="font-weight:700;font-size:16px;color:var(--ocean)">${r.valore||'—'} <span style="font-size:12px;color:var(--text-muted);font-weight:400">${r.um||''}</span></td>
+          ${isAdmin?`<td><button onclick="eliminaRecord('${r.cat}','${r.key}')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
         </tr>`).join('')
-      : `<tr><td colspan="${isAdmin ? 6 : 5}" style="text-align:center;color:var(--text-muted);font-style:italic;padding:16px">Nessun record — inserisci dal form sopra</td></tr>`;
-
+      : `<tr><td colspan="${isAdmin?6:5}" style="text-align:center;color:var(--text-muted);font-style:italic;padding:16px">Nessun record — inserisci dal form sopra</td></tr>`;
     return `
       <div class="record-card">
         <div class="record-card-header">
@@ -924,19 +942,15 @@ function renderRecord() {
         </div>
         <table class="results-table" style="box-shadow:none;border-radius:0">
           <thead><tr>
-            <th style="width:48px;text-align:center">Genere</th>
-            <th>Atleta</th>
-            <th style="width:120px">Squadra</th>
-            <th style="width:100px">Categoria</th>
-            <th style="width:150px">Record</th>
-            ${isAdmin ? '<th style="width:50px"></th>' : ''}
+            <th style="width:48px;text-align:center">Genere</th><th>Atleta</th>
+            <th style="width:120px">Squadra</th><th style="width:100px">Categoria</th>
+            <th style="width:150px">Record</th>${isAdmin?'<th style="width:50px"></th>':''}
           </tr></thead>
           <tbody>${righeHTML}</tbody>
         </table>
       </div>`;
   }).join('');
-
-  container.innerHTML = html || '<div class="empty"><div class="empty-icon">🏆</div><div class="empty-title">Nessun record ancora</div><div class="empty-sub">I record appariranno dopo essere stati inseriti dal comitato</div></div>';
+  container.innerHTML = html || '<div class="empty"><div class="empty-icon">🏆</div><div class="empty-title">Nessun record ancora</div></div>';
 }
 
 window.salvaRecord = function() {
@@ -947,73 +961,328 @@ window.salvaRecord = function() {
   const squadra = document.getElementById('recSquadra').value.trim();
   const valore = document.getElementById('recValore').value.trim();
   const um = document.getElementById('recUM').value;
-
-  if (!nome || !valore) { showToast('⚠️ Inserisci nome e valore del record'); return; }
-
+  if (!nome||!valore) { showToast('⚠️ Inserisci nome e valore del record'); return; }
   const key = `${sportId}_${genere}`;
-  if (!DATA.records) DATA.records = {};
-  if (!DATA.records[cat]) DATA.records[cat] = {};
+  if (!DATA.records) DATA.records={};
+  if (!DATA.records[cat]) DATA.records[cat]={};
   DATA.records[cat][key] = { nome, squadra, valore, um };
-
-  pushToFirebase();
-  renderRecord();
-  showToast('🏆 Record salvato!');
-
-  document.getElementById('recNome').value = '';
-  document.getElementById('recSquadra').value = '';
-  document.getElementById('recValore').value = '';
+  pushToFirebase(); renderRecord(); showToast('🏆 Record salvato!');
+  document.getElementById('recNome').value='';
+  document.getElementById('recSquadra').value='';
+  document.getElementById('recValore').value='';
 };
 
 window.eliminaRecord = function(cat, key) {
   if (!DATA.records?.[cat]?.[key]) return;
   delete DATA.records[cat][key];
+  pushToFirebase(); renderRecord();
+};
+
+// ── TORNEI ──
+const TORNEI_SPORTS = SPORTS.filter(s => SPORTS_TORNEI.includes(s.id));
+
+// Genera calendario girone (round-robin) da array di nomi [A,B,C,D]
+function generaCalendarioGirone(atleti) {
+  const partite = [];
+  for (let i = 0; i < atleti.length; i++) {
+    for (let j = i+1; j < atleti.length; j++) {
+      partite.push({ h: i, a: j, scoreH: '', scoreA: '' });
+    }
+  }
+  return partite;
+}
+
+function getTorneoData(sportId, cat) {
+  if (!DATA.tornei) DATA.tornei = {};
+  if (!DATA.tornei[cat]) DATA.tornei[cat] = {};
+  if (!DATA.tornei[cat][sportId]) DATA.tornei[cat][sportId] = { gironi: {}, bracket: {} };
+  return DATA.tornei[cat][sportId];
+}
+
+function getGironiLetters(n) {
+  return Array.from({length:n},(_,i)=>String.fromCharCode(65+i));
+}
+
+function calcolaClassificaGirone(atleti, partite) {
+  const cls = {};
+  atleti.forEach((n,i) => cls[i] = {nome:n, g:0, v:0, p:0, n:0, gf:0, gs:0, diff:0, pts:0});
+  partite.forEach(m => {
+    const sh = parseFloat(m.scoreH)||0, sa = parseFloat(m.scoreA)||0;
+    if (m.scoreH===''&&m.scoreA==='') return;
+    cls[m.h].g++; cls[m.a].g++;
+    cls[m.h].gf+=sh; cls[m.h].gs+=sa;
+    cls[m.a].gf+=sa; cls[m.a].gs+=sh;
+    if (sh>sa) { cls[m.h].v++; cls[m.h].pts+=3; cls[m.a].p++; }
+    else if (sa>sh) { cls[m.a].v++; cls[m.a].pts+=3; cls[m.h].p++; }
+    else { cls[m.h].n++; cls[m.h].pts+=1; cls[m.a].n++; cls[m.a].pts+=1; }
+  });
+  Object.values(cls).forEach(c => c.diff = c.gf-c.gs);
+  return Object.values(cls).sort((a,b)=>b.pts-a.pts||b.diff-a.diff||b.gf-a.gf);
+}
+
+function renderTornei() {
+  const container = document.getElementById('torneiContainer');
+  const tabsEl = document.getElementById('torSportTabs');
+  if (!container) return;
+
+  // Tabs sport
+  tabsEl.innerHTML = TORNEI_SPORTS.map(s =>
+    `<button class="sport-pill ${s.id===currentTorneoSport?'active':''}" onclick="setTorneoSport('${s.id}')">${s.emoji} ${s.name}</button>`
+  ).join('');
+
+  const cat = currentCategory;
+  const sportId = currentTorneoSport;
+  const sport = sportById(sportId);
+  const torData = getTorneoData(sportId, cat);
+  const gironi = torData.gironi || {};
+  const bracket = torData.bracket || {};
+
+  let html = '';
+
+  // Info box
+  html += `<div class="info-box">ℹ️ <strong>Funzionamento Gironi</strong> — Funzionamento Gironi</div>`;
+
+  // ── GIRONI ──
+  html += `<div class="torneo-block">
+    <div class="torneo-block-header">
+      <span class="torneo-block-title">📋 Gironi ${sport.emoji} ${sport.name}</span>
+      ${isAdmin?`<button onclick="aggiungiGirone('${sportId}','${cat}')" style="background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer">+ Aggiungi Girone</button>`:''}
+    </div>
+    <div class="torneo-block-body">`;
+
+  const giorniKeys = Object.keys(gironi).sort();
+  if (!giorniKeys.length) {
+    html += `<div class="empty" style="padding:24px"><div class="empty-icon">🏆</div><div class="empty-title">Nessun girone</div><div class="empty-sub">${isAdmin?'Clicca "+ Aggiungi Girone" per iniziare':'I gironi appariranno qui'}</div></div>`;
+  } else {
+    html += `<div class="girone-grid">`;
+    giorniKeys.forEach(gKey => {
+      const g = gironi[gKey];
+      const atleti = g.atleti || ['','','',''];
+      const partite = g.partite || generaCalendarioGirone(atleti);
+      const classifica = calcolaClassificaGirone(atleti, partite);
+
+      html += `<div class="girone-card">
+        <div class="girone-header">
+          <span class="girone-title">Girone ${gKey}</span>
+          ${isAdmin?`<button onclick="eliminaGirone('${sportId}','${cat}','${gKey}')" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:14px">🗑</button>`:''}
+        </div>
+        <div class="girone-body">
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:8px">Atleti</div>`;
+
+      atleti.forEach((nome, i) => {
+        html += `<div class="atleta-row">
+          <div class="atleta-num">${i+1}</div>
+          ${isAdmin
+            ? `<input class="score-input" style="flex:1;text-align:left" placeholder="Atleta ${i+1}" value="${nome}" onchange="updateAtleta('${sportId}','${cat}','${gKey}',${i},this.value)">`
+            : `<span style="font-weight:500;font-size:13px">${nome||`Atleta ${i+1}`}</span>`}
+        </div>`;
+      });
+
+      // Calendario partite girone
+      html += `<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin:12px 0 8px">Calendario</div>`;
+      partite.forEach((m, mi) => {
+        const nH = atleti[m.h]||`Atleta ${m.h+1}`;
+        const nA = atleti[m.a]||`Atleta ${m.a+1}`;
+        html += `<div class="match-row">
+          <span class="match-team" style="text-align:right;font-size:12px">${nH}</span>
+          <span class="match-vs">vs</span>
+          <span class="match-team" style="text-align:left;font-size:12px">${nA}</span>
+          ${isAdmin ? `
+            <div class="match-score">
+              <input class="score-input" style="width:36px;padding:3px 4px;font-size:12px" value="${m.scoreH}" placeholder="0" onchange="updateMatchScore('${sportId}','${cat}','${gKey}',${mi},'scoreH',this.value)">
+              <span style="font-size:11px;color:var(--text-muted)">-</span>
+              <input class="score-input" style="width:36px;padding:3px 4px;font-size:12px" value="${m.scoreA}" placeholder="0" onchange="updateMatchScore('${sportId}','${cat}','${gKey}',${mi},'scoreA',this.value)">
+            </div>` : `<span style="font-size:13px;font-weight:600;color:var(--ocean)">${m.scoreH!==''&&m.scoreA!==''?`${m.scoreH}-${m.scoreA}`:'—'}</span>`}
+        </div>`;
+      });
+
+      // Classifica girone
+      html += `<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin:12px 0 8px">Classifica</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="color:var(--text-muted)">
+            <th style="padding:4px;text-align:left">#</th>
+            <th style="padding:4px;text-align:left">Atleta</th>
+            <th style="padding:4px;text-align:center">G</th>
+            <th style="padding:4px;text-align:center">V</th>
+            <th style="padding:4px;text-align:center">N</th>
+            <th style="padding:4px;text-align:center">P</th>
+            <th style="padding:4px;text-align:center;font-weight:700;color:var(--ocean)">Pt</th>
+          </tr></thead>
+          <tbody>${classifica.map((c,i)=>`<tr style="border-top:1px solid var(--border)">
+            <td style="padding:4px;font-weight:700;color:${i===0?'var(--gold)':i===1?'var(--silver)':'var(--text-muted)'}">${i+1}</td>
+            <td style="padding:4px;font-weight:500">${c.nome||`Atleta`}</td>
+            <td style="padding:4px;text-align:center">${c.g}</td>
+            <td style="padding:4px;text-align:center">${c.v}</td>
+            <td style="padding:4px;text-align:center">${c.n}</td>
+            <td style="padding:4px;text-align:center">${c.p}</td>
+            <td style="padding:4px;text-align:center;font-weight:700;color:var(--ocean)">${c.pts}</td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div></div>`;
+    });
+    html += '</div>'; // girone-grid
+  }
+  html += '</div></div>'; // torneo-block-body, torneo-block
+
+  // ── TABELLONE ELIMINAZIONE DIRETTA ──
+  const rounds = [
+    { key: 'ottavi',   label: 'Ottavi di Finale',       slots: 16 },
+    { key: 'quarti',   label: 'Quarti di Finale',       slots: 8  },
+    { key: 'semifin',  label: 'Semifinali',             slots: 4  },
+    { key: 'terzo',    label: 'Finale 3° Posto',        slots: 2  },
+    { key: 'finale',   label: 'Finale 1° Posto 🏆',    slots: 2  },
+  ];
+
+  html += `<div class="torneo-block" style="margin-top:20px">
+    <div class="torneo-block-header">
+      <span class="torneo-block-title">🏆 Tabellone Eliminazione Diretta</span>
+    </div>
+    <div class="torneo-block-body">`;
+
+  rounds.forEach(round => {
+    const rData = bracket[round.key] || {};
+    const numMatches = round.slots / 2;
+    html += `<div class="bracket-round">
+      <div class="bracket-title">${round.label}</div>
+      <div class="bracket-matches">`;
+
+    for (let i = 0; i < numMatches; i++) {
+      const match = rData[`m${i}`] || { t1: `${i*2+1}`, t2: `${i*2+2}`, s1: '', s2: '', winner: '' };
+      const w = match.winner;
+      html += `<div class="bracket-match">
+        <div class="bracket-match-header">Partita ${i+1}</div>
+        <div class="bracket-team ${w===match.t1?'winner':''}">
+          ${isAdmin
+            ? `<input class="score-input" style="width:120px;text-align:left;font-size:13px" value="${match.t1}" onchange="updateBracket('${sportId}','${cat}','${round.key}','m${i}','t1',this.value)">`
+            : `<span class="bracket-team-name">${match.t1||'—'}</span>`}
+          ${isAdmin
+            ? `<input class="score-input" style="width:40px;font-size:13px" value="${match.s1}" placeholder="0" onchange="updateBracket('${sportId}','${cat}','${round.key}','m${i}','s1',this.value)">`
+            : `<span style="font-weight:700;color:var(--ocean)">${match.s1||''}</span>`}
+        </div>
+        <div class="bracket-team ${w===match.t2?'winner':''}">
+          ${isAdmin
+            ? `<input class="score-input" style="width:120px;text-align:left;font-size:13px" value="${match.t2}" onchange="updateBracket('${sportId}','${cat}','${round.key}','m${i}','t2',this.value)">`
+            : `<span class="bracket-team-name">${match.t2||'—'}</span>`}
+          ${isAdmin
+            ? `<input class="score-input" style="width:40px;font-size:13px" value="${match.s2}" placeholder="0" onchange="updateBracket('${sportId}','${cat}','${round.key}','m${i}','s2',this.value)">`
+            : `<span style="font-weight:700;color:var(--ocean)">${match.s2||''}</span>`}
+        </div>
+        ${isAdmin ? `
+        <div style="padding:6px 12px;border-top:1px solid var(--border)">
+          <select style="width:100%;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none" onchange="updateBracket('${sportId}','${cat}','${round.key}','m${i}','winner',this.value)">
+            <option value="">— Vincitore —</option>
+            <option value="${match.t1}" ${w===match.t1?'selected':''}>${match.t1||'Squadra 1'}</option>
+            <option value="${match.t2}" ${w===match.t2?'selected':''}>${match.t2||'Squadra 2'}</option>
+          </select>
+        </div>` : w ? `<div style="padding:6px 12px;font-size:12px;color:#2e7d32;font-weight:600;border-top:1px solid var(--border)">✅ Vince: ${w}</div>` : ''}
+      </div>`;
+    }
+    html += '</div></div>';
+  });
+
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
+window.setTorneoSport = function(sportId) {
+  currentTorneoSport = sportId;
+  renderTornei();
+};
+
+window.aggiungiGirone = function(sportId, cat) {
+  if (!DATA.tornei) DATA.tornei={};
+  if (!DATA.tornei[cat]) DATA.tornei[cat]={};
+  if (!DATA.tornei[cat][sportId]) DATA.tornei[cat][sportId]={gironi:{},bracket:{}};
+  const gironi = DATA.tornei[cat][sportId].gironi;
+  const existing = Object.keys(gironi).length;
+  const newKey = String.fromCharCode(65+existing);
+  const atleti = ['','','',''];
+  gironi[newKey] = { atleti, partite: generaCalendarioGirone(atleti) };
+  pushToFirebase(); renderTornei();
+};
+
+window.eliminaGirone = function(sportId, cat, gKey) {
+  if (!DATA.tornei?.[cat]?.[sportId]?.gironi?.[gKey]) return;
+  delete DATA.tornei[cat][sportId].gironi[gKey];
+  pushToFirebase(); renderTornei();
+};
+
+window.updateAtleta = function(sportId, cat, gKey, idx, val) {
+  const g = DATA.tornei?.[cat]?.[sportId]?.gironi?.[gKey];
+  if (!g) return;
+  if (!g.atleti) g.atleti=['','','',''];
+  g.atleti[idx] = val;
+  // Rigenera partite mantenendo i punteggi esistenti
+  if (!g.partite) g.partite = generaCalendarioGirone(g.atleti);
   pushToFirebase();
-  renderRecord();
+  // Re-render solo il testo dei nomi senza perdere focus
+  setTimeout(renderTornei, 100);
+};
+
+window.updateMatchScore = function(sportId, cat, gKey, matchIdx, field, val) {
+  const g = DATA.tornei?.[cat]?.[sportId]?.gironi?.[gKey];
+  if (!g) return;
+  if (!g.partite) g.partite = generaCalendarioGirone(g.atleti||[]);
+  g.partite[matchIdx][field] = val;
+  pushToFirebase();
+  setTimeout(renderTornei, 100);
+};
+
+window.updateBracket = function(sportId, cat, round, matchKey, field, val) {
+  if (!DATA.tornei) DATA.tornei={};
+  if (!DATA.tornei[cat]) DATA.tornei[cat]={};
+  if (!DATA.tornei[cat][sportId]) DATA.tornei[cat][sportId]={gironi:{},bracket:{}};
+  if (!DATA.tornei[cat][sportId].bracket) DATA.tornei[cat][sportId].bracket={};
+  if (!DATA.tornei[cat][sportId].bracket[round]) DATA.tornei[cat][sportId].bracket[round]={};
+  if (!DATA.tornei[cat][sportId].bracket[round][matchKey]) DATA.tornei[cat][sportId].bracket[round][matchKey]={t1:'',t2:'',s1:'',s2:'',winner:''};
+  DATA.tornei[cat][sportId].bracket[round][matchKey][field] = val;
+  pushToFirebase();
+  setTimeout(renderTornei, 100);
 };
 
 // ── AGGIORNAMENTO DATI ──
-window.updateTeam = function(cat, key, idx, field, val) {
-  if (!DATA[cat]?.[key]?.teams) return;
-  DATA[cat][key].teams[idx][field] = val;
+window.updateTeam = function(cat,key,idx,field,val) {
+  if(!DATA[cat]?.[key]?.teams) return;
+  DATA[cat][key].teams[idx][field]=val;
   pushToFirebase();
-  setTimeout(() => { renderResults(); renderRanking(); renderMedal(); }, 100);
+  setTimeout(()=>{renderResults();renderRanking();renderMedal();},100);
 };
 
-window.updateTiro = function(cat, key, idx, tiroIdx, val) {
-  if (!DATA[cat]?.[key]?.teams?.[idx]) return;
-  if (!DATA[cat][key].teams[idx].tiri) DATA[cat][key].teams[idx].tiri = Array(15).fill('');
-  DATA[cat][key].teams[idx].tiri[tiroIdx] = val;
-  const total = DATA[cat][key].teams[idx].tiri.reduce((s, v) => s + (parseFloat(v) || 0), 0);
-  DATA[cat][key].teams[idx].score = total;
+window.updateTiro = function(cat,key,idx,tiroIdx,val) {
+  if(!DATA[cat]?.[key]?.teams?.[idx]) return;
+  if(!DATA[cat][key].teams[idx].tiri) DATA[cat][key].teams[idx].tiri=Array(15).fill('');
+  DATA[cat][key].teams[idx].tiri[tiroIdx]=val;
+  const total=DATA[cat][key].teams[idx].tiri.reduce((s,v)=>s+(parseFloat(v)||0),0);
+  DATA[cat][key].teams[idx].score=total;
   pushToFirebase();
-  setTimeout(() => { renderResults(); renderRanking(); renderMedal(); }, 100);
+  setTimeout(()=>{renderResults();renderRanking();renderMedal();},100);
 };
 
-window.addTeam = function(cat, key) {
-  if (!DATA[cat]) DATA[cat] = {};
-  if (!DATA[cat][key]) DATA[cat][key] = { teams: [] };
-  if (!DATA[cat][key].teams) DATA[cat][key].teams = [];
-  DATA[cat][key].teams.push({ name: 'Nuovo atleta', score: '' });
+window.addTeam = function(cat,key) {
+  if(!DATA[cat]) DATA[cat]={};
+  if(!DATA[cat][key]) DATA[cat][key]={teams:[]};
+  if(!DATA[cat][key].teams) DATA[cat][key].teams=[];
+  DATA[cat][key].teams.push({name:'Nuovo atleta',score:''});
   pushToFirebase(); renderResults();
 };
 
-window.removeTeam = function(cat, key, idx) {
-  DATA[cat][key].teams.splice(idx, 1);
+window.removeTeam = function(cat,key,idx) {
+  DATA[cat][key].teams.splice(idx,1);
   pushToFirebase(); renderResults();
 };
 
 window.pulisciTeamFinti = function() {
-  if (!isAdmin) return;
-  const finti = ['Team Azzurro', 'Team Rosso', 'Team Verde', 'Team Giallo'];
-  let rimossi = 0;
-  CATEGORIES.forEach(cat => {
-    if (!DATA[cat]) return;
-    Object.keys(DATA[cat]).forEach(key => {
-      const ev = DATA[cat][key];
-      if (ev.teams) {
-        const before = ev.teams.length;
-        ev.teams = ev.teams.filter(t => !finti.includes(t.name));
-        rimossi += (before - ev.teams.length);
+  if(!isAdmin) return;
+  const finti=['Team Azzurro','Team Rosso','Team Verde','Team Giallo'];
+  let rimossi=0;
+  CATEGORIES.forEach(cat=>{
+    if(!DATA[cat]) return;
+    Object.keys(DATA[cat]).forEach(key=>{
+      const ev=DATA[cat][key];
+      if(ev.teams){
+        const before=ev.teams.length;
+        ev.teams=ev.teams.filter(t=>!finti.includes(t.name));
+        rimossi+=(before-ev.teams.length);
       }
     });
   });
@@ -1022,18 +1291,18 @@ window.pulisciTeamFinti = function() {
 };
 
 function updateLiveDot() {
-  const hasLive = DATA.calendario && Object.values(DATA.calendario).some(e => e.status === 'live');
-  document.getElementById('liveDot').style.display = hasLive ? 'block' : 'none';
+  const hasLive = DATA.calendario && Object.values(DATA.calendario).some(e=>e.status==='live');
+  document.getElementById('liveDot').style.display=hasLive?'block':'none';
 }
 
 // ── ADMIN / LOGIN ──
 window.toggleAdmin = function() {
-  if (isAdmin) {
-    isAdmin = false;
+  if(isAdmin){
+    isAdmin=false;
     document.getElementById('adminBar').classList.remove('visible');
     document.getElementById('adminBtn').classList.remove('logged');
-    document.getElementById('adminBtn').textContent = '⚙ Comitato';
-    document.getElementById('adminBtnMobile').textContent = '⚙ Comitato';
+    document.getElementById('adminBtn').textContent='⚙ Comitato';
+    document.getElementById('adminBtnMobile').textContent='⚙ Comitato';
     renderAll();
   } else {
     document.getElementById('loginModal').classList.add('open');
@@ -1041,30 +1310,30 @@ window.toggleAdmin = function() {
 };
 
 window.doLogin = function() {
-  const user = document.getElementById('loginUser').value.trim();
-  const pass = document.getElementById('loginPass').value;
-  if (user === 'comitato' && pass === 'olimpialidi2025') {
-    isAdmin = true;
+  const user=document.getElementById('loginUser').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  if(user==='comitato'&&pass==='olimpialidi2025'){
+    isAdmin=true;
     document.getElementById('loginModal').classList.remove('open');
     document.getElementById('adminBar').classList.add('visible');
     document.getElementById('adminBtn').classList.add('logged');
-    document.getElementById('adminBtn').textContent = '🔓 Esci';
-    document.getElementById('adminBtnMobile').textContent = '🔓 Esci';
-    document.getElementById('loginError').style.display = 'none';
-    document.getElementById('loginUser').value = '';
-    document.getElementById('loginPass').value = '';
+    document.getElementById('adminBtn').textContent='🔓 Esci';
+    document.getElementById('adminBtnMobile').textContent='🔓 Esci';
+    document.getElementById('loginError').style.display='none';
+    document.getElementById('loginUser').value='';
+    document.getElementById('loginPass').value='';
     renderAll(); renderIscritti();
   } else {
-    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginError').style.display='block';
   }
 };
 
 window.closeModal = function() {
   document.getElementById('loginModal').classList.remove('open');
-  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('loginError').style.display='none';
 };
 
-document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') window.doLogin(); });
+document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') window.doLogin(); });
 
 updateTitles();
 </script>
