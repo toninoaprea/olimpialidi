@@ -246,10 +246,9 @@
       <button class="active" onclick="showSection('calendario')">Calendario</button>
       <button onclick="showSection('iscritti')">Iscritti</button>
       <button onclick="showSection('risultati')">Risultati</button>
-      <button onclick="showSection('classifica')">Classifica</button>
+      <button onclick="showSection('tornei')">Tornei</button>
       <button onclick="showSection('medagliere')">Medagliere</button>
       <button onclick="showSection('record')">Record</button>
-      <button onclick="showSection('tornei')">Tornei</button>
     </nav>
     <button class="admin-btn desktop-nav" id="adminBtn" onclick="toggleAdmin()">⚙ Comitato</button>
   </div>
@@ -279,10 +278,9 @@
     <button class="active" onclick="showSection('calendario');closeDrawer()">Calendario</button>
     <button onclick="showSection('iscritti');closeDrawer()">Iscritti</button>
     <button onclick="showSection('risultati');closeDrawer()">Risultati</button>
-    <button onclick="showSection('classifica');closeDrawer()">Classifica</button>
+    <button onclick="showSection('tornei');closeDrawer()">Tornei</button>
     <button onclick="showSection('medagliere');closeDrawer()">Medagliere</button>
     <button onclick="showSection('record');closeDrawer()">Record</button>
-    <button onclick="showSection('tornei');closeDrawer()">Tornei</button>
   </nav>
   <div class="drawer-admin">
     <button id="adminBtnMobile" onclick="toggleAdmin();closeDrawer()">⚙ Comitato</button>
@@ -677,7 +675,7 @@ const SPORTS_TORNEI = ['pallanuoto','racchettoni','beach_pong','bocce','calcioba
 
 const CATEGORIES = ['open','espoir','junior'];
 const SPORT_NO_AUTO = ['calciobalilla'];
-const NAV_SECTIONS = ['regolamento','calendario','iscritti','risultati','classifica','medagliere','record','tornei'];
+const NAV_SECTIONS = ['regolamento','calendario','iscritti','risultati','tornei','medagliere','record'];
 
 let DATA = {};
 let isAdmin = false;
@@ -1083,14 +1081,37 @@ function renderResults() {
       sel.appendChild(o);
     });
   });
-  const selectedKey = sel.value;
+    const selectedKey = sel.value;
   if (!selectedKey) {
-    container.innerHTML='<div class="empty"><div class="empty-icon">🏅</div><div class="empty-title">Seleziona uno sport</div><div class="empty-sub">Scegli dal menu qui sopra</div></div>';
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🏅</div><div class="empty-title">Seleziona uno sport</div><div class="empty-sub">Scegli dal menu qui sopra</div></div>';
     return;
   }
   if (!DATA[cat]) DATA[cat]={};
   if (!DATA[cat][selectedKey]) DATA[cat][selectedKey]={teams:[]};
   if (!DATA[cat][selectedKey].teams) DATA[cat][selectedKey].teams=[];
+
+  // Sport con sistema a gironi: mostra banner rimando
+  const torSportIds = ['pallanuoto','racchettoni','beach_pong','bocce','calciobalilla'];
+  const baseSportId = getBaseSportId(selectedKey);
+  if (torSportIds.includes(baseSportId)) {
+    const sport = SPORTS.find(s => s.id === baseSportId);
+    container.innerHTML = `
+      <div style="background:linear-gradient(135deg,var(--navy),var(--ocean));border-radius:var(--radius);padding:28px;text-align:center;color:white;margin-bottom:20px">
+        <div style="font-size:40px;margin-bottom:12px">${sport ? sport.emoji : '🏆'}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin-bottom:8px">
+          ${sport ? sport.name : 'Questo sport'} ha un formato a Gironi
+        </div>
+        <div style="font-size:14px;opacity:0.85;margin-bottom:20px">
+          Risultati, classifiche gironi e tabellone eliminazione diretta<br>si trovano nella sezione <strong>Tornei</strong>
+        </div>
+        <button onclick="showSection('tornei');currentTorneoSport='${baseSportId}';renderTornei()" 
+          style="background:var(--gold);color:var(--navy);border:none;border-radius:10px;padding:12px 28px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer">
+          🏆 Vai ai Tornei →
+        </button>
+      </div>`;
+    return;
+  }
+
   isMultiScore(getBaseSportId(selectedKey))
     ? renderMultiScoreTable(cat, selectedKey, container)
     : renderSimpleResults(cat, selectedKey, container);
