@@ -139,6 +139,15 @@
   .badge-espoir { background: rgba(0,180,216,0.12); color: #0096c7; }
   .badge-junior { background: rgba(76,175,80,0.12); color: #2e7d32; }
 
+
+  .reg-art { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .reg-art:last-child { border-bottom: none; }
+  .reg-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--navy); letter-spacing: 1px; margin-bottom: 10px; }
+  .reg-nota { background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 8px; padding: 10px 14px; margin-top: 12px; font-size: 13px; }
+  .reg-pill { background: #e8f4fd; color: var(--ocean); border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 500; display: inline-block; }
+  .reg-sport-block { background: #f8fbff; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; border-left: 3px solid var(--ocean); }
+  .reg-sport-title { font-weight: 700; color: var(--navy); font-size: 14px; margin-bottom: 6px; }
+
   /* Record */
   .record-card { background: white; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 20px; }
   .record-card-header { background: var(--navy); padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
@@ -233,6 +242,7 @@
     </button>
     <div class="logo">Olimpia<span>lidi</span> 🏅</div>
     <nav class="desktop-nav">
+      <button onclick="showSection('regolamento')">Regolamento</button>
       <button class="active" onclick="showSection('calendario')">Calendario</button>
       <button onclick="showSection('iscritti')">Iscritti</button>
       <button onclick="showSection('risultati')">Risultati</button>
@@ -265,6 +275,7 @@
     <button class="drawer-close" onclick="closeDrawer()">✕</button>
   </div>
   <nav>
+    <button onclick="showSection('regolamento');closeDrawer()">Regolamento</button>
     <button class="active" onclick="showSection('calendario');closeDrawer()">Calendario</button>
     <button onclick="showSection('iscritti');closeDrawer()">Iscritti</button>
     <button onclick="showSection('risultati');closeDrawer()">Risultati</button>
@@ -296,6 +307,189 @@
   <div class="sync-bar">
     <div class="sync-dot" id="pubSyncDot"></div>
     <span id="pubSyncLabel">Connessione a Firebase...</span>
+  </div>
+
+  <!-- REGOLAMENTO -->
+  <div class="section" id="sec-regolamento">
+    <h1 class="page-title">Regolamento <span class="accent">Olimpialidi 2026</span></h1>
+    <div style="background:white;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px">
+
+      <!-- Header -->
+      <div style="background:var(--navy);padding:24px 28px;text-align:center">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);letter-spacing:2px">OlimpiaLidi 2026</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:white;letter-spacing:1px;margin-top:4px">3ª Edizione</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-top:8px">📍 Bagni Tina & Spiaggia libera, Marina di Cassano, Piano di Sorrento (NA)</div>
+      </div>
+
+      <div style="padding:28px;max-width:800px;margin:0 auto;line-height:1.7;font-size:14px">
+
+        <div class="reg-art">
+          <h2 class="reg-title">Art. 1 — Descrizione dell'Evento</h2>
+          <p>Le OlimpiaLidi è il nome di un torneo multidisciplinare amatoriale, nato da un'idea di Mauro D'Arco e Antonino Aprea, volta a simulare in modo giocoso delle Olimpiadi.</p>
+          <p style="margin-top:8px">Per la terza edizione sono previste 14 discipline differenti. Il torneo inizierà sabato 1 agosto con la Cerimonia d'Apertura, la sfilata dei partecipanti e i primi giochi.</p>
+          <div class="reg-nota">⚠️ <strong>NOTA:</strong> Le OlimpiaLidi si disputeranno con un raggiungimento minimo di 10 iscritti per categoria e la composizione minima di 2 squadre.</div>
+        </div>
+
+        <div class="reg-art">
+          <h2 class="reg-title">Art. 2 — Il Comitato OlimpiaLidico</h2>
+          <p>Il "Comitato" 2025 è composto da: Antonino Aprea, Daniele Carrino, Mauro D'Arco, Lisa D'Esposito, Tiziana D'Esposito, Ludovica Parlato, Gianluca Rotoli e Alessandro Schisano.</p>
+          <p style="margin-top:8px">Ogni Atleta Partecipante, prima dell'inizio della Manifestazione, accetta questo Regolamento in ogni sua parte.</p>
+        </div>
+
+        <div class="reg-art">
+          <h2 class="reg-title">Art. 3 — Partecipazione all'Evento</h2>
+          <p>La partecipazione è ad iscrizione ed è aperta a tutti. La quota d'iscrizione è di <strong>€ 20,00</strong> per la categoria OPEN ed <strong>€ 15,00</strong> per le altre. È possibile iscriversi anche a una sola disciplina pagando <strong>€ 3,00 a disciplina</strong>.</p>
+          <p style="margin-top:8px">La quota dovrà essere saldata entro le ore 20:00 di domenica 26 Luglio.</p>
+        </div>
+
+        <div class="reg-art">
+          <h2 class="reg-title">Art. 4 — Premi</h2>
+          <p>Sono previste medaglie per il primo, secondo e terzo classificato di ciascuna disciplina. È prevista una medaglia ricordo per ciascun partecipante.</p>
+        </div>
+
+        <div class="reg-art">
+          <h2 class="reg-title">Art. 5 — Squadre OlimpiaLidiche</h2>
+          <p>Ciascun partecipante può scegliere le discipline per le quali gareggiare da un minimo di 1 a un massimo di 14. Il Comitato invita gli atleti ad organizzarsi in squadre composte da atleti di diversa età/categoria.</p>
+          <p style="margin-top:8px;font-style:italic;color:var(--text-muted)">Esempio: Mario Rossi sceglie la squadra "Italia" → M. Rossi (ITA)</p>
+        </div>
+
+        <div class="reg-art">
+          <h2 class="reg-title">Art. 6 — Categorie</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:12px">
+            <div style="background:#f0f7ff;border-radius:10px;padding:14px;border-left:4px solid var(--ocean)">
+              <div style="font-weight:700;color:var(--navy);font-size:15px">🏅 Open</div>
+              <div style="font-size:13px;color:var(--text-muted);margin-top:4px">Donne e uomini dai 18 anni in su</div>
+            </div>
+            <div style="background:#f0fbff;border-radius:10px;padding:14px;border-left:4px solid #0096c7">
+              <div style="font-weight:700;color:var(--navy);font-size:15px">🏅 Espoir</div>
+              <div style="font-size:13px;color:var(--text-muted);margin-top:4px">Ragazze e ragazzi dai 13 ai 17 anni</div>
+            </div>
+            <div style="background:#f0fff4;border-radius:10px;padding:14px;border-left:4px solid #2e7d32">
+              <div style="font-weight:700;color:var(--navy);font-size:15px">🏅 Juniores</div>
+              <div style="font-size:13px;color:var(--text-muted);margin-top:4px">Ragazze e ragazzi dai 5 ai 12 anni</div>
+            </div>
+          </div>
+          <div class="reg-nota" style="margin-top:12px">⚠️ Esclusivamente per 100mt Sacchi, 100mt Nuoto e Canoa sono previste gare maschili e femminili per la categoria Open.</div>
+        </div>
+
+        <div class="reg-art">
+          <h2 class="reg-title">Art. 7 — Le Discipline</h2>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+            <span class="reg-pill">🏃 100mt Sacchi</span>
+            <span class="reg-pill">🏊 100mt Nuoto</span>
+            <span class="reg-pill">🏀 Basket (tiri liberi)</span>
+            <span class="reg-pill">🏓 Beach Pong</span>
+            <span class="reg-pill">🔵 Biglie su sabbia</span>
+            <span class="reg-pill">🎱 Bocce</span>
+            <span class="reg-pill">⚽ Calcio Balilla</span>
+            <span class="reg-pill">🛶 Canoa</span>
+            <span class="reg-pill">🎯 Freccette</span>
+            <span class="reg-pill">🎪 Lancio degli anelli</span>
+            <span class="reg-pill">⛳ Mini Golf</span>
+            <span class="reg-pill">🤽 Pallanuoto (rigori)</span>
+            <span class="reg-pill">🏸 Racchettoni</span>
+            <span class="reg-pill">🏹 Tiro con l'arco</span>
+          </div>
+        </div>
+
+        <div class="reg-art">
+          <h2 class="reg-title">Art. 8 — Condotta antisportiva</h2>
+          <p>Per condotte antisportive sono previsti: primo richiamo → secondo richiamo → cartellino giallo → cartellino rosso con <strong>espulsione dalla disciplina</strong>. L'atleta espulso è classificato automaticamente ultimo. Una seconda espulsione comporta l'espulsione dall'intero evento.</p>
+        </div>
+
+        <!-- Discipline dettaglio -->
+        <div class="reg-art">
+          <h2 class="reg-title" style="font-size:20px;border-bottom:2px solid var(--gold);padding-bottom:8px;margin-bottom:16px">Regole delle singole discipline</h2>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🏃 Art. 8.1 — 100mt Corsa nei sacchi</div>
+            <p>Corsa con le gambe dentro al sacco. Chi arriva primo vince. In caso di falsa partenza reiterata: squalifica. La gara si svolge su sabbia (50-100mt). Si cronometra il primo classificato per stabilire il Record OlimpiaLidico.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🏊 Art. 8.2 — 100mt Nuoto misto</div>
+            <p>Prima metà su materassino rettangolare a pancia in giù (stile libero con le braccia), seconda metà in stile libero. Per Open: andata su materassino, ritorno in stile libero. Si cronometra il primo per il Record OlimpiaLidico.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🏀 Art. 8.3 — Basket tiri liberi</div>
+            <p>20 tiri a disposizione. Tiro da 3 punti o da 2 punti a scelta. Vince chi totalizza il punteggio più alto. Si registra il massimo punteggio come Record OlimpiaLidico.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🏓 Art. 8.4 — Beach Pong</div>
+            <p>Ping pong da spiaggia. Partita al meglio di 3 set. Set vinto a 11 punti (con 2 punti di vantaggio in caso di 10-10). Servizio ogni 2 punti. Si cambia campo ad ogni set.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🔵 Art. 8.5 — Biglie su sabbia</div>
+            <p>Gara su pista in sabbia con biglie di uguale diametro. Il tiro si effettua colpendo la biglia con un dito. Chi viene doppiato è eliminato. Vince chi taglia il traguardo per primo.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🎱 Art. 8.6 — Bocce</div>
+            <p>4 bocce a testa, si lancia tentando di andare a punto. Si gioca fino a 11 punti. Lancia chi ha le bocce più lontane dal pallino. Le finali potrebbero essere al meglio di 3 partite.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">⚽ Art. 8.7 — Calcio Balilla 2vs2</div>
+            <p>Gironi con possibilità di pareggio nelle eliminatorie. Fasi finali al meglio di 3 partite con cambio campo tra una partita e l'altra. Vietata la "girella" per Open ed Espoir.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🛶 Art. 8.8 — Canoa</div>
+            <p>Gara su circa 150mt con giro intorno ad una boa. Percorso breve per Juniores. Si cronometra il primo classificato per il Record OlimpiaLidico.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🎯 Art. 8.9 — Freccette</div>
+            <p>20 lanci totali. Vince chi ottiene il punteggio più alto. In caso di parità: ulteriori 10, poi 5, poi lanci singoli. Punteggi: doppio (bordo esterno), triplo (cerchio interno), 50 (bullseye), 25 (cerchio intorno al centro).</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🎪 Art. 8.10 — Lancio degli anelli</div>
+            <p>5 coni a distanza progressiva con punteggi differenti. 20 lanci a disposizione. Vince chi totalizza il punteggio più alto. Si registra il massimo come Record OlimpiaLidico.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">⛳ Art. 8.11 — Mini Golf</div>
+            <p>Scopo: completare ogni pista/buca col minor numero di colpi. Max 10 colpi per buca (11° colpo = penalità e si passa alla buca successiva). In caso di parità si ripete l'ultima buca come spareggio.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🤽 Art. 8.12 — Pallanuoto (rigori)</div>
+            <p>Porta galleggiante in acqua. Gara al meglio di 5 tiri, in caso di pareggio si prosegue a oltranza. Il tiro deve avvenire dopo il fischio dell'arbitro, altrimenti è considerato fuori.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🏸 Art. 8.13 — Racchettoni 1vs1</div>
+            <p>Ispirato al tennis. Eliminatorie al meglio di 3 set da 3 games. Finali al meglio di 5 set da 3 games. Punteggio: 15-30-45. Vietato schiacciare dall'alto verso il basso.</p>
+          </div>
+
+          <div class="reg-sport-block">
+            <div class="reg-sport-title">🏹 Art. 8.14 — Tiro con l'arco</div>
+            <p>12 tiri (3 tiri di prova prima della gara). Distanza diversa per categoria. In caso di parità per le prime 3 posizioni: 5 tiri di spareggio. Si consiglia protezione per il braccio di tiro.</p>
+          </div>
+        </div>
+
+        <div class="reg-art">
+          <h2 class="reg-title">Art. 9 — Casi non disciplinati</h2>
+          <p>Ogni Partecipante si rimette al giudizio unico e insindacabile del Comitato in caso di avvenimenti non disciplinati da questo Regolamento.</p>
+        </div>
+
+        <div class="reg-art">
+          <h2 class="reg-title">Art. 10 — Liberatoria diritti d'immagine</h2>
+          <p>Gli iscritti accettano la pubblicazione di materiale audio/video/fotografico per fini di divulgazione del torneo sui social o a mezzo stampa.</p>
+        </div>
+
+        <div style="text-align:center;margin-top:32px;padding:20px;background:#f0f7ff;border-radius:12px">
+          <div style="font-weight:700;color:var(--navy);margin-bottom:6px">Il Comitato OlimpiaLidico</div>
+          <div style="font-size:13px;color:var(--text-muted)">Per informazioni e iscrizioni:</div>
+          <a href="mailto:olimpialidi@gmail.com" style="color:var(--ocean);font-weight:600;text-decoration:none">olimpialidi@gmail.com</a>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <!-- CALENDARIO -->
@@ -475,7 +669,7 @@ const SPORTS_TORNEI = ['pallanuoto','racchettoni','beach_pong','bocce','calcioba
 
 const CATEGORIES = ['open','espoir','junior'];
 const SPORT_NO_AUTO = ['calciobalilla'];
-const NAV_SECTIONS = ['calendario','iscritti','risultati','classifica','medagliere','record','tornei'];
+const NAV_SECTIONS = ['regolamento','calendario','iscritti','risultati','classifica','medagliere','record','tornei'];
 
 let DATA = {};
 let isAdmin = false;
