@@ -503,7 +503,7 @@
     <h1 class="page-title">Iscritti <span class="accent" id="isc-title">Open</span></h1>
     <div id="addAtletaForm" style="display:none;background:white;border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:24px;box-shadow:var(--shadow)">
       <div style="font-weight:600;font-size:15px;margin-bottom:16px;color:var(--navy)">➕ Aggiungi atleta</div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px">
         <div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Nome e Cognome</div>
           <input id="newAtletaNome" type="text" placeholder="Es: Mario Rossi" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;width:200px;outline:none">
@@ -523,8 +523,16 @@
             <option value="F">♀ Femminile</option>
           </select>
         </div>
-        <button onclick="aggiungiAtleta()" style="background:var(--navy);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Aggiungi</button>
       </div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-weight:600">Sport a cui partecipa:</div>
+        <div id="sportCheckboxes" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px"></div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button onclick="selectAllSports(true)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;color:var(--ocean)">✓ Tutti</button>
+          <button onclick="selectAllSports(false)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;color:var(--text-muted)">✗ Nessuno</button>
+        </div>
+      </div>
+      <button onclick="aggiungiAtleta()" style="background:var(--navy);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Aggiungi atleta</button>
       <div id="atletaError" style="color:#e53935;font-size:12px;margin-top:8px;display:none">Inserisci un nome valido</div>
     </div>
     <div id="iscrittiContainer"></div>
@@ -862,34 +870,95 @@ window.updateCal = function(sportId, field, val) {
 };
 
 // ── ISCRITTI ──
+function initSportCheckboxes() {
+  const box = document.getElementById('sportCheckboxes');
+  if (!box || box.children.length > 0) return;
+  const genere = document.getElementById('newAtletaGenere')?.value || 'M';
+  box.innerHTML = SPORTS.map(sport => {
+    const label = `${sport.emoji} ${sport.name}`;
+    return `<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:#f8fbff">
+      <input type="checkbox" id="chk_${sport.id}" value="${sport.id}" style="accent-color:var(--ocean);width:14px;height:14px"> ${label}
+    </label>`;
+  }).join('');
+}
+
+window.selectAllSports = function(val) {
+  SPORTS.forEach(s => {
+    const el = document.getElementById('chk_' + s.id);
+    if (el) el.checked = val;
+  });
+};
+
 function renderIscritti() {
   const container = document.getElementById('iscrittiContainer');
   const form = document.getElementById('addAtletaForm');
-  if (form) form.style.display = isAdmin ? 'block' : 'none';
+  if (form) {
+    form.style.display = isAdmin ? 'block' : 'none';
+    if (isAdmin) initSportCheckboxes();
+  }
   const cat = currentCategory;
   const atleti = (DATA.iscritti && DATA.iscritti[cat]) ? DATA.iscritti[cat] : {};
-  const lista = Object.entries(atleti).map(([id, a]) => ({ id, ...a }));
-  const maschi = lista.filter(a => a.genere === 'M').sort((a,b) => a.nome.localeCompare(b.nome));
-  const femmine = lista.filter(a => a.genere === 'F').sort((a,b) => a.nome.localeCompare(b.nome));
+  const lista = Object.entries(atleti).map(([id, a]) => ({ id, ...a }))
+    .sort((a,b) => a.nome.localeCompare(b.nome));
+  const maschi = lista.filter(a => a.genere === 'M');
+  const femmine = lista.filter(a => a.genere === 'F');
 
   if (!lista.length) {
     container.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div class="empty-title">Nessun iscritto</div><div class="empty-sub">${isAdmin?'Usa il form qui sopra per aggiungere atleti':'Gli iscritti appariranno qui'}</div></div>`;
     return;
   }
 
+  // Tabella iscritti con colonne sport
   function buildTable(list, title, icon) {
     if (!list.length) return '';
-    return `<div style="margin-bottom:28px">
+    // Mostra solo sport compatibili col genere
+    const sportsToShow = SPORTS.filter(s =>
+      s.genders.includes('tutti') || s.genders.includes(list[0]?.genere || 'M')
+    );
+    const sportCols = sportsToShow.map(s =>
+      `<th style="width:36px;text-align:center;padding:8px 4px;font-size:10px;white-space:nowrap" title="${s.name}">${s.emoji}</th>`
+    ).join('');
+    const rows = list.map((a,i) => {
+      const sportCells = sportsToShow.map(s => {
+        const partecipa = a.sport && a.sport.includes(s.id);
+        if (isAdmin) {
+          return `<td style="text-align:center;padding:4px">
+            <input type="checkbox" ${partecipa?'checked':''} style="accent-color:var(--ocean);width:14px;height:14px;cursor:pointer"
+              onchange="toggleSportAtleta('${cat}','${a.id}','${s.id}',this.checked)">
+          </td>`;
+        }
+        return `<td style="text-align:center;padding:4px;font-size:14px">${partecipa?'<span style="color:#2e7d32;font-weight:700">✓</span>':'<span style="color:#ccc">—</span>'}</td>`;
+      }).join('');
+      return `<tr>
+        <td style="color:var(--text-muted);font-weight:600;padding:8px 12px">${i+1}</td>
+        <td style="padding:8px 12px">${isAdmin
+          ? `<input class="score-input" style="width:180px;text-align:left" value="${a.nome}" onchange="modificaNomeAtleta('${cat}','${a.id}',this.value)">`
+          : `<span style="font-weight:600">${a.nome}</span>`}
+        </td>
+        <td style="padding:8px 12px"><span class="badge badge-${cat}">${catLabel(cat)}</span></td>
+        ${sportCells}
+        ${isAdmin?`<td style="padding:4px 8px"><button onclick="rimuoviAtleta('${cat}','${a.id}')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
+      </tr>`;
+    }).join('');
+
+    return `<div style="margin-bottom:32px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--navy);margin-bottom:12px;letter-spacing:1px">${icon} ${title} — ${list.length} atleti</div>
-      <table class="results-table">
-        <thead><tr><th style="width:40px">#</th><th>Nome e Cognome</th><th style="width:100px">Categoria</th>${isAdmin?'<th style="width:80px"></th>':''}</tr></thead>
-        <tbody>${list.map((a,i) => `<tr>
-          <td style="color:var(--text-muted);font-weight:600">${i+1}</td>
-          <td>${isAdmin?`<input class="score-input" style="width:200px;text-align:left" value="${a.nome}" onchange="modificaNomeAtleta('${cat}','${a.id}',this.value)">`:`<span style="font-weight:600">${a.nome}</span>`}</td>
-          <td><span class="badge badge-${cat}">${catLabel(cat)}</span></td>
-          ${isAdmin?`<td><button onclick="rimuoviAtleta('${cat}','${a.id}')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button></td>`:''}
-        </tr>`).join('')}</tbody>
-      </table></div>`;
+      <div style="overflow-x:auto">
+      <table class="results-table" style="min-width:600px">
+        <thead><tr>
+          <th style="width:36px">#</th>
+          <th style="min-width:180px">Nome e Cognome</th>
+          <th style="width:90px">Categoria</th>
+          ${sportCols}
+          ${isAdmin?'<th style="width:40px"></th>':''}
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:6px">
+        ${sportsToShow.map(s => `${s.emoji} = ${s.name}`).join(' &nbsp;|&nbsp; ')}
+      </div>
+    </div>`;
   }
   container.innerHTML = buildTable(maschi,'Maschile','♂') + buildTable(femmine,'Femminile','♀');
 }
@@ -916,30 +985,75 @@ window.aggiungiAtleta = function() {
   const errEl = document.getElementById('atletaError');
   if (!nome) { errEl.style.display='block'; return; }
   errEl.style.display = 'none';
+
+  // Raccogli sport selezionati
+  const sportiSelezionati = SPORTS
+    .filter(s => document.getElementById('chk_' + s.id)?.checked)
+    .map(s => s.id);
+
   if (!DATA.iscritti) DATA.iscritti = {};
   if (!DATA.iscritti[cat]) DATA.iscritti[cat] = {};
   const id = 'a_' + Date.now();
-  DATA.iscritti[cat][id] = { nome, genere };
+  DATA.iscritti[cat][id] = { nome, genere, sport: sportiSelezionati };
+
+  // Aggiungi ai Risultati solo per gli sport selezionati
   if (!DATA[cat]) DATA[cat] = {};
-  SPORTS.forEach(sport => {
-    if (SPORT_NO_AUTO.includes(sport.id)) return;
+  sportiSelezionati.forEach(sportId => {
+    const sport = SPORTS.find(s => s.id === sportId);
+    if (!sport) return;
     const key = sport.genders.includes('tutti') ? sport.id : `${sport.id}_${genere}`;
     if (!DATA[cat][key]) DATA[cat][key] = { teams: [] };
     if (!DATA[cat][key].teams) DATA[cat][key].teams = [];
     if (!DATA[cat][key].teams.some(t => t.name === nome)) DATA[cat][key].teams.push({ name: nome, score: '' });
   });
+
   document.getElementById('newAtletaNome').value = '';
+  selectAllSports(false);
   pushToFirebase(); renderIscritti();
+};
+
+window.toggleSportAtleta = function(cat, id, sportId, checked) {
+  if (!DATA.iscritti?.[cat]?.[id]) return;
+  const atleta = DATA.iscritti[cat][id];
+  if (!atleta.sport) atleta.sport = [];
+
+  const sport = SPORTS.find(s => s.id === sportId);
+  if (!sport) return;
+  const key = sport.genders.includes('tutti') ? sportId : `${sportId}_${atleta.genere}`;
+
+  if (checked) {
+    // Aggiungi sport all'atleta
+    if (!atleta.sport.includes(sportId)) atleta.sport.push(sportId);
+    // Aggiungi ai risultati
+    if (!DATA[cat]) DATA[cat] = {};
+    if (!DATA[cat][key]) DATA[cat][key] = { teams: [] };
+    if (!DATA[cat][key].teams) DATA[cat][key].teams = [];
+    if (!DATA[cat][key].teams.some(t => t.name === atleta.nome)) {
+      DATA[cat][key].teams.push({ name: atleta.nome, score: '' });
+    }
+  } else {
+    // Rimuovi sport dall'atleta
+    atleta.sport = atleta.sport.filter(s => s !== sportId);
+    // Rimuovi dai risultati
+    if (DATA[cat]?.[key]?.teams) {
+      DATA[cat][key].teams = DATA[cat][key].teams.filter(t => t.name !== atleta.nome);
+    }
+  }
+  pushToFirebase();
 };
 
 window.rimuoviAtleta = function(cat, id) {
   if (!DATA.iscritti?.[cat]?.[id]) return;
   const nome = DATA.iscritti[cat][id].nome;
   const genere = DATA.iscritti[cat][id].genere;
+  const sport = DATA.iscritti[cat][id].sport || [];
   delete DATA.iscritti[cat][id];
+  // Rimuovi solo dagli sport a cui era iscritto
   if (DATA[cat]) {
-    SPORTS.forEach(sport => {
-      const key = sport.genders.includes('tutti') ? sport.id : `${sport.id}_${genere}`;
+    sport.forEach(sportId => {
+      const s = SPORTS.find(sp => sp.id === sportId);
+      if (!s) return;
+      const key = s.genders.includes('tutti') ? sportId : `${sportId}_${genere}`;
       if (DATA[cat][key]?.teams) DATA[cat][key].teams = DATA[cat][key].teams.filter(t => t.name !== nome);
     });
   }
