@@ -766,6 +766,8 @@ window.closeDrawer = function() {
 window.showSection = function(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('sec-' + name).classList.add('active');
+  const sel = document.getElementById('sportSelect');
+  if (sel) sel.value = '';
   document.querySelectorAll('nav button').forEach((b, i) => {
     b.classList.toggle('active', NAV_SECTIONS[i] === name);
   });
@@ -778,7 +780,10 @@ window.showSection = function(name) {
 window.setCategory = function(cat) {
   currentCategory = cat;
   document.querySelectorAll('.cat-tab').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === cat));
-  updateTitles(); renderAll();
+  updateTitles();
+  const sel = document.getElementById('sportSelect');
+  if (sel) sel.value = '';
+  renderAll();
   if (document.getElementById('sec-iscritti').classList.contains('active')) renderIscritti();
   if (document.getElementById('sec-tornei').classList.contains('active')) renderTornei();
 };
