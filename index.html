@@ -789,7 +789,120 @@ window.showSection = function(name) {
 window.setCategory = function(cat) {
   currentCategory = cat;
   document.querySelectorAll('.cat-tab').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === cat));
-    const sel = document.getElementById('sportSelect');
+  
+// ── EXPORT EXCEL ──
+window.esportaExcel = function() {
+  if (!isAdmin) return;
+  showToast('📊 Preparando il file Excel...');
+
+  // Usa SheetJS via CDN (caricato dinamicamente)
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  script.onload = () => generaExcel();
+  if (window.XLSX) { generaExcel(); return; }
+  document.head.appendChild(script);
+};
+
+function generaExcel() {
+  const wb = XLSX.utils.book_new();
+  const now = new Date().toLocaleDateString('it-IT');
+
+  // ── FOGLIO 1: ISCRITTI (tutte le categorie) ──
+  const iscrittiRows = [['Categoria','Genere','Nome e Cognome', ...SPORTS.map(s => s.name)]];
+  CATEGORIES.forEach(cat => {
+    const atleti = DATA.iscritti?.[cat] || {};
+    Object.values(atleti).sort((a,b) => a.nome.localeCompare(b.nome)).forEach(a => {
+      const sportCols = SPORTS.map(s => (a.sport || []).includes(s.id) ? '✓' : '');
+      iscrittiRows.push([cat.charAt(0).toUpperCase()+cat.slice(1), a.genere === 'M' ? 'Maschile' : 'Femminile', a.nome, ...sportCols]);
+    });
+  });
+  const wsIscritti = XLSX.utils.aoa_to_sheet(iscrittiRows);
+  wsIscritti['!cols'] = [{wch:10},{wch:10},{wch:22},...SPORTS.map(()=>({wch:14}))];
+  XLSX.utils.book_append_sheet(wb, wsIscritti, 'Iscritti');
+
+  // ── FOGLIO 2: CALENDARIO ──
+  const calRows = [['Sport','Data','Ora','Luogo','Stato']];
+  SPORTS.forEach(sport => {
+    const ev = DATA.calendario?.[sport.id] || {};
+    const data = ev.date ? ev.date.split('-').reverse().join('/') : '—';
+    calRows.push([sport.name, data, ev.time||'—', ev.location||'Spiaggia principale', {upcoming:'In programma',live:'LIVE',done:'Conclusa'}[ev.status||'upcoming']]);
+  });
+  const wsCal = XLSX.utils.aoa_to_sheet(calRows);
+  wsCal['!cols'] = [{wch:22},{wch:12},{wch:8},{wch:24},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, wsCal, 'Calendario');
+
+  // ── FOGLI RISULTATI: uno per ogni sport x categoria ──
+  SPORTS.forEach(sport => {
+    const sheetRows = [];
+    let hasData = false;
+
+    CATEGORIES.forEach(cat => {
+      const genKeys = sport.genders.includes('tutti') ? [sport.id] : [`${sport.id}_M`, `${sport.id}_F`];
+      genKeys.forEach(key => {
+        const ev = DATA[cat]?.[key];
+        if (!ev?.teams?.length) return;
+        const genLabel = sport.genders.includes('tutti') ? '' : (key.endsWith('_M') ? ' ♂' : ' ♀');
+        sheetRows.push([`${cat.toUpperCase()}${genLabel}`, '', '']);
+        if (sport.multiScore) {
+          // Tabella multiScore con 15 colonne
+          sheetRows.push(['Pos', 'Atleta', ...Array.from({length:15},(_,i)=>`Tiro ${i+1}`), 'Totale']);
+          const sorted = [...ev.teams].map((t,i)=>({...t,origIdx:i}))
+            .sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0));
+          sorted.forEach((t,i) => {
+            const tiri = t.tiri || Array(15).fill('');
+            sheetRows.push([i+1, t.name, ...tiri, t.score||0]);
+          });
+        } else {
+          sheetRows.push(['Pos', 'Atleta', 'Punteggio/Tempo']);
+          const asc = sport.asc || false;
+          const sorted = [...ev.teams].filter(t=>t.score!=='')
+            .sort((a,b) => asc ? (parseFloat(a.score)||0)-(parseFloat(b.score)||0) : (parseFloat(b.score)||0)-(parseFloat(a.score)||0));
+          sorted.forEach((t,i) => sheetRows.push([i+1, t.name, t.score]));
+        }
+        sheetRows.push([]); // riga vuota separatore
+        hasData = true;
+      });
+    });
+
+    if (hasData) {
+      const wsName = sport.name.substring(0,28).replace(/[\/:*?[\]]/g,'_');
+      const ws = XLSX.utils.aoa_to_sheet(sheetRows);
+      ws['!cols'] = [{wch:6},{wch:22},{wch:14}];
+      XLSX.utils.book_append_sheet(wb, ws, wsName);
+    }
+  });
+
+  // ── FOGLIO MEDAGLIERE ──
+  const medRows = [['Categoria','Atleta','Oro 🥇','Argento 🥈','Bronzo 🥉','Totale']];
+  CATEGORIES.forEach(cat => {
+    const medals = {};
+    Object.values(DATA[cat]||{}).forEach(ev => {
+      if (!ev.teams) return;
+      [...ev.teams].filter(t=>t.score!=='').sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0))
+        .forEach((t,i) => {
+          if(i>2) return;
+          if(!medals[t.name]) medals[t.name]={gold:0,silver:0,bronze:0};
+          if(i===0)medals[t.name].gold++;
+          if(i===1)medals[t.name].silver++;
+          if(i===2)medals[t.name].bronze++;
+        });
+    });
+    Object.entries(medals).sort((a,b)=>b[1].gold-a[1].gold).forEach(([nome,m]) => {
+      medRows.push([cat.charAt(0).toUpperCase()+cat.slice(1), nome, m.gold, m.silver, m.bronze, m.gold+m.silver+m.bronze]);
+    });
+  });
+  const wsMed = XLSX.utils.aoa_to_sheet(medRows);
+  wsMed['!cols'] = [{wch:10},{wch:22},{wch:8},{wch:10},{wch:8},{wch:8}];
+  XLSX.utils.book_append_sheet(wb, wsMed, 'Medagliere');
+
+  // ── DOWNLOAD ──
+  const filename = `Olimpialidi_${now.replace(/\//g,'-')}.xlsx`;
+  XLSX.writeFile(wb, filename);
+  showToast(`✅ Esportato: ${filename}`);
+}
+
+updateTitles();
+  const sel = document.getElementById('sportSelect');
   if (sel) sel.value = '';
   renderAll();
   if (document.getElementById('sec-iscritti').classList.contains('active')) renderIscritti();
@@ -926,8 +1039,6 @@ function renderIscritti() {
     const sqColors = {'ATC':'#dbeafe','SSGU':'#fef3c7','Again':'#d1fae5'};
     const rows = list.map((a, i) => {
       const sportIscritti = a.sport || [];
-      const sqColors = {'ATC':'#dbeafe','SSGU':'#fef3c7','Again':'#d1fae5'};
-      const sqBg = sqColors[a.squadra] || '#f5f5f5';
       const sportCols = SPORTS.map(s => {
         const ok = sportIscritti.includes(s.id);
         return `<td style="text-align:center;padding:8px 4px;font-size:13px">${ok ? '<span style="color:#2e7d32;font-weight:700">✓</span>' : '<span style="color:#ddd">—</span>'}</td>`;
@@ -935,16 +1046,6 @@ function renderIscritti() {
       const sqBg = sqColors[a.squadra] || '#f5f5f5';
       return `<tr>
         <td style="color:var(--text-muted);font-weight:600">${i+1}</td>
-        <td style="text-align:center">
-          ${isAdmin
-            ? `<select onchange="modificaSquadra('${cat}','${a.id}',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-family:'DM Sans',sans-serif;font-size:12px;background:${sqBg};font-weight:600">
-                <option value="">—</option>
-                <option value="ATC" ${a.squadra==='ATC'?'selected':''}>ATC</option>
-                <option value="SSGU" ${a.squadra==='SSGU'?'selected':''}>SSGU</option>
-                <option value="Again" ${a.squadra==='Again'?'selected':''}>Again</option>
-               </select>`
-            : `<span style="background:${sqBg};padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600">${a.squadra||'—'}</span>`}
-        </td>
         <td style="white-space:nowrap">${isAdmin
           ? `<div style="display:flex;align-items:center;gap:6px">
                <input class="score-input" style="width:150px;text-align:left" value="${a.nome}" onchange="modificaNomeAtleta('${cat}','${a.id}',this.value)">
