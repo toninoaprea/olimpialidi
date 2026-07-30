@@ -711,7 +711,6 @@ window.closeDrawer=function(){ document.getElementById('drawer').classList.remov
 window.showSection=function(name){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+name).classList.add('active');
-  const sel=document.getElementById('sportSelect'); if(sel) sel.value='';
   document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('active',NAV_SECTIONS[i]===name));
   updateTitles();
   if(name==='iscritti') renderIscritti();
