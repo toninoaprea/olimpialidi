@@ -967,7 +967,8 @@ function renderSimpleResults(cat,key,container){
     ${isAdmin?`<button onclick="addTeam('${cat}','${key}')" style="margin-top:12px;background:var(--ocean);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">+ Aggiungi partecipante</button>`:''}`;
 }
 function renderMultiScoreTable(cat,key,container){
-  const N=15,teams=DATA[cat][key].teams||[];
+  const sport_ms=SPORTS.find(s=>s.id===getBaseSportId(key));
+  const N=sport_ms?.numTiri||15,teams=DATA[cat][key].teams||[];
   const withTotals=teams.map((t,i)=>{const tiri=t.tiri||Array(N).fill('');return{...t,tiri,total:tiri.reduce((s,v)=>s+(parseFloat(v)||0),0),origIdx:i};}).sort((a,b)=>b.total-a.total);
   const hcols=Array.from({length:N},(_,i)=>`<th style="width:48px;text-align:center">${i+1}</th>`).join('');
   container.innerHTML=`<div style="overflow-x:auto"><table class="results-table" style="min-width:1000px">
