@@ -1043,7 +1043,7 @@ function renderTornei(){
     html+='</div>';
   }
   html+='</div></div>';
-  const rounds=[{key:'ottavi',label:'Ottavi di Finale',slots:16},{key:'quarti',label:'Quarti di Finale',slots:8},{key:'semifin',label:'Semifinali',slots:4},{key:'terzo',label:'Finale 3° Posto',slots:2},{key:'finale',label:'Finale 1° Posto 🏆',slots:2}];
+  const rounds=[{key:'quarti',label:'Quarti di Finale',slots:8},{key:'semifin',label:'Semifinali',slots:4},{key:'terzo',label:'Finale 3° Posto',slots:2},{key:'finale',label:'Finale 1° Posto 🏆',slots:2}];
   html+=`<div class="torneo-block" style="margin-top:20px"><div class="torneo-block-header"><span class="torneo-block-title">🏆 Tabellone Eliminazione Diretta</span></div><div class="torneo-block-body">`;
   rounds.forEach(round=>{
     const rData=bracket[round.key]||{},numMatches=round.slots/2;
