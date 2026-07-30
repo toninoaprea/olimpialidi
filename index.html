@@ -723,11 +723,7 @@ window.showSection=function(name){
   updateTitles();
   if(name==='calendario') renderCalendar();
   else if(name==='iscritti') renderIscritti();
-  else if(name==='risultati') { 
-  const sel=document.getElementById('sportSelect'); 
-  if(sel) sel.value=''; 
-  renderResults(); 
-};
+  else if(name==='risultati') renderResults();
   else if(name==='medagliere') renderMedal();
   else if(name==='tornei') renderTornei();
   else if(name==='record') renderRecord();
