@@ -616,7 +616,7 @@ let DATA = {};
 let isAdmin = false;
 let currentCategory = 'open';
 let currentGender = 'tutti';
-let lastSelectedSport = SPORTS[0].id + '_M';
+let lastSelectedSport = SPORTS.length > 0 ? SPORTS.filter(s=>!['pallanuoto','racchettoni','beach_pong','bocce','calciobalilla'].includes(s.id))[0].id + '_M' : '';
 let currentTorneoSport = SPORTS_TORNEI[0];
 let dbReady = false;
 let saveTimer = null;
@@ -895,14 +895,18 @@ function renderResults() {
   const sel=document.getElementById('sportSelect'), container=document.getElementById('resultsContainer');
   if(!sel||!container) return;
   // Ripristina ultimo sport selezionato se il select è vuoto
-  if(!sel.value && lastSelectedSport) sel.value = lastSelectedSport;
-  const cat=currentCategory, prev=sel.value;
+  const cat=currentCategory;
   sel.innerHTML='<option value="">— Seleziona uno sport —</option>';
   getVisibleSports().forEach(sport=>{
     const entries=sport.genders.includes('tutti')?[{key:sport.id,label:sport.name}]:currentGender==='tutti'?[{key:`${sport.id}_M`,label:`${sport.name} ♂`},{key:`${sport.id}_F`,label:`${sport.name} ♀`}]:[{key:`${sport.id}_${currentGender}`,label:`${sport.name} ${currentGender==='M'?'♂':'♀'}`}];
-    entries.forEach(({key,label})=>{const o=document.createElement('option');o.value=key;o.textContent=`${sport.emoji} ${label}`;if(key===prev)o.selected=true;sel.appendChild(o);});
+    entries.forEach(({key,label})=>{const o=document.createElement('option');o.value=key;o.textContent=`${sport.emoji} ${label}`;sel.appendChild(o);});
   });
+  // Ripristina ultimo sport dopo aver popolato le opzioni
+  if(lastSelectedSport && Array.from(sel.options).some(o=>o.value===lastSelectedSport)) {
+    sel.value = lastSelectedSport;
+  }
   const selectedKey=sel.value;
+  if(selectedKey) lastSelectedSport=selectedKey;
   if(selectedKey) lastSelectedSport=selectedKey;
   if(!selectedKey){ container.innerHTML='<div class="empty"><div class="empty-icon">🏅</div><div class="empty-title">Seleziona uno sport</div><div class="empty-sub">Scegli dal menu qui sopra</div></div>'; return; }
   if(!DATA[cat]) DATA[cat]={};
