@@ -952,7 +952,7 @@ function renderSimpleResults(cat,key,container){
   const ev=DATA[cat][key];
   const sorted=[...(ev.teams||[])].map((t,i)=>({...t,origIdx:i})).sort((a,b)=>{
     const sa=parseFloat(a.score)||null,sb=parseFloat(b.score)||null;
-    if(sa===null&&sb===null) return 0; if(sa===null) return 1; if(sb===null) return -1;
+    if(sa===null&&sb===null) return a.name.localeCompare(b.name); if(sa===null) return 1; if(sb===null) return -1;
     const sport=SPORTS.find(s=>s.id===getBaseSportId(key));
     return sport?.asc?sa-sb:sb-sa;
   });
