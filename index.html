@@ -950,7 +950,7 @@ function renderRisultatiContent() {
 
 function renderSimpleResults(cat,key,container){
   const ev=DATA[cat][key];
-  const sorted=[...(ev.teams||[])].filter(t=>t.name&&t.name.trim()&&t.name!=='Nuovo atleta').map((t,i)=>({...t,origIdx:i})).sort((a,b)=>{
+  const sorted=[...(ev.teams||[])].map((t,i)=>({...t,origIdx:i})).sort((a,b)=>{
     const sa=parseFloat(a.score)||null,sb=parseFloat(b.score)||null;
     if(sa===null&&sb===null) return 0; if(sa===null) return 1; if(sb===null) return -1;
     const sport=SPORTS.find(s=>s.id===getBaseSportId(key));
@@ -968,7 +968,7 @@ function renderSimpleResults(cat,key,container){
 }
 function renderMultiScoreTable(cat,key,container){
   const sport_ms=SPORTS.find(s=>s.id===getBaseSportId(key));
-  const N=sport_ms?.numTiri||15,teams=(DATA[cat][key].teams||[]).filter(t=>t.name&&t.name.trim()&&t.name!=='Nuovo atleta');
+  const N=sport_ms?.numTiri||15,teams=DATA[cat][key].teams||[];
   const withTotals=teams.map((t,i)=>{const tiri=t.tiri||Array(N).fill('');return{...t,tiri,total:tiri.reduce((s,v)=>s+(parseFloat(v)||0),0),origIdx:i};}).sort((a,b)=>b.total-a.total);
   const hcols=Array.from({length:N},(_,i)=>`<th style="width:48px;text-align:center">${i+1}</th>`).join('');
   container.innerHTML=`<div style="overflow-x:auto"><table class="results-table" style="min-width:1000px">
