@@ -512,9 +512,7 @@
       <div class="live-dot" id="liveDot" style="display:none"></div>
       <h1 class="page-title" style="margin-bottom:0">Risultati <span class="accent" id="res-title">Open</span></h1>
     </div>
-    <select class="sport-select" id="sportSelect" onchange="renderResults()">
-      <option value="">— Seleziona uno sport —</option>
-    </select>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="risultatiSportTabs"></div>
     <div id="resultsContainer"></div>
   </div>
 
@@ -731,6 +729,7 @@ window.showSection=function(name){
 };
 window.setCategory=function(cat){
   lastSelectedSport='';
+  currentRisultatiSport='';
   currentCategory=cat;
   document.querySelectorAll('.cat-tab').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===cat));
   const sel=document.getElementById('sportSelect'); if(sel) sel.value='';
@@ -738,6 +737,7 @@ window.setCategory=function(cat){
 };
 window.setGender=function(g){
   lastSelectedSport='';
+  currentRisultatiSport='';
   currentGender=g;
   document.querySelectorAll('.gender-btn').forEach(b=>{
     const map={tutti:'Tutti',M:'♂ Maschile',F:'♀ Femminile'};
@@ -891,14 +891,7 @@ window.rimuoviAtleta=function(cat,id){
 };
 
 // ── RISULTATI ──
-function renderResults() {
-  const sel=document.getElementById('sportSelect'), container=document.getElementById('resultsContainer');
-  if(!sel||!container) return;
-  // Ripristina ultimo sport selezionato se il select è vuoto
-  const cat=currentCategory;
-  sel.innerHTML='<option value="">— Seleziona uno sport —</option>';
-  getVisibleSports().forEach(sport=>{
-    const entries=sport.genders.includes('tutti')?[{key:sport.id,label:sport.name}]:currentGender==='tutti'?[{key:`${sport.id}_M`,label:`${sport.name} ♂`},{key:`${sport.id}_F`,label:`${sport.name} ♀`}]:[{key:`${sport.id}_${currentGender}`,label:`${sport.name} ${currentGender==='M'?'♂':'♀'}`}];
+]:currentGender==='tutti'?[{key:`${sport.id}_M`,label:`${sport.name} ♂`},{key:`${sport.id}_F`,label:`${sport.name} ♀`}]:[{key:`${sport.id}_${currentGender}`,label:`${sport.name} ${currentGender==='M'?'♂':'♀'}`}];
     entries.forEach(({key,label})=>{const o=document.createElement('option');o.value=key;o.textContent=`${sport.emoji} ${label}`;sel.appendChild(o);});
   });
   // Ripristina ultimo sport dopo aver popolato le opzioni
@@ -926,6 +919,64 @@ function renderResults() {
   }
   isMultiScore(baseSportId)?renderMultiScoreTable(cat,selectedKey,container):renderSimpleResults(cat,selectedKey,container);
 }
+// ── RISULTATI (tab-based) ──
+const RISULTATI_SPORTS = SPORTS.filter(s => !['pallanuoto','racchettoni','beach_pong','bocce','calciobalilla'].includes(s.id));
+let currentRisultatiSport = '';
+
+function initRisultatiTabs() {
+  const tabsEl = document.getElementById('risultatiSportTabs');
+  if (!tabsEl) return;
+  // Build tabs: for M/F sports show M and F separately, for tutti show once
+  const tabs = [];
+  RISULTATI_SPORTS.forEach(sport => {
+    if (sport.genders.includes('tutti')) {
+      tabs.push({ key: sport.id, label: sport.name, emoji: sport.emoji });
+    } else {
+      tabs.push({ key: `${sport.id}_M`, label: `${sport.name} ♂`, emoji: sport.emoji });
+      tabs.push({ key: `${sport.id}_F`, label: `${sport.name} ♀`, emoji: sport.emoji });
+    }
+  });
+  // Filter by current gender
+  const filtered = tabs.filter(t => {
+    if (currentGender === 'tutti') return true;
+    if (currentGender === 'M') return !t.key.endsWith('_F');
+    if (currentGender === 'F') return !t.key.endsWith('_M') || t.key.indexOf('_') === -1;
+    return true;
+  });
+  if (!currentRisultatiSport || !filtered.some(t => t.key === currentRisultatiSport)) {
+    currentRisultatiSport = filtered[0]?.key || '';
+  }
+  tabsEl.innerHTML = filtered.map(t =>
+    `<button class="sport-pill ${t.key === currentRisultatiSport ? 'active' : ''}" onclick="setRisultatiSport('${t.key}')">${t.emoji} ${t.label}</button>`
+  ).join('');
+}
+
+window.setRisultatiSport = function(key) {
+  currentRisultatiSport = key;
+  document.querySelectorAll('#risultatiSportTabs .sport-pill').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('onclick').includes(`'${key}'`));
+  });
+  renderRisultatiContent();
+};
+
+function renderResults() {
+  initRisultatiTabs();
+  renderRisultatiContent();
+}
+
+function renderRisultatiContent() {
+  const container = document.getElementById('resultsContainer');
+  if (!container || !currentRisultatiSport) return;
+  const cat = currentCategory;
+  const key = currentRisultatiSport;
+  const baseSportId = getBaseSportId(key);
+  if (!DATA[cat]) DATA[cat] = {};
+  if (!DATA[cat][key]) DATA[cat][key] = { teams: [] };
+  if (!DATA[cat][key].teams) DATA[cat][key].teams = [];
+  isMultiScore(baseSportId) ? renderMultiScoreTable(cat, key, container) : renderSimpleResults(cat, key, container);
+}
+
+
 function renderSimpleResults(cat,key,container){
   const ev=DATA[cat][key];
   const sorted=[...(ev.teams||[])].map((t,i)=>({...t,origIdx:i})).sort((a,b)=>{
