@@ -731,7 +731,6 @@ window.showSection=function(name){
 window.setCategory=function(cat){
   currentCategory=cat;
   document.querySelectorAll('.cat-tab').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===cat));
-  const sel=document.getElementById('sportSelect'); if(sel) sel.value='';
   updateTitles(); renderAll();
 };
 window.setGender=function(g){
