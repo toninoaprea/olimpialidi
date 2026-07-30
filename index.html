@@ -616,6 +616,7 @@ let DATA = {};
 let isAdmin = false;
 let currentCategory = 'open';
 let currentGender = 'tutti';
+let lastSelectedSport = '';
 let currentTorneoSport = SPORTS_TORNEI[0];
 let dbReady = false;
 let saveTimer = null;
@@ -729,11 +730,14 @@ window.showSection=function(name){
   else if(name==='record') renderRecord();
 };
 window.setCategory=function(cat){
+  lastSelectedSport='';
   currentCategory=cat;
   document.querySelectorAll('.cat-tab').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===cat));
+  const sel=document.getElementById('sportSelect'); if(sel) sel.value='';
   updateTitles(); renderAll();
 };
 window.setGender=function(g){
+  lastSelectedSport='';
   currentGender=g;
   document.querySelectorAll('.gender-btn').forEach(b=>{
     const map={tutti:'Tutti',M:'♂ Maschile',F:'♀ Femminile'};
@@ -890,6 +894,8 @@ window.rimuoviAtleta=function(cat,id){
 function renderResults() {
   const sel=document.getElementById('sportSelect'), container=document.getElementById('resultsContainer');
   if(!sel||!container) return;
+  // Ripristina ultimo sport selezionato se il select è vuoto
+  if(!sel.value && lastSelectedSport) sel.value = lastSelectedSport;
   const cat=currentCategory, prev=sel.value;
   sel.innerHTML='<option value="">— Seleziona uno sport —</option>';
   getVisibleSports().forEach(sport=>{
@@ -897,6 +903,7 @@ function renderResults() {
     entries.forEach(({key,label})=>{const o=document.createElement('option');o.value=key;o.textContent=`${sport.emoji} ${label}`;if(key===prev)o.selected=true;sel.appendChild(o);});
   });
   const selectedKey=sel.value;
+  if(selectedKey) lastSelectedSport=selectedKey;
   if(!selectedKey){ container.innerHTML='<div class="empty"><div class="empty-icon">🏅</div><div class="empty-title">Seleziona uno sport</div><div class="empty-sub">Scegli dal menu qui sopra</div></div>'; return; }
   if(!DATA[cat]) DATA[cat]={};
   if(!DATA[cat][selectedKey]) DATA[cat][selectedKey]={teams:[]};
