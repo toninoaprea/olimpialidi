@@ -535,6 +535,13 @@
             <option value="junior">Junior</option>
           </select>
         </div>
+        <div id="podioGenereBox">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Genere</div>
+          <select id="podioGenere" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+            <option value="M">♂ Maschile</option>
+            <option value="F">♀ Femminile</option>
+          </select>
+        </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:16px">
         <div style="background:#fff9e6;border-radius:10px;padding:12px;border-left:4px solid var(--gold)">
@@ -1037,9 +1044,15 @@ function initPodioSelect() {
 
 function populatePodioAtleti() {
   const cat = document.getElementById('podioCat')?.value || 'open';
-  const atleti = Object.values(DATA.iscritti?.[cat] || {})
-    .sort((a,b) => a.nome.localeCompare(b.nome));
-  
+  const sportId = document.getElementById('podioSport')?.value;
+  const sport = SPORTS.find(s => s.id === sportId);
+  const hasMF = sport && !sport.genders.includes('tutti');
+  const genere = hasMF ? (document.getElementById('podioGenere')?.value || 'M') : null;
+  let atleti = Object.values(DATA.iscritti?.[cat] || {});
+  // Filtra per genere se sport M/F
+  if (genere) atleti = atleti.filter(a => a.genere === genere);
+  atleti = atleti.sort((a,b) => a.nome.localeCompare(b.nome));
+
   ['podio1','podio2','podio3'].forEach(id => {
     const sel = document.getElementById(id);
     if (!sel) return;
@@ -1051,7 +1064,6 @@ function populatePodioAtleti() {
       o.textContent = `${a.nome} (${a.squadra || '—'})`;
       sel.appendChild(o);
     });
-    // Restore previous selection
     if (currentVal) sel.value = currentVal;
   });
 }
@@ -1059,9 +1071,16 @@ function populatePodioAtleti() {
 function loadPodioInForm() {
   const sportId = document.getElementById('podioSport')?.value;
   const cat = document.getElementById('podioCat')?.value || 'open';
+  // Mostra/nascondi genere in base allo sport
+  const sport = SPORTS.find(s => s.id === sportId);
+  const hasMF = sport && !sport.genders.includes('tutti');
+  const genereBox = document.getElementById('podioGenereBox');
+  if (genereBox) genereBox.style.display = hasMF ? 'block' : 'none';
   populatePodioAtleti();
   if (!sportId) return;
-  const podio = DATA.podio?.[cat]?.[sportId] || {};
+  const genere = hasMF ? (document.getElementById('podioGenere')?.value || 'M') : 'tutti';
+  const key = hasMF ? `${sportId}_${genere}` : sportId;
+  const podio = DATA.podio?.[cat]?.[key] || {};
   document.getElementById('podio1').value = podio['1'] || '';
   document.getElementById('podio2').value = podio['2'] || '';
   document.getElementById('podio3').value = podio['3'] || '';
@@ -1070,13 +1089,17 @@ function loadPodioInForm() {
 window.salvaPodio = function() {
   const sportId = document.getElementById('podioSport').value;
   const cat = document.getElementById('podioCat').value;
-  const p1 = document.getElementById('podio1').value.trim();
-  const p2 = document.getElementById('podio2').value.trim();
-  const p3 = document.getElementById('podio3').value.trim();
+  const p1 = document.getElementById('podio1').value;
+  const p2 = document.getElementById('podio2').value;
+  const p3 = document.getElementById('podio3').value;
   if (!sportId) { showToast('⚠️ Seleziona uno sport'); return; }
+  const sport = SPORTS.find(s => s.id === sportId);
+  const hasMF = sport && !sport.genders.includes('tutti');
+  const genere = hasMF ? (document.getElementById('podioGenere')?.value || 'M') : 'tutti';
+  const key = hasMF ? `${sportId}_${genere}` : sportId;
   if (!DATA.podio) DATA.podio = {};
   if (!DATA.podio[cat]) DATA.podio[cat] = {};
-  DATA.podio[cat][sportId] = { '1': p1, '2': p2, '3': p3 };
+  DATA.podio[cat][key] = { '1': p1, '2': p2, '3': p3 };
   pushToFirebase();
   renderMedal();
   showToast('🏅 Podio salvato!');
@@ -1085,8 +1108,12 @@ window.salvaPodio = function() {
 window.eliminaPodio = function() {
   const sportId = document.getElementById('podioSport').value;
   const cat = document.getElementById('podioCat').value;
-  if (!DATA.podio?.[cat]?.[sportId]) return;
-  delete DATA.podio[cat][sportId];
+  const sport = SPORTS.find(s => s.id === sportId);
+  const hasMF = sport && !sport.genders.includes('tutti');
+  const genere = hasMF ? (document.getElementById('podioGenere')?.value || 'M') : 'tutti';
+  const key = hasMF ? `${sportId}_${genere}` : sportId;
+  if (!DATA.podio?.[cat]?.[key]) return;
+  delete DATA.podio[cat][key];
   pushToFirebase();
   renderMedal();
   document.getElementById('podio1').value = '';
@@ -1107,7 +1134,12 @@ function renderMedal(){
       // Auto-load podio when sport/cat changes
       const sel = document.getElementById('podioSport');
       const catSel = document.getElementById('podioCat');
-      if (sel && !sel.onchange) { sel.onchange = loadPodioInForm; catSel.onchange = loadPodioInForm; }
+      if (sel && !sel.onchange) {
+        sel.onchange = loadPodioInForm;
+        catSel.onchange = loadPodioInForm;
+        const genSel = document.getElementById('podioGenere');
+        if (genSel) genSel.onchange = loadPodioInForm;
+      }
     }
   }
 
@@ -1160,8 +1192,9 @@ function renderMedal(){
 
   // Mostra anche il podio per sport (sotto il medagliere)
   const podioCards = Object.entries(podioData).map(([sportId, podio]) => {
-    const sport = SPORTS.find(s => s.id === sportId);
+    const sport = SPORTS.find(s => s.id === sportId.replace(/_M$|_F$/, ''));
     if (!sport) return '';
+    const genLabel = sportId.endsWith('_M') ? ' ♂' : sportId.endsWith('_F') ? ' ♀' : '';
     const entries = [['🥇',podio['1'],'gold'],['🥈',podio['2'],'silver'],['🥉',podio['3'],'bronze']].filter(([,n])=>n&&n.trim());
     if (!entries.length) return '';
     return `<div style="background:white;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px">
