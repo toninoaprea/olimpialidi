@@ -679,6 +679,11 @@ onValue(ref(db,'olimpialidi'),(snapshot)=>{
 
 // ── HELPERS ──
 function getVisibleSports() { return SPORTS.filter(s=>currentGender==='tutti'||s.genders.includes('tutti')||s.genders.includes(currentGender)); }
+
+function parseScore(s) {
+  if(s===''||s===null||s===undefined) return null;
+  return parseFloat(String(s).replace(',','.')) || 0;
+}
 function catLabel(c) { return c.charAt(0).toUpperCase()+c.slice(1); }
 function statusLabel(s) { return {upcoming:'In programma',live:'🔴 LIVE',done:'Conclusa'}[s]||s; }
 function formatDate(d) { if(!d) return '—'; const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`; }
@@ -969,7 +974,7 @@ function renderSimpleResults(cat,key,container){
 function renderMultiScoreTable(cat,key,container){
   const sport_ms=SPORTS.find(s=>s.id===getBaseSportId(key));
   const N=sport_ms?.numTiri||15,teams=DATA[cat][key].teams||[];
-  const withTotals=teams.map((t,i)=>{const raw=t.tiri||[];const tiri=Array(N).fill('').map((_,i)=>raw[i]||'');return{...t,tiri,total:tiri.reduce((s,v)=>s+(parseFloat(v)||0),0),origIdx:i};}).sort((a,b)=>sport_ms?.asc ? a.total-b.total : b.total-a.total);
+  const withTotals=teams.map((t,i)=>{const raw=t.tiri||[];const tiri=Array(N).fill('').map((_,i)=>raw[i]||'');return{...t,tiri,total:tiri.reduce((s,v)=>s+(parseScore(v)||0),0),origIdx:i};}).sort((a,b)=>sport_ms?.asc ? a.total-b.total : b.total-a.total);
   const hcols=Array.from({length:N},(_,i)=>`<th style="width:48px;text-align:center">${i+1}</th>`).join('');
   container.innerHTML=`<div style="overflow-x:auto"><table class="results-table" style="min-width:1000px">
     <thead><tr><th style="width:48px">Pos</th><th style="min-width:160px">Partecipante</th>${hcols}<th style="width:70px;text-align:center">Tot</th>${isAdmin?'<th style="width:50px"></th>':''}</tr></thead>
@@ -984,9 +989,19 @@ function renderMedal(){
   const cat=currentCategory; if(!DATA[cat]){container.innerHTML='';return;}
   const medA={},medS={},atSq={};
   CATEGORIES.forEach(c=>Object.values(DATA.iscritti?.[c]||{}).forEach(a=>{if(a.nome)atSq[a.nome]=a.squadra||''}));
-  Object.values(DATA[cat]).forEach(ev=>{
+  // Itera per sport per applicare correttamente asc e multiScore
+  Object.entries(DATA[cat]).forEach(([key, ev])=>{
     if(!ev.teams) return;
-    [...ev.teams].filter(t=>t.score!=='').sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0)).forEach((t,i)=>{
+    // Trova lo sport corrispondente alla chiave
+    const sportId = key.replace(/_M$|_F$/, '');
+    const sport = SPORTS.find(s => s.id === sportId);
+    if(!sport) return;
+    const isAsc = sport.asc || false;
+    const sorted = [...ev.teams].filter(t=>t.score!==''&&t.score!==null&&t.score!==undefined&&t.name&&t.name.trim())
+      .sort((a,b)=> isAsc
+        ? parseScore(a.score)-parseScore(b.score)
+        : parseScore(b.score)-parseScore(a.score));
+    sorted.forEach((t,i)=>{
       if(i>2) return;
       if(!medA[t.name])medA[t.name]={gold:0,silver:0,bronze:0};
       if(i===0)medA[t.name].gold++;if(i===1)medA[t.name].silver++;if(i===2)medA[t.name].bronze++;
