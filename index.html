@@ -536,18 +536,24 @@
           </select>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:16px">
         <div style="background:#fff9e6;border-radius:10px;padding:12px;border-left:4px solid var(--gold)">
           <div style="font-size:12px;font-weight:700;color:#b8860b;margin-bottom:6px">🥇 1° Posto</div>
-          <input id="podio1" type="text" placeholder="Nome atleta" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+          <select id="podio1" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white">
+            <option value="">— Seleziona atleta —</option>
+          </select>
         </div>
         <div style="background:#f5f5f5;border-radius:10px;padding:12px;border-left:4px solid var(--silver)">
           <div style="font-size:12px;font-weight:700;color:#708090;margin-bottom:6px">🥈 2° Posto</div>
-          <input id="podio2" type="text" placeholder="Nome atleta" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+          <select id="podio2" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white">
+            <option value="">— Seleziona atleta —</option>
+          </select>
         </div>
         <div style="background:#fdf0e6;border-radius:10px;padding:12px;border-left:4px solid var(--bronze)">
           <div style="font-size:12px;font-weight:700;color:var(--bronze);margin-bottom:6px">🥉 3° Posto</div>
-          <input id="podio3" type="text" placeholder="Nome atleta" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+          <select id="podio3" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white">
+            <option value="">— Seleziona atleta —</option>
+          </select>
         </div>
       </div>
       <button onclick="salvaPodio()" style="background:var(--navy);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">💾 Salva Podio</button>
@@ -1029,9 +1035,31 @@ function initPodioSelect() {
   });
 }
 
+function populatePodioAtleti() {
+  const cat = document.getElementById('podioCat')?.value || 'open';
+  const atleti = Object.values(DATA.iscritti?.[cat] || {})
+    .sort((a,b) => a.nome.localeCompare(b.nome));
+  
+  ['podio1','podio2','podio3'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const currentVal = sel.value;
+    sel.innerHTML = '<option value="">— Seleziona atleta —</option>';
+    atleti.forEach(a => {
+      const o = document.createElement('option');
+      o.value = a.nome;
+      o.textContent = `${a.nome} (${a.squadra || '—'})`;
+      sel.appendChild(o);
+    });
+    // Restore previous selection
+    if (currentVal) sel.value = currentVal;
+  });
+}
+
 function loadPodioInForm() {
   const sportId = document.getElementById('podioSport')?.value;
   const cat = document.getElementById('podioCat')?.value || 'open';
+  populatePodioAtleti();
   if (!sportId) return;
   const podio = DATA.podio?.[cat]?.[sportId] || {};
   document.getElementById('podio1').value = podio['1'] || '';
@@ -1075,6 +1103,7 @@ function renderMedal(){
     form.style.display = isAdmin ? 'block' : 'none';
     if (isAdmin) {
       initPodioSelect();
+      populatePodioAtleti();
       // Auto-load podio when sport/cat changes
       const sel = document.getElementById('podioSport');
       const catSel = document.getElementById('podioCat');
