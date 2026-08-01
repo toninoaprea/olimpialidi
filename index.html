@@ -1144,29 +1144,39 @@ function renderMedal(){
   }
 
   const cat = currentCategory;
-  const podioData = DATA.podio?.[cat] || {};
   const sqColors = {'ATC':'#dbeafe','SSGU':'#fef3c7','Again':'#d1fae5'};
 
   // Mappa nome -> squadra
   const atSq = {};
   CATEGORIES.forEach(c => Object.values(DATA.iscritti?.[c]||{}).forEach(a => { if(a.nome) atSq[a.nome] = a.squadra||''; }));
 
-  // Calcola medaglie da podio manuale
-  const medA = {}, medS = {};
-  Object.entries(podioData).forEach(([sportId, podio]) => {
+  // Medagliere ATLETI: solo categoria corrente
+  const medA = {};
+  const podioDataCat = DATA.podio?.[cat] || {};
+  Object.entries(podioDataCat).forEach(([sportId, podio]) => {
     [[podio['1'],0],[podio['2'],1],[podio['3'],2]].forEach(([nome, i]) => {
       if (!nome || !nome.trim()) return;
       if (!medA[nome]) medA[nome] = {gold:0, silver:0, bronze:0};
       if (i===0) medA[nome].gold++;
       if (i===1) medA[nome].silver++;
       if (i===2) medA[nome].bronze++;
-      const sq = atSq[nome] || '';
-      if (sq) {
+    });
+  });
+
+  // Medagliere SQUADRE: tutte le categorie sommate
+  const medS = {};
+  CATEGORIES.forEach(c => {
+    const podioData = DATA.podio?.[c] || {};
+    Object.entries(podioData).forEach(([sportId, podio]) => {
+      [[podio['1'],0],[podio['2'],1],[podio['3'],2]].forEach(([nome, i]) => {
+        if (!nome || !nome.trim()) return;
+        const sq = atSq[nome] || '';
+        if (!sq) return;
         if (!medS[sq]) medS[sq] = {gold:0, silver:0, bronze:0};
         if (i===0) medS[sq].gold++;
         if (i===1) medS[sq].silver++;
         if (i===2) medS[sq].bronze++;
-      }
+      });
     });
   });
 
@@ -1190,8 +1200,8 @@ function renderMedal(){
       </table></div>`;
   };
 
-  // Mostra anche il podio per sport (sotto il medagliere)
-  const podioCards = Object.entries(podioData).map(([sportId, podio]) => {
+  // Mostra anche il podio per sport (solo categoria corrente)
+  const podioCards = Object.entries(podioDataCat).map(([sportId, podio]) => {
     const sport = SPORTS.find(s => s.id === sportId.replace(/_M$|_F$/, ''));
     if (!sport) return '';
     const genLabel = sportId.endsWith('_M') ? ' ♂' : sportId.endsWith('_F') ? ' ♀' : '';
@@ -1212,7 +1222,7 @@ function renderMedal(){
     container.innerHTML = `<div class="empty"><div class="empty-icon">🥇</div><div class="empty-title">Nessuna medaglia assegnata</div><div class="empty-sub">${isAdmin?'Usa il form qui sopra per inserire il podio':'Il medagliere apparirà quando il comitato inserisce i risultati'}</div></div>`;
     return;
   }
-  container.innerHTML = tbl(sS,'🏆 Medagliere Squadre') + tbl(sA,'👤 Medagliere Atleti') +
+  container.innerHTML = tbl(sS,'🏆 Medagliere Squadre (tutte le categorie)') + tbl(sA,'👤 Medagliere Atleti') +
     (podioCards ? `<div style="margin-top:24px"><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--navy);letter-spacing:1px;margin-bottom:12px">📋 Risultati per Sport</div>${podioCards}</div>` : '');
 }
 
