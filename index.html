@@ -518,6 +518,42 @@
 
   <div class="section" id="sec-medagliere">
     <h1 class="page-title">Medagliere <span class="accent" id="med-title">Open</span></h1>
+
+    <!-- FORM PODIO - solo comitato -->
+    <div id="podioForm" style="display:none;background:white;border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:24px;box-shadow:var(--shadow)">
+      <div style="font-weight:600;font-size:15px;margin-bottom:16px;color:var(--navy)">🏅 Inserisci Podio per Sport</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px">
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Sport</div>
+          <select id="podioSport" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white;min-width:200px"></select>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Categoria</div>
+          <select id="podioCat" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+            <option value="open">Open</option>
+            <option value="espoir">Espoir</option>
+            <option value="junior">Junior</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px">
+        <div style="background:#fff9e6;border-radius:10px;padding:12px;border-left:4px solid var(--gold)">
+          <div style="font-size:12px;font-weight:700;color:#b8860b;margin-bottom:6px">🥇 1° Posto</div>
+          <input id="podio1" type="text" placeholder="Nome atleta" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+        </div>
+        <div style="background:#f5f5f5;border-radius:10px;padding:12px;border-left:4px solid var(--silver)">
+          <div style="font-size:12px;font-weight:700;color:#708090;margin-bottom:6px">🥈 2° Posto</div>
+          <input id="podio2" type="text" placeholder="Nome atleta" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+        </div>
+        <div style="background:#fdf0e6;border-radius:10px;padding:12px;border-left:4px solid var(--bronze)">
+          <div style="font-size:12px;font-weight:700;color:var(--bronze);margin-bottom:6px">🥉 3° Posto</div>
+          <input id="podio3" type="text" placeholder="Nome atleta" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+        </div>
+      </div>
+      <button onclick="salvaPodio()" style="background:var(--navy);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">💾 Salva Podio</button>
+      <button onclick="eliminaPodio()" style="background:#e53935;color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-left:8px">🗑 Elimina Podio</button>
+    </div>
+
     <div id="medalContainer"></div>
   </div>
 
@@ -659,10 +695,11 @@ onValue(ref(db,'olimpialidi'),(snapshot)=>{
       });
     });
     if(!DATA.records) DATA.records={};
+    if(!DATA.podio) DATA.podio={};
     if(!DATA.tornei) DATA.tornei={};
     if(!DATA.iscritti) DATA.iscritti={};
   } else {
-    DATA={calendario:{},open:{},espoir:{},junior:{},iscritti:{},records:{},tornei:{}};
+    DATA={calendario:{},open:{},espoir:{},junior:{},iscritti:{},records:{},tornei:{},podio:{}};
     SPORTS.forEach(s=>{ DATA.calendario[s.id]={date:'',time:'',location:'Spiaggia principale',status:'upcoming'}; });
     set(ref(db,'olimpialidi'),DATA);
   }
@@ -671,7 +708,7 @@ onValue(ref(db,'olimpialidi'),(snapshot)=>{
   renderAll();
   updateLiveDot();
 },()=>{
-  DATA={calendario:{},open:{},espoir:{},junior:{},iscritti:{},records:{},tornei:{}};
+  DATA={calendario:{},open:{},espoir:{},junior:{},iscritti:{},records:{},tornei:{},podio:{}};
   dbReady=true;
   setSyncStatus('error','🔴 Offline');
   renderAll();
@@ -979,69 +1016,111 @@ function renderMultiScoreTable(cat,key,container){
 }
 
 // ── MEDAGLIERE ──
+
+// ── PODIO / MEDAGLIERE MANUALE ──
+function initPodioSelect() {
+  const sel = document.getElementById('podioSport');
+  if (!sel || sel.options.length > 1) return;
+  SPORTS.forEach(sport => {
+    const o = document.createElement('option');
+    o.value = sport.id;
+    o.textContent = `${sport.emoji} ${sport.name}`;
+    sel.appendChild(o);
+  });
+}
+
+function loadPodioInForm() {
+  const sportId = document.getElementById('podioSport')?.value;
+  const cat = document.getElementById('podioCat')?.value || 'open';
+  if (!sportId) return;
+  const podio = DATA.podio?.[cat]?.[sportId] || {};
+  document.getElementById('podio1').value = podio['1'] || '';
+  document.getElementById('podio2').value = podio['2'] || '';
+  document.getElementById('podio3').value = podio['3'] || '';
+}
+
+window.salvaPodio = function() {
+  const sportId = document.getElementById('podioSport').value;
+  const cat = document.getElementById('podioCat').value;
+  const p1 = document.getElementById('podio1').value.trim();
+  const p2 = document.getElementById('podio2').value.trim();
+  const p3 = document.getElementById('podio3').value.trim();
+  if (!sportId) { showToast('⚠️ Seleziona uno sport'); return; }
+  if (!DATA.podio) DATA.podio = {};
+  if (!DATA.podio[cat]) DATA.podio[cat] = {};
+  DATA.podio[cat][sportId] = { '1': p1, '2': p2, '3': p3 };
+  pushToFirebase();
+  renderMedal();
+  showToast('🏅 Podio salvato!');
+};
+
+window.eliminaPodio = function() {
+  const sportId = document.getElementById('podioSport').value;
+  const cat = document.getElementById('podioCat').value;
+  if (!DATA.podio?.[cat]?.[sportId]) return;
+  delete DATA.podio[cat][sportId];
+  pushToFirebase();
+  renderMedal();
+  document.getElementById('podio1').value = '';
+  document.getElementById('podio2').value = '';
+  document.getElementById('podio3').value = '';
+  showToast('🗑 Podio eliminato');
+};
+
 function renderMedal(){
-  const container=document.getElementById('medalContainer'); if(!container) return;
-  const cat=currentCategory; if(!DATA[cat]){container.innerHTML='';return;}
+  const container = document.getElementById('medalContainer');
+  const form = document.getElementById('podioForm');
+  if (!container) return;
+  if (form) {
+    form.style.display = isAdmin ? 'block' : 'none';
+    if (isAdmin) {
+      initPodioSelect();
+      // Auto-load podio when sport/cat changes
+      const sel = document.getElementById('podioSport');
+      const catSel = document.getElementById('podioCat');
+      if (sel && !sel.onchange) { sel.onchange = loadPodioInForm; catSel.onchange = loadPodioInForm; }
+    }
+  }
+
+  const cat = currentCategory;
+  const podioData = DATA.podio?.[cat] || {};
+  const sqColors = {'ATC':'#dbeafe','SSGU':'#fef3c7','Again':'#d1fae5'};
 
   // Mappa nome -> squadra
-  const atSq={};
-  CATEGORIES.forEach(c=>Object.values(DATA.iscritti?.[c]||{}).forEach(a=>{if(a.nome)atSq[a.nome]=a.squadra||'';}));
+  const atSq = {};
+  CATEGORIES.forEach(c => Object.values(DATA.iscritti?.[c]||{}).forEach(a => { if(a.nome) atSq[a.nome] = a.squadra||''; }));
 
-  const medA={}, medS={};
-
-  // Itera ogni sport per categoria
-  Object.entries(DATA[cat]).forEach(([key, ev])=>{
-    if(!ev||!ev.teams||!ev.teams.length) return;
-    const sportId=key.replace(/_M$|_F$/,'');
-    const sport=SPORTS.find(s=>s.id===sportId);
-    if(!sport) return;
-    const isAsc=sport.asc||false;
-
-    // Filtra atleti con punteggio valido e nome valido
-    const validi=ev.teams.filter(t=>{
-      if(!t||!t.name||!t.name.trim()) return false;
-      if(t.score===''||t.score===null||t.score===undefined) return false;
-      return true;
-    });
-    if(!validi.length) return;
-
-    // Ordina
-    const sorted=[...validi].sort((a,b)=>{
-      const sa=parseFloat(String(a.score).replace(',','.'))||0;
-      const sb=parseFloat(String(b.score).replace(',','.'))||0;
-      return isAsc ? sa-sb : sb-sa;
-    });
-
-    // Assegna medaglie ai primi 3
-    sorted.slice(0,3).forEach((t,i)=>{
-      const nome=t.name;
-      if(!medA[nome]) medA[nome]={gold:0,silver:0,bronze:0};
-      if(i===0) medA[nome].gold++;
-      if(i===1) medA[nome].silver++;
-      if(i===2) medA[nome].bronze++;
-      const sq=atSq[nome]||'';
-      if(sq){
-        if(!medS[sq]) medS[sq]={gold:0,silver:0,bronze:0};
-        if(i===0) medS[sq].gold++;
-        if(i===1) medS[sq].silver++;
-        if(i===2) medS[sq].bronze++;
+  // Calcola medaglie da podio manuale
+  const medA = {}, medS = {};
+  Object.entries(podioData).forEach(([sportId, podio]) => {
+    [[podio['1'],0],[podio['2'],1],[podio['3'],2]].forEach(([nome, i]) => {
+      if (!nome || !nome.trim()) return;
+      if (!medA[nome]) medA[nome] = {gold:0, silver:0, bronze:0};
+      if (i===0) medA[nome].gold++;
+      if (i===1) medA[nome].silver++;
+      if (i===2) medA[nome].bronze++;
+      const sq = atSq[nome] || '';
+      if (sq) {
+        if (!medS[sq]) medS[sq] = {gold:0, silver:0, bronze:0};
+        if (i===0) medS[sq].gold++;
+        if (i===1) medS[sq].silver++;
+        if (i===2) medS[sq].bronze++;
       }
     });
   });
 
-  const sA=Object.entries(medA).map(([n,m])=>({name:n,...m,total:m.gold+m.silver+m.bronze})).sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
-  const sS=Object.entries(medS).map(([n,m])=>({name:n,...m,total:m.gold+m.silver+m.bronze})).sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
-  const sqC={'ATC':'#dbeafe','SSGU':'#fef3c7','Again':'#d1fae5'};
+  const sA = Object.entries(medA).map(([n,m])=>({name:n,...m,total:m.gold+m.silver+m.bronze})).sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
+  const sS = Object.entries(medS).map(([n,m])=>({name:n,...m,total:m.gold+m.silver+m.bronze})).sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
 
-  const tbl=(data,title)=>{
-    if(!data.length) return '';
+  const tbl = (data, title) => {
+    if (!data.length) return '';
     return `<div style="margin-bottom:28px">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--navy);letter-spacing:1px;margin-bottom:12px">${title}</div>
       <table class="medal-table">
         <thead><tr><th>#</th><th>${title.includes('Squadr')?'Squadra':'Atleta'}</th><th>🥇</th><th>🥈</th><th>🥉</th><th>Tot</th></tr></thead>
         <tbody>${data.map((t,i)=>`<tr>
           <td style="font-weight:700;color:var(--text-muted)">${i+1}</td>
-          <td><span class="team-name" style="${sqC[t.name]?`background:${sqC[t.name]};padding:3px 8px;border-radius:6px`:''}">${t.name}</span></td>
+          <td><span class="team-name" style="${sqColors[t.name]?`background:${sqColors[t.name]};padding:3px 8px;border-radius:6px`:''}">${t.name}</span></td>
           <td class="gold-cell">${t.gold||'—'}</td>
           <td class="silver-cell">${t.silver||'—'}</td>
           <td class="bronze-cell">${t.bronze||'—'}</td>
@@ -1050,11 +1129,29 @@ function renderMedal(){
       </table></div>`;
   };
 
-  if(!sA.length&&!sS.length){
-    container.innerHTML='<div class="empty"><div class="empty-icon">🥇</div><div class="empty-title">Nessuna medaglia assegnata</div></div>';
+  // Mostra anche il podio per sport (sotto il medagliere)
+  const podioCards = Object.entries(podioData).map(([sportId, podio]) => {
+    const sport = SPORTS.find(s => s.id === sportId);
+    if (!sport) return '';
+    const entries = [['🥇',podio['1'],'gold'],['🥈',podio['2'],'silver'],['🥉',podio['3'],'bronze']].filter(([,n])=>n&&n.trim());
+    if (!entries.length) return '';
+    return `<div style="background:white;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px">
+      <div style="background:var(--navy);padding:8px 14px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:18px">${sport.emoji}</span>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:white;letter-spacing:1px">${sport.name}</span>
+      </div>
+      <div style="padding:10px 14px;display:flex;gap:16px;flex-wrap:wrap">
+        ${entries.map(([medal,nome])=>`<span>${medal} <strong>${nome}</strong></span>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  if (!sA.length && !sS.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">🥇</div><div class="empty-title">Nessuna medaglia assegnata</div><div class="empty-sub">${isAdmin?'Usa il form qui sopra per inserire il podio':'Il medagliere apparirà quando il comitato inserisce i risultati'}</div></div>`;
     return;
   }
-  container.innerHTML=tbl(sS,'🏆 Medagliere Squadre')+tbl(sA,'👤 Medagliere Atleti');
+  container.innerHTML = tbl(sS,'🏆 Medagliere Squadre') + tbl(sA,'👤 Medagliere Atleti') +
+    (podioCards ? `<div style="margin-top:24px"><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--navy);letter-spacing:1px;margin-bottom:12px">📋 Risultati per Sport</div>${podioCards}</div>` : '');
 }
 
 // ── RECORD ──
@@ -1087,7 +1184,8 @@ window.salvaRecord=function(){
   const valore=document.getElementById('recValore').value.trim(),um=document.getElementById('recUM').value;
   if(!nome||!valore){showToast('⚠️ Inserisci nome e valore');return;}
   const key=`${sportId}_${genere}`;
-  if(!DATA.records) DATA.records={};if(!DATA.records[cat]) DATA.records[cat]={};
+  if(!DATA.records) DATA.records={};
+    if(!DATA.podio) DATA.podio={};if(!DATA.records[cat]) DATA.records[cat]={};
   DATA.records[cat][key]={nome,squadra,valore,um};
   pushToFirebase();renderRecord();showToast('🏆 Record salvato!');
   document.getElementById('recNome').value='';document.getElementById('recSquadra').value='';document.getElementById('recValore').value='';
