@@ -679,11 +679,6 @@ onValue(ref(db,'olimpialidi'),(snapshot)=>{
 
 // ── HELPERS ──
 function getVisibleSports() { return SPORTS.filter(s=>currentGender==='tutti'||s.genders.includes('tutti')||s.genders.includes(currentGender)); }
-
-function parseScore(s) {
-  if(s===''||s===null||s===undefined) return null;
-  return parseFloat(String(s).replace(',','.')) || 0;
-}
 function catLabel(c) { return c.charAt(0).toUpperCase()+c.slice(1); }
 function statusLabel(s) { return {upcoming:'In programma',live:'🔴 LIVE',done:'Conclusa'}[s]||s; }
 function formatDate(d) { if(!d) return '—'; const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`; }
@@ -974,7 +969,7 @@ function renderSimpleResults(cat,key,container){
 function renderMultiScoreTable(cat,key,container){
   const sport_ms=SPORTS.find(s=>s.id===getBaseSportId(key));
   const N=sport_ms?.numTiri||15,teams=DATA[cat][key].teams||[];
-  const withTotals=teams.map((t,i)=>{const raw=t.tiri||[];const tiri=Array(N).fill('').map((_,i)=>raw[i]||'');return{...t,tiri,total:tiri.reduce((s,v)=>s+(parseScore(v)||0),0),origIdx:i};}).sort((a,b)=>sport_ms?.asc ? a.total-b.total : b.total-a.total);
+  const withTotals=teams.map((t,i)=>{const raw=t.tiri||[];const tiri=Array(N).fill('').map((_,i)=>raw[i]||'');return{...t,tiri,total:tiri.reduce((s,v)=>s+(parseFloat(v)||0),0),origIdx:i};}).sort((a,b)=>sport_ms?.asc ? a.total-b.total : b.total-a.total);
   const hcols=Array.from({length:N},(_,i)=>`<th style="width:48px;text-align:center">${i+1}</th>`).join('');
   container.innerHTML=`<div style="overflow-x:auto"><table class="results-table" style="min-width:1000px">
     <thead><tr><th style="width:48px">Pos</th><th style="min-width:160px">Partecipante</th>${hcols}<th style="width:70px;text-align:center">Tot</th>${isAdmin?'<th style="width:50px"></th>':''}</tr></thead>
@@ -987,36 +982,78 @@ function renderMultiScoreTable(cat,key,container){
 function renderMedal(){
   const container=document.getElementById('medalContainer'); if(!container) return;
   const cat=currentCategory; if(!DATA[cat]){container.innerHTML='';return;}
-  const medA={},medS={},atSq={};
-  CATEGORIES.forEach(c=>Object.values(DATA.iscritti?.[c]||{}).forEach(a=>{if(a.nome)atSq[a.nome]=a.squadra||''}));
-  // Itera per sport per applicare correttamente asc e multiScore
+
+  // Mappa nome -> squadra
+  const atSq={};
+  CATEGORIES.forEach(c=>Object.values(DATA.iscritti?.[c]||{}).forEach(a=>{if(a.nome)atSq[a.nome]=a.squadra||'';}));
+
+  const medA={}, medS={};
+
+  // Itera ogni sport per categoria
   Object.entries(DATA[cat]).forEach(([key, ev])=>{
-    if(!ev.teams) return;
-    // Trova lo sport corrispondente alla chiave
-    const sportId = key.replace(/_M$|_F$/, '');
-    const sport = SPORTS.find(s => s.id === sportId);
+    if(!ev||!ev.teams||!ev.teams.length) return;
+    const sportId=key.replace(/_M$|_F$/,'');
+    const sport=SPORTS.find(s=>s.id===sportId);
     if(!sport) return;
-    const isAsc = sport.asc || false;
-    const sorted = [...ev.teams].filter(t=>t.score!==''&&t.score!==null&&t.score!==undefined&&t.name&&t.name.trim())
-      .sort((a,b)=> isAsc
-        ? parseScore(a.score)-parseScore(b.score)
-        : parseScore(b.score)-parseScore(a.score));
-    sorted.forEach((t,i)=>{
-      if(i>2) return;
-      if(!medA[t.name])medA[t.name]={gold:0,silver:0,bronze:0};
-      if(i===0)medA[t.name].gold++;if(i===1)medA[t.name].silver++;if(i===2)medA[t.name].bronze++;
-      const sq=atSq[t.name]||''; if(sq){if(!medS[sq])medS[sq]={gold:0,silver:0,bronze:0};if(i===0)medS[sq].gold++;if(i===1)medS[sq].silver++;if(i===2)medS[sq].bronze++;}
+    const isAsc=sport.asc||false;
+
+    // Filtra atleti con punteggio valido e nome valido
+    const validi=ev.teams.filter(t=>{
+      if(!t||!t.name||!t.name.trim()) return false;
+      if(t.score===''||t.score===null||t.score===undefined) return false;
+      return true;
+    });
+    if(!validi.length) return;
+
+    // Ordina
+    const sorted=[...validi].sort((a,b)=>{
+      const sa=parseFloat(String(a.score).replace(',','.'))||0;
+      const sb=parseFloat(String(b.score).replace(',','.'))||0;
+      return isAsc ? sa-sb : sb-sa;
+    });
+
+    // Assegna medaglie ai primi 3
+    sorted.slice(0,3).forEach((t,i)=>{
+      const nome=t.name;
+      if(!medA[nome]) medA[nome]={gold:0,silver:0,bronze:0};
+      if(i===0) medA[nome].gold++;
+      if(i===1) medA[nome].silver++;
+      if(i===2) medA[nome].bronze++;
+      const sq=atSq[nome]||'';
+      if(sq){
+        if(!medS[sq]) medS[sq]={gold:0,silver:0,bronze:0};
+        if(i===0) medS[sq].gold++;
+        if(i===1) medS[sq].silver++;
+        if(i===2) medS[sq].bronze++;
+      }
     });
   });
-  const sA=Object.entries(medA).map(([n,m])=>{return{name:n,...m,total:m.gold+m.silver+m.bronze}}).sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
-  const sS=Object.entries(medS).map(([n,m])=>{return{name:n,...m,total:m.gold+m.silver+m.bronze}}).sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
+
+  const sA=Object.entries(medA).map(([n,m])=>({name:n,...m,total:m.gold+m.silver+m.bronze})).sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
+  const sS=Object.entries(medS).map(([n,m])=>({name:n,...m,total:m.gold+m.silver+m.bronze})).sort((a,b)=>b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze);
+  const sqC={'ATC':'#dbeafe','SSGU':'#fef3c7','Again':'#d1fae5'};
+
   const tbl=(data,title)=>{
     if(!data.length) return '';
-    return `<div style="margin-bottom:28px"><div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--navy);letter-spacing:1px;margin-bottom:12px">${title}</div>
-      <table class="medal-table"><thead><tr><th>#</th><th>${title.includes('Squadr')?'Squadra':'Atleta'}</th><th>🥇</th><th>🥈</th><th>🥉</th><th>Tot</th></tr></thead>
-      <tbody>${data.map((t,i)=>`<tr><td style="font-weight:700;color:var(--text-muted)">${i+1}</td><td><span class="team-name" style="${SQ_COLORS[t.name]?`background:${SQ_COLORS[t.name]};padding:3px 8px;border-radius:6px`:''}">${t.name}</span></td><td class="gold-cell">${t.gold||'—'}</td><td class="silver-cell">${t.silver||'—'}</td><td class="bronze-cell">${t.bronze||'—'}</td><td style="font-weight:600">${t.total}</td></tr>`).join('')}</tbody></table></div>`;
+    return `<div style="margin-bottom:28px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--navy);letter-spacing:1px;margin-bottom:12px">${title}</div>
+      <table class="medal-table">
+        <thead><tr><th>#</th><th>${title.includes('Squadr')?'Squadra':'Atleta'}</th><th>🥇</th><th>🥈</th><th>🥉</th><th>Tot</th></tr></thead>
+        <tbody>${data.map((t,i)=>`<tr>
+          <td style="font-weight:700;color:var(--text-muted)">${i+1}</td>
+          <td><span class="team-name" style="${sqC[t.name]?`background:${sqC[t.name]};padding:3px 8px;border-radius:6px`:''}">${t.name}</span></td>
+          <td class="gold-cell">${t.gold||'—'}</td>
+          <td class="silver-cell">${t.silver||'—'}</td>
+          <td class="bronze-cell">${t.bronze||'—'}</td>
+          <td style="font-weight:600">${t.total}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
   };
-  if(!sA.length&&!sS.length){container.innerHTML='<div class="empty"><div class="empty-icon">🥇</div><div class="empty-title">Nessuna medaglia assegnata</div></div>';return;}
+
+  if(!sA.length&&!sS.length){
+    container.innerHTML='<div class="empty"><div class="empty-icon">🥇</div><div class="empty-title">Nessuna medaglia assegnata</div></div>';
+    return;
+  }
   container.innerHTML=tbl(sS,'🏆 Medagliere Squadre')+tbl(sA,'👤 Medagliere Atleti');
 }
 
