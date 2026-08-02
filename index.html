@@ -258,6 +258,7 @@
     </div>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
       <button onclick="pulisciTeamFinti()" style="background:#e53935;color:white;border:none;border-radius:8px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">🧹 Pulisci Team finti</button>
+      <button onclick="sincronizzaAtleti()" style="background:#7b1fa2;color:white;border:none;border-radius:8px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">🔄 Sincronizza Atleti</button>
       <button onclick="esportaExcel()" style="background:#2e7d32;color:white;border:none;border-radius:8px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">📊 Esporta Excel</button>
       <div class="sync-bar" style="margin-bottom:0">
         <div class="sync-dot" id="syncDot"></div>
@@ -1361,6 +1362,46 @@ window.addTeam=function(cat,key){
   DATA[cat][key].teams.push({name:'Nuovo atleta',score:''});pushToFirebase();renderResults();
 };
 window.removeTeam=function(cat,key,idx){DATA[cat][key].teams.splice(idx,1);pushToFirebase();renderResults();};
+
+window.sincronizzaAtleti = function() {
+  if (!isAdmin) return;
+  let aggiunti = 0;
+
+  CATEGORIES.forEach(cat => {
+    const atleti = Object.values(DATA.iscritti?.[cat] || {});
+    atleti.forEach(atleta => {
+      if (!atleta.nome || !atleta.sport) return;
+      const genere = atleta.genere || 'M';
+
+      atleta.sport.forEach(sportId => {
+        const sport = SPORTS.find(s => s.id === sportId);
+        if (!sport) return;
+        if (sportId === 'calciobalilla') return;
+
+        const key = sport.genders.includes('tutti') ? sportId : `${sportId}_${genere}`;
+
+        if (!DATA[cat]) DATA[cat] = {};
+        if (!DATA[cat][key]) DATA[cat][key] = { teams: [] };
+        if (!DATA[cat][key].teams) DATA[cat][key].teams = [];
+
+        // Aggiungi solo se non già presente
+        const exists = DATA[cat][key].teams.some(t => t.name === atleta.nome);
+        if (!exists) {
+          DATA[cat][key].teams.push({ name: atleta.nome, score: '' });
+          aggiunti++;
+        }
+      });
+    });
+  });
+
+  if (aggiunti > 0) {
+    pushToFirebase();
+    showToast(`✅ Sincronizzati ${aggiunti} atleti mancanti!`);
+  } else {
+    showToast('✅ Tutti gli atleti erano già sincronizzati!');
+  }
+};
+
 window.pulisciTeamFinti=function(){
   if(!isAdmin)return;
   const finti=['Team Azzurro','Team Rosso','Team Verde','Team Giallo'];let rimossi=0;
