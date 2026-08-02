@@ -1213,7 +1213,11 @@ function renderMedal(){
         <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:white;letter-spacing:1px">${sport.name}</span>
       </div>
       <div style="padding:10px 14px;display:flex;gap:16px;flex-wrap:wrap">
-        ${entries.map(([medal,nome])=>`<span>${medal} <strong>${nome}</strong></span>`).join('')}
+        ${entries.map(([medal,nome])=>{
+          const sq=atSq[nome]||'';
+          const sqBg=sqColors[sq]||'';
+          return `<span>${medal} <strong>${nome}</strong>${sq?` <span style="background:${sqBg};padding:2px 7px;border-radius:5px;font-size:11px;font-weight:600">${sq}</span>`:''}</span>`;
+        }).join('')}
       </div>
     </div>`;
   }).join('');
