@@ -1436,6 +1436,61 @@ function generaExcel(){
   const mR=[['Categoria','Squadra','Atleta','Oro','Argento','Bronzo','Tot']];
   CATEGORIES.forEach(cat=>{const m={};Object.values(DATA[cat]||{}).forEach(ev=>{if(!ev.teams)return;[...ev.teams].filter(t=>t.score!=='').sort((a,b)=>(parseFloat(b.score)||0)-(parseFloat(a.score)||0)).forEach((t,i)=>{if(i>2)return;if(!m[t.name])m[t.name]={gold:0,silver:0,bronze:0};if(i===0)m[t.name].gold++;if(i===1)m[t.name].silver++;if(i===2)m[t.name].bronze++;});});Object.entries(m).sort((a,b)=>b[1].gold-a[1].gold).forEach(([n,v])=>mR.push([catLabel(cat),'',n,v.gold,v.silver,v.bronze,v.gold+v.silver+v.bronze]));});
   const wsM=XLSX.utils.aoa_to_sheet(mR);XLSX.utils.book_append_sheet(wb,wsM,'Medagliere');
+
+  // ── FOGLI TORNEI ──
+  const TORNEI_IDS=['pallanuoto','racchettoni','beach_pong','bocce','calciobalilla'];
+  TORNEI_IDS.forEach(sportId=>{
+    const sport=SPORTS.find(s=>s.id===sportId);if(!sport)return;
+    CATEGORIES.forEach(cat=>{
+      const torData=DATA.tornei?.[cat]?.[sportId];if(!torData)return;
+      const gironi=torData.gironi||{},bracket=torData.bracket||{};
+      if(!Object.keys(gironi).length&&!Object.keys(bracket).length)return;
+      const rows=[];
+      const sName=`${sport.name.substring(0,14)}_${cat.charAt(0).toUpperCase()+cat.slice(1)}`.replace(/[/:*?[\]]/g,'_');
+      // Gironi
+      Object.entries(gironi).sort().forEach(([gKey,g])=>{
+        const atleti=g.atleti||['','','',''],partite=g.partite||[];
+        rows.push([`GIRONE ${gKey}`,'','','','','','']);
+        rows.push(['Atleti:',...atleti]);rows.push([]);
+        rows.push(['Partita','Casa','vs','Ospite','Ris.Casa','','Ris.Ospite']);
+        partite.forEach((m,i)=>rows.push([`P${i+1}`,atleti[m.h]||`A${m.h+1}`,'vs',atleti[m.a]||`A${m.a+1}`,m.scoreH||'','-',m.scoreA||'']));
+        rows.push([]);
+        const cls={};atleti.forEach((n,i)=>cls[i]={nome:n,g:0,v:0,p:0,n:0,gf:0,gs:0,pts:0});
+        partite.forEach(m=>{
+          const sh=parseFloat(String(m.scoreH||'').replace(',','.'))||0,sa=parseFloat(String(m.scoreA||'').replace(',','.'))||0;
+          if(m.scoreH===''&&m.scoreA==='')return;
+          cls[m.h].g++;cls[m.a].g++;cls[m.h].gf+=sh;cls[m.h].gs+=sa;cls[m.a].gf+=sa;cls[m.a].gs+=sh;
+          if(sh>sa){cls[m.h].v++;cls[m.h].pts+=3;cls[m.a].p++;}else if(sa>sh){cls[m.a].v++;cls[m.a].pts+=3;cls[m.h].p++;}else{cls[m.h].n++;cls[m.h].pts++;cls[m.a].n++;cls[m.a].pts++;}
+        });
+        const sorted=Object.values(cls).sort((a,b)=>b.pts-a.pts);
+        rows.push([`Class. Girone ${gKey}`,'G','V','N','P','GF-GS','Pt']);
+        sorted.forEach(c=>rows.push([c.nome||'—',c.g,c.v,c.n,c.p,`${c.gf}-${c.gs}`,c.pts]));
+        rows.push([]);rows.push([]);
+      });
+      // Tabellone
+      const rNames={ottavi:'Ottavi',quarti:'Quarti',semifin:'Semifinali',terzo:'Finale 3°',finale:'Finale 1°'};
+      Object.entries(bracket).forEach(([rk,matches])=>{
+        rows.push([rNames[rk]||rk,'','','','','']);
+        rows.push(['Partita','Sq.1','Ris.','Sq.2','Ris.','Vincitore']);
+        Object.entries(matches).sort().forEach(([mk,m])=>rows.push([`P${parseInt(mk.replace('m',''))+1}`,m.t1||'—',m.s1||'',m.t2||'—',m.s2||'',m.winner||'']));
+        rows.push([]);
+      });
+      if(rows.length>0){const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:12},{wch:18},{wch:5},{wch:18},{wch:6},{wch:3},{wch:6}];XLSX.utils.book_append_sheet(wb,ws,sName);}
+    });
+  });
+
+  // ── PODIO MEDAGLIERE ──
+  const pRows=[['Categoria','Sport','Genere','1° Posto','2° Posto','3° Posto']];
+  CATEGORIES.forEach(cat=>{
+    Object.entries(DATA.podio?.[cat]||{}).forEach(([key,podio])=>{
+      const sId=key.replace(/_M$|_F$/,'');
+      const sp=SPORTS.find(s=>s.id===sId);
+      const gen=key.endsWith('_M')?'Maschile':key.endsWith('_F')?'Femminile':'Misto';
+      pRows.push([catLabel(cat),sp?.name||sId,gen,podio['1']||'',podio['2']||'',podio['3']||'']);
+    });
+  });
+  if(pRows.length>1){const wsPodio=XLSX.utils.aoa_to_sheet(pRows);wsPodio['!cols']=[{wch:10},{wch:22},{wch:10},{wch:22},{wch:22},{wch:22}];XLSX.utils.book_append_sheet(wb,wsPodio,'Podio_Medagliere');}
+
   XLSX.writeFile(wb,`Olimpialidi_${now.replace(/\//g,'-')}.xlsx`);showToast('✅ Excel scaricato!');
 }
 
