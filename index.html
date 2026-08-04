@@ -1303,13 +1303,37 @@ function renderTornei(){
     html+='</div>';
   }
   html+='</div></div>';
-  // Ottavi solo per racchettoni
-  const rounds = sportId === 'racchettoni'
-    ? [{key:'ottavi',label:'Ottavi di Finale',slots:16},{key:'quarti',label:'Quarti di Finale',slots:8},{key:'semifin',label:'Semifinali',slots:4},{key:'terzo',label:'Finale 3° Posto',slots:2},{key:'finale',label:'Finale 1° Posto 🏆',slots:2}]
-    : [{key:'quarti',label:'Quarti di Finale',slots:8},{key:'semifin',label:'Semifinali',slots:4},{key:'terzo',label:'Finale 3° Posto',slots:2},{key:'finale',label:'Finale 1° Posto 🏆',slots:2}];
+  // Rounds in base a sport e categoria
+  let rounds;
+  if (sportId === 'racchettoni' && (cat === 'open' || cat === 'espoir')) {
+    rounds = [
+      {key:'spareggi', label:'Spareggi (accesso Ottavi)', slots:3, custom:true},
+      {key:'ottavi',   label:'Ottavi di Finale',          slots:16},
+      {key:'quarti',   label:'Quarti di Finale',          slots:8},
+      {key:'semifin',  label:'Semifinali',                slots:4},
+      {key:'terzo',    label:'Finale 3° Posto',           slots:2},
+      {key:'finale',   label:'Finale 1° Posto 🏆',       slots:2},
+    ];
+  } else if (sportId === 'racchettoni') {
+    rounds = [
+      {key:'ottavi',  label:'Ottavi di Finale',   slots:16},
+      {key:'quarti',  label:'Quarti di Finale',   slots:8},
+      {key:'semifin', label:'Semifinali',          slots:4},
+      {key:'terzo',   label:'Finale 3° Posto',     slots:2},
+      {key:'finale',  label:'Finale 1° Posto 🏆', slots:2},
+    ];
+  } else {
+    rounds = [
+      {key:'quarti',  label:'Quarti di Finale',   slots:8},
+      {key:'semifin', label:'Semifinali',          slots:4},
+      {key:'terzo',   label:'Finale 3° Posto',     slots:2},
+      {key:'finale',  label:'Finale 1° Posto 🏆', slots:2},
+    ];
+  }
   html+=`<div class="torneo-block" style="margin-top:20px"><div class="torneo-block-header"><span class="torneo-block-title">🏆 Tabellone Eliminazione Diretta</span></div><div class="torneo-block-body">`;
   rounds.forEach(round=>{
-    const rData=bracket[round.key]||{},numMatches=round.slots/2;
+    const rData=bracket[round.key]||{};
+    const numMatches = round.custom ? 3 : round.slots/2;
     html+=`<div class="bracket-round"><div class="bracket-title">${round.label}</div><div class="bracket-matches">`;
     for(let i=0;i<numMatches;i++){
       const match=rData[`m${i}`]||{t1:`${i*2+1}`,t2:`${i*2+2}`,s1:'',s2:'',winner:''},w=match.winner;
