@@ -1286,15 +1286,22 @@ function renderTornei(){
   tabsEl.innerHTML=TORNEI_SPORTS_LIST.map(s=>`<button class="sport-pill ${s.id===currentTorneoSport?'active':''}" onclick="setTorneoSport('${s.id}')">${s.emoji} ${s.name}</button>`).join('');
   const cat=currentCategory,sportId=currentTorneoSport,sport=sportById(sportId);
   const torData=getTorneoData(sportId,cat),gironi=torData.gironi||{},bracket=torData.bracket||{};
-  let html=`<div class="info-box">ℹ️ <strong>Funzionamento Gironi</strong> — Beach Pong e Racchettoni sono ad eliminazione diretta. 
-  </div>`;
-  html+=`<div class="torneo-block"><div class="torneo-block-header"><span class="torneo-block-title">📋 Gironi ${sport?sport.emoji:''} ${sport?sport.name:''}</span>${isAdmin?`<button onclick="aggiungiGirone('${sportId}','${cat}')" style="background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer">+ Aggiungi Girone</button>`:''}</div><div class="torneo-block-body">`;
+  let html=`<div class="info-box">ℹ️ <strong>Funzionamento Gironi</strong> — Funzionamento Gironi</div>`;
+  html+=`<div class="torneo-block"><div class="torneo-block-header"><span class="torneo-block-title">📋 Gironi ${sport?sport.emoji:''} ${sport?sport.name:''}</span>${isAdmin?`<div style="display:flex;align-items:center;gap:8px">
+        <select id="gironeSize_${sportId}" style="border:1.5px solid rgba(255,255,255,0.3);border-radius:6px;padding:5px 10px;background:rgba(255,255,255,0.1);color:white;font-family:'DM Sans',sans-serif;font-size:12px;outline:none">
+          <option value="4">4 atleti</option>
+          <option value="3">3 atleti</option>
+        </select>
+        <button onclick="aggiungiGirone('${sportId}','${cat}',document.getElementById('gironeSize_${sportId}').value)" style="background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer">+ Aggiungi Girone</button>
+      </div>`:''}</div><div class="torneo-block-body">`;
   const gKeys=Object.keys(gironi).sort();
   if(!gKeys.length){html+=`<div class="empty" style="padding:24px"><div class="empty-icon">🏆</div><div class="empty-title">Nessun girone</div><div class="empty-sub">${isAdmin?'Clicca &quot;+ Aggiungi Girone&quot; per iniziare':'I gironi appariranno qui'}</div></div>`;}
   else{
     html+=`<div class="girone-grid">`;
     gKeys.forEach(gKey=>{
-      const g=gironi[gKey],atleti=g.atleti||['','','',''],partite=g.partite||generaCalendarioGirone(atleti),cls=calcolaClassificaGirone(atleti,partite);
+      const g=gironi[gKey];
+      const gSize=g.size||g.atleti?.length||4;
+      const atleti=g.atleti||Array(gSize).fill(''),partite=g.partite||generaCalendarioGirone(atleti),cls=calcolaClassificaGirone(atleti,partite);
       html+=`<div class="girone-card"><div class="girone-header"><span class="girone-title">Girone ${gKey}</span>${isAdmin?`<button onclick="eliminaGirone('${sportId}','${cat}','${gKey}')" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:14px">🗑</button>`:''}</div><div class="girone-body"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:8px">Atleti</div>`;
       atleti.forEach((nome,i)=>{html+=`<div class="atleta-row"><div class="atleta-num">${i+1}</div>${isAdmin?`<input class="score-input" style="flex:1;text-align:left" placeholder="Atleta ${i+1}" value="${nome}" onchange="updateAtleta('${sportId}','${cat}','${gKey}',${i},this.value)">`:`<span style="font-weight:500;font-size:13px">${nome||`Atleta ${i+1}`}</span>`}</div>`;});
       html+=`<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin:12px 0 8px">Calendario</div>`;
@@ -1349,15 +1356,18 @@ function renderTornei(){
   container.innerHTML=html;
 }
 window.setTorneoSport=function(id){currentTorneoSport=id;renderTornei();};
-window.aggiungiGirone=function(sportId,cat){
+window.aggiungiGirone=function(sportId,cat,size){
+  size = parseInt(size) || 4;
   if(!DATA.tornei)DATA.tornei={};if(!DATA.tornei[cat])DATA.tornei[cat]={};if(!DATA.tornei[cat][sportId])DATA.tornei[cat][sportId]={gironi:{},bracket:{}};
-  const gironi=DATA.tornei[cat][sportId].gironi,n=Object.keys(gironi).length,key=String.fromCharCode(65+n),atleti=['','','',''];
-  gironi[key]={atleti,partite:generaCalendarioGirone(atleti)};pushToFirebase();renderTornei();
+  const gironi=DATA.tornei[cat][sportId].gironi,n=Object.keys(gironi).length,key=String.fromCharCode(65+n);
+  const atleti=Array(size).fill('');
+  gironi[key]={atleti,size,partite:generaCalendarioGirone(atleti)};pushToFirebase();renderTornei();
 };
 window.eliminaGirone=function(sportId,cat,gKey){if(!DATA.tornei?.[cat]?.[sportId]?.gironi?.[gKey])return;delete DATA.tornei[cat][sportId].gironi[gKey];pushToFirebase();renderTornei();};
 window.updateAtleta=function(sportId,cat,gKey,idx,val){
   const g=DATA.tornei?.[cat]?.[sportId]?.gironi?.[gKey];if(!g)return;
-  if(!g.atleti)g.atleti=['','','',''];g.atleti[idx]=val;
+  const sz=g.size||g.atleti?.length||4;
+  if(!g.atleti)g.atleti=Array(sz).fill('');g.atleti[idx]=val;
   if(!g.partite)g.partite=generaCalendarioGirone(g.atleti);
   pushToFirebase();setTimeout(renderTornei,100);
 };
