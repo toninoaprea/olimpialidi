@@ -1047,7 +1047,8 @@ function populatePodioAtleti() {
   const cat = document.getElementById('podioCat')?.value || 'open';
   const sportId = document.getElementById('podioSport')?.value;
   const sport = SPORTS.find(s => s.id === sportId);
-  const hasMF = sport && !sport.genders.includes('tutti');
+  const FORZA_MISTI = ['racchettoni','beach_pong'];
+  const hasMF = sport && !sport.genders.includes('tutti') && !FORZA_MISTI.includes(sportId);
   const genere = hasMF ? (document.getElementById('podioGenere')?.value || 'M') : null;
   let atleti = Object.values(DATA.iscritti?.[cat] || {});
   // Filtra per genere se sport M/F
@@ -1074,7 +1075,8 @@ function loadPodioInForm() {
   const cat = document.getElementById('podioCat')?.value || 'open';
   // Mostra/nascondi genere in base allo sport
   const sport = SPORTS.find(s => s.id === sportId);
-  const hasMF = sport && !sport.genders.includes('tutti');
+  const FORZA_MISTI = ['racchettoni','beach_pong'];
+  const hasMF = sport && !sport.genders.includes('tutti') && !FORZA_MISTI.includes(sportId);
   const genereBox = document.getElementById('podioGenereBox');
   if (genereBox) genereBox.style.display = hasMF ? 'block' : 'none';
   populatePodioAtleti();
@@ -1095,7 +1097,8 @@ window.salvaPodio = function() {
   const p3 = document.getElementById('podio3').value;
   if (!sportId) { showToast('⚠️ Seleziona uno sport'); return; }
   const sport = SPORTS.find(s => s.id === sportId);
-  const hasMF = sport && !sport.genders.includes('tutti');
+  const FORZA_MISTI = ['racchettoni','beach_pong'];
+  const hasMF = sport && !sport.genders.includes('tutti') && !FORZA_MISTI.includes(sportId);
   const genere = hasMF ? (document.getElementById('podioGenere')?.value || 'M') : 'tutti';
   const key = hasMF ? `${sportId}_${genere}` : sportId;
   if (!DATA.podio) DATA.podio = {};
@@ -1110,7 +1113,8 @@ window.eliminaPodio = function() {
   const sportId = document.getElementById('podioSport').value;
   const cat = document.getElementById('podioCat').value;
   const sport = SPORTS.find(s => s.id === sportId);
-  const hasMF = sport && !sport.genders.includes('tutti');
+  const FORZA_MISTI = ['racchettoni','beach_pong'];
+  const hasMF = sport && !sport.genders.includes('tutti') && !FORZA_MISTI.includes(sportId);
   const genere = hasMF ? (document.getElementById('podioGenere')?.value || 'M') : 'tutti';
   const key = hasMF ? `${sportId}_${genere}` : sportId;
   if (!DATA.podio?.[cat]?.[key]) return;
