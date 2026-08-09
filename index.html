@@ -995,7 +995,20 @@ function renderRisultatiContent() {
   if (!DATA[cat]) DATA[cat] = {};
   if (!DATA[cat][key]) DATA[cat][key] = { teams: [] };
   if (!DATA[cat][key].teams) DATA[cat][key].teams = [];
-  isMultiScore(baseSportId) ? renderMultiScoreTable(cat, key, container) : renderSimpleResults(cat, key, container);
+  // Nota golf
+  if (baseSportId === 'golf') {
+    container.innerHTML = `<div class="info-box" style="margin-bottom:16px">
+      ⛳ <strong>Par per categoria:</strong><br>
+      🏅 <strong>Open:</strong> Buca 1 par 4 &nbsp;|&nbsp; Buca 2 par 5 &nbsp;|&nbsp; Buca 3 par 5<br>
+      🏅 <strong>Espoir:</strong> Buca 1 par 5 &nbsp;|&nbsp; Buca 2 par 6 &nbsp;|&nbsp; Buca 3 par 6<br>
+      🏅 <strong>Junior:</strong> Buca 1 par 6 &nbsp;|&nbsp; Buca 2 par 7 &nbsp;|&nbsp; Buca 3 par 7
+    </div>`;
+    const tmp = document.createElement('div');
+    renderMultiScoreTable(cat, key, tmp);
+    container.appendChild(tmp);
+  } else {
+    isMultiScore(baseSportId) ? renderMultiScoreTable(cat, key, container) : renderSimpleResults(cat, key, container);
+  }
 }
 
 
