@@ -1306,8 +1306,10 @@ function renderTornei(){
   let html=`<div class="info-box">ℹ️ <strong>Funzionamento Gironi</strong> — Funzionamento Gironi</div>`;
   html+=`<div class="torneo-block"><div class="torneo-block-header"><span class="torneo-block-title">📋 Gironi ${sport?sport.emoji:''} ${sport?sport.name:''}</span>${isAdmin?`<div style="display:flex;align-items:center;gap:8px">
         <select id="gironeSize_${sportId}" style="border:1.5px solid rgba(255,255,255,0.3);border-radius:6px;padding:5px 10px;background:rgba(255,255,255,0.1);color:white;font-family:'DM Sans',sans-serif;font-size:12px;outline:none">
-          <option value="4">4 atleti</option>
           <option value="3">3 atleti</option>
+          <option value="4">4 atleti</option>
+          <option value="5">5 atleti</option>
+          <option value="6">6 atleti</option>
         </select>
         <button onclick="aggiungiGirone('${sportId}','${cat}',document.getElementById('gironeSize_${sportId}').value)" style="background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer">+ Aggiungi Girone</button>
       </div>`:''}</div><div class="torneo-block-body">`;
