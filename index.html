@@ -547,21 +547,39 @@
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:16px">
         <div style="background:#fff9e6;border-radius:10px;padding:12px;border-left:4px solid var(--gold)">
           <div style="font-size:12px;font-weight:700;color:#b8860b;margin-bottom:6px">🥇 1° Posto</div>
-          <select id="podio1" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white">
+          <select id="podio1" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white;margin-bottom:6px">
             <option value="">— Seleziona atleta —</option>
           </select>
+          <div id="podioPartner1Box" style="display:none">
+            <div style="font-size:11px;color:#b8860b;margin-bottom:4px">Partner</div>
+            <select id="podioP1b" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white">
+              <option value="">— Seleziona partner —</option>
+            </select>
+          </div>
         </div>
         <div style="background:#f5f5f5;border-radius:10px;padding:12px;border-left:4px solid var(--silver)">
           <div style="font-size:12px;font-weight:700;color:#708090;margin-bottom:6px">🥈 2° Posto</div>
-          <select id="podio2" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white">
+          <select id="podio2" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white;margin-bottom:6px">
             <option value="">— Seleziona atleta —</option>
           </select>
+          <div id="podioPartner2Box" style="display:none">
+            <div style="font-size:11px;color:#708090;margin-bottom:4px">Partner</div>
+            <select id="podioP2b" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white">
+              <option value="">— Seleziona partner —</option>
+            </select>
+          </div>
         </div>
         <div style="background:#fdf0e6;border-radius:10px;padding:12px;border-left:4px solid var(--bronze)">
           <div style="font-size:12px;font-weight:700;color:var(--bronze);margin-bottom:6px">🥉 3° Posto</div>
-          <select id="podio3" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white">
+          <select id="podio3" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white;margin-bottom:6px">
             <option value="">— Seleziona atleta —</option>
           </select>
+          <div id="podioPartner3Box" style="display:none">
+            <div style="font-size:11px;color:var(--bronze);margin-bottom:4px">Partner</div>
+            <select id="podioP3b" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:white">
+              <option value="">— Seleziona partner —</option>
+            </select>
+          </div>
         </div>
       </div>
       <button onclick="salvaPodio()" style="background:var(--navy);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">💾 Salva Podio</button>
@@ -1081,17 +1099,36 @@ function populatePodioAtleti() {
     });
     if (currentVal) sel.value = currentVal;
   });
+  // Popola anche i partner select per calciobalilla
+  ['podioP1b','podioP2b','podioP3b'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const currentVal = sel.value;
+    sel.innerHTML = '<option value="">— Seleziona partner —</option>';
+    atleti.forEach(a => {
+      const o = document.createElement('option');
+      o.value = a.nome;
+      o.textContent = `${a.nome} (${a.squadra || '—'})`;
+      sel.appendChild(o);
+    });
+    if (currentVal) sel.value = currentVal;
+  });
 }
 
 function loadPodioInForm() {
   const sportId = document.getElementById('podioSport')?.value;
   const cat = document.getElementById('podioCat')?.value || 'open';
-  // Mostra/nascondi genere in base allo sport
   const sport = SPORTS.find(s => s.id === sportId);
   const FORZA_MISTI = ['racchettoni','beach_pong'];
   const hasMF = sport && !sport.genders.includes('tutti') && !FORZA_MISTI.includes(sportId);
   const genereBox = document.getElementById('podioGenereBox');
   if (genereBox) genereBox.style.display = hasMF ? 'block' : 'none';
+  // Mostra/nascondi campi partner per calciobalilla
+  const isCalcio = sportId === 'calciobalilla';
+  ['podioPartner1Box','podioPartner2Box','podioPartner3Box'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = isCalcio ? 'block' : 'none';
+  });
   populatePodioAtleti();
   if (!sportId) return;
   const genere = hasMF ? (document.getElementById('podioGenere')?.value || 'M') : 'tutti';
@@ -1100,6 +1137,11 @@ function loadPodioInForm() {
   document.getElementById('podio1').value = podio['1'] || '';
   document.getElementById('podio2').value = podio['2'] || '';
   document.getElementById('podio3').value = podio['3'] || '';
+  if (isCalcio) {
+    document.getElementById('podioP1b').value = podio['1b'] || '';
+    document.getElementById('podioP2b').value = podio['2b'] || '';
+    document.getElementById('podioP3b').value = podio['3b'] || '';
+  }
 }
 
 window.salvaPodio = function() {
@@ -1116,7 +1158,13 @@ window.salvaPodio = function() {
   const key = hasMF ? `${sportId}_${genere}` : sportId;
   if (!DATA.podio) DATA.podio = {};
   if (!DATA.podio[cat]) DATA.podio[cat] = {};
-  DATA.podio[cat][key] = { '1': p1, '2': p2, '3': p3 };
+  const entry = { '1': p1, '2': p2, '3': p3 };
+  if (sportId === 'calciobalilla') {
+    entry['1b'] = document.getElementById('podioP1b')?.value || '';
+    entry['2b'] = document.getElementById('podioP2b')?.value || '';
+    entry['3b'] = document.getElementById('podioP3b')?.value || '';
+  }
+  DATA.podio[cat][key] = entry;
   pushToFirebase();
   renderMedal();
   showToast('🏅 Podio salvato!');
@@ -1223,7 +1271,12 @@ function renderMedal(){
     const sport = SPORTS.find(s => s.id === sportId.replace(/_M$|_F$/, ''));
     if (!sport) return '';
     const genLabel = sportId.endsWith('_M') ? ' ♂' : sportId.endsWith('_F') ? ' ♀' : '';
-    const entries = [['🥇',podio['1'],'gold'],['🥈',podio['2'],'silver'],['🥉',podio['3'],'bronze']].filter(([,n])=>n&&n.trim());
+    const isCalcio = sportId.replace(/_M$|_F$/,'') === 'calciobalilla';
+    const entries = [
+      ['🥇', isCalcio && podio['1b'] ? `${podio['1']} & ${podio['1b']}` : podio['1'], 'gold'],
+      ['🥈', isCalcio && podio['2b'] ? `${podio['2']} & ${podio['2b']}` : podio['2'], 'silver'],
+      ['🥉', isCalcio && podio['3b'] ? `${podio['3']} & ${podio['3b']}` : podio['3'], 'bronze'],
+    ].filter(([,n])=>n&&n.trim());
     if (!entries.length) return '';
     return `<div style="background:white;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px">
       <div style="background:var(--navy);padding:8px 14px;display:flex;align-items:center;gap:8px">
