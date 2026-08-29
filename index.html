@@ -836,93 +836,144 @@ function renderHof() {
   if (!container) return;
   if (form) form.style.display = isAdmin ? 'block' : 'none';
 
+  const years = ['y2024','y2025','y2026'];
+  const yLabels = {y2024:'2024',y2025:'2025',y2026:'2026'};
+
+  const gold   = a => years.reduce((s,y)=>s+(a[y]?.gold||0),0);
+  const silver = a => years.reduce((s,y)=>s+(a[y]?.silver||0),0);
+  const bronze = a => years.reduce((s,y)=>s+(a[y]?.bronze||0),0);
+  const total  = a => gold(a)+silver(a)+bronze(a);
+
   const atleti = Object.entries(DATA.hof || {})
     .map(([id, a]) => ({ id, ...a }))
-    .sort((a, b) => {
-      const totB = (b.y2024?.gold||0)+(b.y2024?.silver||0)+(b.y2024?.bronze||0)+(b.y2025?.gold||0)+(b.y2025?.silver||0)+(b.y2025?.bronze||0)+(b.y2026?.gold||0)+(b.y2026?.silver||0)+(b.y2026?.bronze||0);
-      const totA = (a.y2024?.gold||0)+(a.y2024?.silver||0)+(a.y2024?.bronze||0)+(a.y2025?.gold||0)+(a.y2025?.silver||0)+(a.y2025?.bronze||0)+(a.y2026?.gold||0)+(a.y2026?.silver||0)+(a.y2026?.bronze||0);
-      return totB - totA || (b.y2024?.gold||0)+(b.y2025?.gold||0)+(b.y2026?.gold||0) - ((a.y2024?.gold||0)+(a.y2025?.gold||0)+(a.y2026?.gold||0));
-    });
+    .sort((a,b) => gold(b)-gold(a) || silver(b)-silver(a) || bronze(b)-bronze(a) || total(b)-total(a));
 
   if (!atleti.length) {
     container.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div><div class="empty-title">Nessun atleta ancora</div><div class="empty-sub">' + (isAdmin ? 'Usa il form sopra per aggiungere atleti' : 'La Hall of Fame apparirà qui') + '</div></div>';
     return;
   }
 
-  const years = ['y2024','y2025','y2026'];
-  const yLabels = {'y2024':'2024','y2025':'2025','y2026':'2026'};
+  const isMobile = window.innerWidth < 640;
+  const posColor = i => i===0?'#b8860b':i===1?'#708090':i===2?'var(--bronze)':'var(--text-muted)';
 
+  if (isMobile) {
+    // Card layout per mobile
+    const cards = atleti.map((a,i) => {
+      const g=gold(a),s=silver(a),b=bronze(a),t=total(a);
+      const catBg = {open:'#e8f4fd',espoir:'#f0fff4',junior:'#fff3e0'}[a.cat||'open']||'#f5f5f5';
+      const catCol = {open:'#0077b6',espoir:'#2e7d32',junior:'#e65100'}[a.cat||'open']||'#666';
+      const yearRows = years.map(y => {
+        const med = a[y]||{};
+        const parts = [];
+        if(med.gold)   parts.push(`🥇${med.gold}`);
+        if(med.silver) parts.push(`🥈${med.silver}`);
+        if(med.bronze) parts.push(`🥉${med.bronze}`);
+        return `<div style="text-align:center">
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">${yLabels[y]}</div>
+          <div style="font-size:12px">${parts.length?parts.join(' '):'—'}</div>
+        </div>`;
+      }).join('');
+
+      const editRow = isAdmin ? `
+        <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input class="score-input" style="flex:1;min-width:120px;text-align:left" value="${a.nome||''}" placeholder="Nome" onchange="updateHofField('${a.id}','nome',this.value)">
+          <select onchange="updateHofField('${a.id}','cat',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none">
+            <option value="open" ${(a.cat||'open')==='open'?'selected':''}>Open</option>
+            <option value="espoir" ${a.cat==='espoir'?'selected':''}>Espoir</option>
+            <option value="junior" ${a.cat==='junior'?'selected':''}>Junior</option>
+          </select>
+          <button onclick="eliminaHof('${a.id}')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px">
+          ${years.map(y => {
+            const med = a[y]||{};
+            return `<div style="background:var(--sand-dark,#f5f5f5);border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">${yLabels[y]}</div>
+              <div style="display:flex;gap:2px;justify-content:center">
+                <input class="score-input" style="width:30px;padding:2px;font-size:11px;background:#fff9e6" title="Oro" value="${med.gold||''}" placeholder="🥇" onchange="updateHof('${a.id}','${y}','gold',this.value)">
+                <input class="score-input" style="width:30px;padding:2px;font-size:11px;background:#f5f5f5" title="Arg" value="${med.silver||''}" placeholder="🥈" onchange="updateHof('${a.id}','${y}','silver',this.value)">
+                <input class="score-input" style="width:30px;padding:2px;font-size:11px;background:#fdf0e6" title="Bro" value="${med.bronze||''}" placeholder="🥉" onchange="updateHof('${a.id}','${y}','bronze',this.value)">
+              </div>
+            </div>`;
+          }).join('')}
+        </div>` : '';
+
+      return `<div style="background:white;border-radius:12px;border:1px solid var(--border);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${posColor(i)};min-width:28px">${i+1}</div>
+            <div>
+              <div style="font-weight:600;font-size:15px">${a.nome||'—'}</div>
+              <span style="background:${catBg};color:${catCol};border-radius:20px;padding:2px 8px;font-size:11px;font-weight:600">${catLabel(a.cat||'open')}</span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:22px;font-weight:700;color:var(--ocean)">${t}</div>
+            <div style="font-size:11px;color:var(--text-muted)">medaglie</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+          <div style="background:#fff9e6;border-radius:8px;padding:6px;text-align:center"><div style="font-size:16px">🥇</div><div style="font-size:16px;font-weight:700;color:#b8860b">${g||'—'}</div></div>
+          <div style="background:#f5f5f5;border-radius:8px;padding:6px;text-align:center"><div style="font-size:16px">🥈</div><div style="font-size:16px;font-weight:700;color:#708090">${s||'—'}</div></div>
+          <div style="background:#fdf0e6;border-radius:8px;padding:6px;text-align:center"><div style="font-size:16px">🥉</div><div style="font-size:16px;font-weight:700;color:var(--bronze)">${b||'—'}</div></div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px">
+          ${yearRows}
+        </div>
+        ${editRow}
+      </div>`;
+    }).join('');
+
+    container.innerHTML = cards;
+    return;
+  }
+
+  // Desktop: tabella completa
   const rows = atleti.map((a, i) => {
-    const totGold   = years.reduce((s,y) => s + (a[y]?.gold||0), 0);
-    const totSilver = years.reduce((s,y) => s + (a[y]?.silver||0), 0);
-    const totBronze = years.reduce((s,y) => s + (a[y]?.bronze||0), 0);
-    const totAll    = totGold + totSilver + totBronze;
-    const catBadge  = `<span class="badge badge-${a.cat||'open'}">${catLabel(a.cat||'open')}</span>`;
-
+    const g=gold(a),s=silver(a),b=bronze(a),t=total(a);
     const yearCols = years.map(y => {
       const med = a[y] || {};
       if (isAdmin) {
-        return `
-          <td style="text-align:center;padding:6px 4px">
-            <div style="display:flex;gap:3px;justify-content:center;flex-wrap:wrap">
-              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#fff9e6" title="Oro" value="${med.gold||''}" placeholder="🥇" onchange="updateHof('${a.id}','${y}','gold',this.value)">
-              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#f5f5f5" title="Argento" value="${med.silver||''}" placeholder="🥈" onchange="updateHof('${a.id}','${y}','silver',this.value)">
-              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#fdf0e6" title="Bronzo" value="${med.bronze||''}" placeholder="🥉" onchange="updateHof('${a.id}','${y}','bronze',this.value)">
-            </div>
-          </td>`;
+        return `<td style="text-align:center;padding:6px 4px">
+          <div style="display:flex;gap:3px;justify-content:center">
+            <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#fff9e6" value="${med.gold||''}" placeholder="🥇" onchange="updateHof('${a.id}','${y}','gold',this.value)">
+            <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#f5f5f5" value="${med.silver||''}" placeholder="🥈" onchange="updateHof('${a.id}','${y}','silver',this.value)">
+            <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#fdf0e6" value="${med.bronze||''}" placeholder="🥉" onchange="updateHof('${a.id}','${y}','bronze',this.value)">
+          </div></td>`;
       } else {
-        const g = med.gold||0, s = med.silver||0, b = med.bronze||0;
-        if (!g && !s && !b) return `<td style="text-align:center;color:var(--text-muted);font-size:13px">—</td>`;
-        return `<td style="text-align:center;font-size:13px">
-          ${g ? `<span style="color:#b8860b;font-weight:700">🥇${g}</span> ` : ''}
-          ${s ? `<span style="color:#708090;font-weight:700">🥈${s}</span> ` : ''}
-          ${b ? `<span style="color:var(--bronze);font-weight:700">🥉${b}</span>` : ''}
-        </td>`;
+        const gv=med.gold||0,sv=med.silver||0,bv=med.bronze||0;
+        if(!gv&&!sv&&!bv) return `<td style="text-align:center;color:var(--text-muted)">—</td>`;
+        return `<td style="text-align:center;font-size:13px">${gv?`<span style="color:#b8860b;font-weight:700">🥇${gv}</span> `:''}${sv?`<span style="color:#708090;font-weight:700">🥈${sv}</span> `:''}${bv?`<span style="color:var(--bronze);font-weight:700">🥉${bv}</span>`:''}</td>`;
       }
     }).join('');
 
     return `<tr>
-      <td style="font-weight:700;color:${i===0?'var(--gold)':i===1?'var(--silver)':i===2?'var(--bronze)':'var(--text-muted)'}font-family:'Bebas Neue',sans-serif;font-size:20px">${i+1}</td>
-      <td style="font-weight:600;white-space:nowrap">
-        ${isAdmin
-          ? `<input class="score-input" style="width:170px;text-align:left" value="${a.nome||''}" onchange="updateHofField('${a.id}','nome',this.value)">`
-          : `<span>${a.nome||'—'}</span>`}
-      </td>
-      <td style="text-align:center">
-        ${isAdmin
-          ? `<select onchange="updateHofField('${a.id}','cat',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none">
-              <option value="open" ${(a.cat||'open')==='open'?'selected':''}>Open</option>
-              <option value="espoir" ${a.cat==='espoir'?'selected':''}>Espoir</option>
-              <option value="junior" ${a.cat==='junior'?'selected':''}>Junior</option>
-            </select>`
-          : catBadge}
-      </td>
+      <td style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${posColor(i)}">${i+1}</td>
+      <td style="font-weight:600;white-space:nowrap">${isAdmin?`<input class="score-input" style="width:170px;text-align:left" value="${a.nome||''}" onchange="updateHofField('${a.id}','nome',this.value)">`:`<span>${a.nome||'—'}</span>`}</td>
+      <td style="text-align:center">${isAdmin?`<select onchange="updateHofField('${a.id}','cat',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none"><option value="open" ${(a.cat||'open')==='open'?'selected':''}>Open</option><option value="espoir" ${a.cat==='espoir'?'selected':''}>Espoir</option><option value="junior" ${a.cat==='junior'?'selected':''}>Junior</option></select>`:`<span class="badge badge-${a.cat||'open'}">${catLabel(a.cat||'open')}</span>`}</td>
       ${yearCols}
-      <td style="text-align:center;font-weight:700;color:#b8860b">${totGold||'—'}</td>
-      <td style="text-align:center;font-weight:700;color:#708090">${totSilver||'—'}</td>
-      <td style="text-align:center;font-weight:700;color:var(--bronze)">${totBronze||'—'}</td>
-      <td style="text-align:center;font-weight:700;font-size:16px;color:var(--ocean)">${totAll}</td>
-      ${isAdmin ? `<td><button onclick="eliminaHof('${a.id}')" style="background:none;border:none;cursor:pointer;font-size:15px">🗑</button></td>` : ''}
+      <td style="text-align:center;font-weight:700;color:#b8860b">${g||'—'}</td>
+      <td style="text-align:center;font-weight:700;color:#708090">${s||'—'}</td>
+      <td style="text-align:center;font-weight:700;color:var(--bronze)">${b||'—'}</td>
+      <td style="text-align:center;font-weight:700;font-size:16px;color:var(--ocean)">${t}</td>
+      ${isAdmin?`<td><button onclick="eliminaHof('${a.id}')" style="background:none;border:none;cursor:pointer;font-size:15px">🗑</button></td>`:''}
     </tr>`;
   }).join('');
 
-  const adminYearHeader = isAdmin
-    ? years.map(y => `<th style="text-align:center;min-width:110px">${yLabels[y]}<br><span style="font-size:9px;opacity:0.7">🥇 🥈 🥉</span></th>`).join('')
-    : years.map(y => `<th style="text-align:center">${yLabels[y]}</th>`).join('');
+  const yHeaders = years.map(y=>`<th style="text-align:center;min-width:${isAdmin?'110px':'70px'}">${yLabels[y]}${isAdmin?'<br><span style="font-size:9px;opacity:0.7">🥇 🥈 🥉</span>':''}</th>`).join('');
 
-  container.innerHTML = `
-    <div style="overflow-x:auto">
-    <table class="results-table" style="min-width:700px">
+  container.innerHTML = `<div style="overflow-x:auto">
+    <table class="results-table" style="min-width:600px">
       <thead><tr>
         <th style="width:40px">#</th>
         <th style="min-width:160px">Atleta</th>
         <th style="width:80px;text-align:center">Cat.</th>
-        ${adminYearHeader}
-        <th style="text-align:center">🥇 Tot</th>
-        <th style="text-align:center">🥈 Tot</th>
-        <th style="text-align:center">🥉 Tot</th>
-        <th style="text-align:center;min-width:60px">Totale</th>
-        ${isAdmin ? '<th style="width:40px"></th>' : ''}
+        ${yHeaders}
+        <th style="text-align:center">🥇</th>
+        <th style="text-align:center">🥈</th>
+        <th style="text-align:center">🥉</th>
+        <th style="text-align:center;min-width:60px">Tot.</th>
+        ${isAdmin?'<th style="width:40px"></th>':''}
       </tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`;
