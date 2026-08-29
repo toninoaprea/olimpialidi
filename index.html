@@ -211,6 +211,7 @@
       <button onclick="showSection('risultati')">Risultati</button>
       <button onclick="showSection('tornei')">Tornei</button>
       <button onclick="showSection('medagliere')">Medagliere</button>
+      <button onclick="showSection('hof')">Hall of Fame</button>
       <button onclick="showSection('record')">Record</button>
     </nav>
     <button class="admin-btn desktop-nav" id="adminBtn" onclick="toggleAdmin()">⚙ Comitato</button>
@@ -243,6 +244,7 @@
     <button onclick="showSection('risultati');closeDrawer()">Risultati</button>
     <button onclick="showSection('tornei');closeDrawer()">Tornei</button>
     <button onclick="showSection('medagliere');closeDrawer()">Medagliere</button>
+    <button onclick="showSection('hof');closeDrawer()">Hall of Fame</button>
     <button onclick="showSection('record');closeDrawer()">Record</button>
   </nav>
   <div class="drawer-admin">
@@ -589,6 +591,33 @@
     <div id="medalContainer"></div>
   </div>
 
+  <!-- HALL OF FAME -->
+  <div class="section" id="sec-hof">
+    <h1 class="page-title">🏆 Hall of <span class="accent">Fame</span></h1>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:24px">Medaglie conquistate nelle edizioni 2024, 2025 e 2026</p>
+
+    <div id="hofAddForm" style="display:none;background:white;border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:24px;box-shadow:var(--shadow)">
+      <div style="font-weight:600;font-size:15px;margin-bottom:16px;color:var(--navy)">➕ Aggiungi atleta alla Hall of Fame</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Nome Atleta</div>
+          <input id="hofNome" type="text" placeholder="Es: Mario Rossi" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;width:200px;outline:none">
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Categoria attuale</div>
+          <select id="hofCat" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:white">
+            <option value="open">Open</option>
+            <option value="espoir">Espoir</option>
+            <option value="junior">Junior</option>
+          </select>
+        </div>
+        <button onclick="aggiungiHof()" style="background:var(--navy);color:white;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">➕ Aggiungi</button>
+      </div>
+    </div>
+
+    <div id="hofContainer"></div>
+  </div>
+
   <div class="section" id="sec-record">
     <h1 class="page-title">Record</h1>
     <div id="addRecordForm" style="display:none;background:white;border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:24px;box-shadow:var(--shadow)">
@@ -674,7 +703,7 @@ const SPORTS = [
 const SPORTS_TORNEI = ['pallanuoto','racchettoni','beach_pong','bocce','calciobalilla'];
 const CATEGORIES = ['open','espoir','junior'];
 const SPORT_NO_AUTO = ['calciobalilla'];
-const NAV_SECTIONS = ['regolamento','calendario','iscritti','risultati','tornei','medagliere','record'];
+const NAV_SECTIONS = ['regolamento','calendario','iscritti','risultati','tornei','medagliere','hof','record'];
 const SQUADRE = ['ATC','SSGU','Again'];
 const SQ_COLORS = {'ATC':'#dbeafe','SSGU':'#fef3c7','Again':'#d1fae5'};
 
@@ -728,10 +757,11 @@ onValue(ref(db,'olimpialidi'),(snapshot)=>{
     });
     if(!DATA.records) DATA.records={};
     if(!DATA.podio) DATA.podio={};
+    if(!DATA.hof) DATA.hof={};
     if(!DATA.tornei) DATA.tornei={};
     if(!DATA.iscritti) DATA.iscritti={};
   } else {
-    DATA={calendario:{},open:{},espoir:{},junior:{},iscritti:{},records:{},tornei:{},podio:{}};
+    DATA={calendario:{},open:{},espoir:{},junior:{},iscritti:{},records:{},tornei:{},podio:{},hof:{}};
     SPORTS.forEach(s=>{ DATA.calendario[s.id]={date:'',time:'',location:'Spiaggia principale',status:'upcoming'}; });
     set(ref(db,'olimpialidi'),DATA);
   }
@@ -740,7 +770,7 @@ onValue(ref(db,'olimpialidi'),(snapshot)=>{
   renderAll();
   updateLiveDot();
 },()=>{
-  DATA={calendario:{},open:{},espoir:{},junior:{},iscritti:{},records:{},tornei:{},podio:{}};
+  DATA={calendario:{},open:{},espoir:{},junior:{},iscritti:{},records:{},tornei:{},podio:{},hof:{}};
   dbReady=true;
   setSyncStatus('error','🔴 Offline');
   renderAll();
@@ -788,7 +818,140 @@ window.showSection=function(name){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+name).classList.add('active');
   document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('active',NAV_SECTIONS[i]===name));
-  updateTitles();
+  
+// ── HALL OF FAME ──
+function renderHof() {
+  const container = document.getElementById('hofContainer');
+  const form = document.getElementById('hofAddForm');
+  if (!container) return;
+  if (form) form.style.display = isAdmin ? 'block' : 'none';
+
+  const atleti = Object.entries(DATA.hof || {})
+    .map(([id, a]) => ({ id, ...a }))
+    .sort((a, b) => {
+      const totB = (b.y2024?.gold||0)+(b.y2024?.silver||0)+(b.y2024?.bronze||0)+(b.y2025?.gold||0)+(b.y2025?.silver||0)+(b.y2025?.bronze||0)+(b.y2026?.gold||0)+(b.y2026?.silver||0)+(b.y2026?.bronze||0);
+      const totA = (a.y2024?.gold||0)+(a.y2024?.silver||0)+(a.y2024?.bronze||0)+(a.y2025?.gold||0)+(a.y2025?.silver||0)+(a.y2025?.bronze||0)+(a.y2026?.gold||0)+(a.y2026?.silver||0)+(a.y2026?.bronze||0);
+      return totB - totA || (b.y2024?.gold||0)+(b.y2025?.gold||0)+(b.y2026?.gold||0) - ((a.y2024?.gold||0)+(a.y2025?.gold||0)+(a.y2026?.gold||0));
+    });
+
+  if (!atleti.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div><div class="empty-title">Nessun atleta ancora</div><div class="empty-sub">' + (isAdmin ? 'Usa il form sopra per aggiungere atleti' : 'La Hall of Fame apparirà qui') + '</div></div>';
+    return;
+  }
+
+  const years = ['y2024','y2025','y2026'];
+  const yLabels = {'y2024':'2024','y2025':'2025','y2026':'2026'};
+
+  const rows = atleti.map((a, i) => {
+    const totGold   = years.reduce((s,y) => s + (a[y]?.gold||0), 0);
+    const totSilver = years.reduce((s,y) => s + (a[y]?.silver||0), 0);
+    const totBronze = years.reduce((s,y) => s + (a[y]?.bronze||0), 0);
+    const totAll    = totGold + totSilver + totBronze;
+    const catBadge  = `<span class="badge badge-${a.cat||'open'}">${catLabel(a.cat||'open')}</span>`;
+
+    const yearCols = years.map(y => {
+      const med = a[y] || {};
+      if (isAdmin) {
+        return `
+          <td style="text-align:center;padding:6px 4px">
+            <div style="display:flex;gap:3px;justify-content:center;flex-wrap:wrap">
+              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#fff9e6" title="Oro" value="${med.gold||''}" placeholder="🥇" onchange="updateHof('${a.id}','${y}','gold',this.value)">
+              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#f5f5f5" title="Argento" value="${med.silver||''}" placeholder="🥈" onchange="updateHof('${a.id}','${y}','silver',this.value)">
+              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#fdf0e6" title="Bronzo" value="${med.bronze||''}" placeholder="🥉" onchange="updateHof('${a.id}','${y}','bronze',this.value)">
+            </div>
+          </td>`;
+      } else {
+        const g = med.gold||0, s = med.silver||0, b = med.bronze||0;
+        if (!g && !s && !b) return `<td style="text-align:center;color:var(--text-muted);font-size:13px">—</td>`;
+        return `<td style="text-align:center;font-size:13px">
+          ${g ? `<span style="color:#b8860b;font-weight:700">🥇${g}</span> ` : ''}
+          ${s ? `<span style="color:#708090;font-weight:700">🥈${s}</span> ` : ''}
+          ${b ? `<span style="color:var(--bronze);font-weight:700">🥉${b}</span>` : ''}
+        </td>`;
+      }
+    }).join('');
+
+    return `<tr>
+      <td style="font-weight:700;color:${i===0?'var(--gold)':i===1?'var(--silver)':i===2?'var(--bronze)':'var(--text-muted)'}font-family:'Bebas Neue',sans-serif;font-size:20px">${i+1}</td>
+      <td style="font-weight:600;white-space:nowrap">
+        ${isAdmin
+          ? `<input class="score-input" style="width:170px;text-align:left" value="${a.nome||''}" onchange="updateHofField('${a.id}','nome',this.value)">`
+          : `<span>${a.nome||'—'}</span>`}
+      </td>
+      <td style="text-align:center">
+        ${isAdmin
+          ? `<select onchange="updateHofField('${a.id}','cat',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none">
+              <option value="open" ${(a.cat||'open')==='open'?'selected':''}>Open</option>
+              <option value="espoir" ${a.cat==='espoir'?'selected':''}>Espoir</option>
+              <option value="junior" ${a.cat==='junior'?'selected':''}>Junior</option>
+            </select>`
+          : catBadge}
+      </td>
+      ${yearCols}
+      <td style="text-align:center;font-weight:700;color:#b8860b">${totGold||'—'}</td>
+      <td style="text-align:center;font-weight:700;color:#708090">${totSilver||'—'}</td>
+      <td style="text-align:center;font-weight:700;color:var(--bronze)">${totBronze||'—'}</td>
+      <td style="text-align:center;font-weight:700;font-size:16px;color:var(--ocean)">${totAll}</td>
+      ${isAdmin ? `<td><button onclick="eliminaHof('${a.id}')" style="background:none;border:none;cursor:pointer;font-size:15px">🗑</button></td>` : ''}
+    </tr>`;
+  }).join('');
+
+  const adminYearHeader = isAdmin
+    ? years.map(y => `<th style="text-align:center;min-width:110px">${yLabels[y]}<br><span style="font-size:9px;opacity:0.7">🥇 🥈 🥉</span></th>`).join('')
+    : years.map(y => `<th style="text-align:center">${yLabels[y]}</th>`).join('');
+
+  container.innerHTML = `
+    <div style="overflow-x:auto">
+    <table class="results-table" style="min-width:700px">
+      <thead><tr>
+        <th style="width:40px">#</th>
+        <th style="min-width:160px">Atleta</th>
+        <th style="width:80px;text-align:center">Cat.</th>
+        ${adminYearHeader}
+        <th style="text-align:center">🥇 Tot</th>
+        <th style="text-align:center">🥈 Tot</th>
+        <th style="text-align:center">🥉 Tot</th>
+        <th style="text-align:center;min-width:60px">Totale</th>
+        ${isAdmin ? '<th style="width:40px"></th>' : ''}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+window.aggiungiHof = function() {
+  const nome = document.getElementById('hofNome').value.trim();
+  const cat  = document.getElementById('hofCat').value;
+  if (!nome) { showToast('⚠️ Inserisci un nome'); return; }
+  if (!DATA.hof) DATA.hof = {};
+  const id = 'hof_' + Date.now();
+  DATA.hof[id] = { nome, cat, y2024:{gold:'',silver:'',bronze:''}, y2025:{gold:'',silver:'',bronze:''}, y2026:{gold:'',silver:'',bronze:''} };
+  document.getElementById('hofNome').value = '';
+  pushToFirebase(); renderHof();
+  showToast('🏆 Atleta aggiunto!');
+};
+
+window.updateHof = function(id, year, field, val) {
+  if (!DATA.hof?.[id]) return;
+  if (!DATA.hof[id][year]) DATA.hof[id][year] = {};
+  DATA.hof[id][year][field] = val ? parseInt(val)||0 : '';
+  pushToFirebase();
+  // Refresh solo il container senza perdere focus
+  setTimeout(renderHof, 800);
+};
+
+window.updateHofField = function(id, field, val) {
+  if (!DATA.hof?.[id]) return;
+  DATA.hof[id][field] = val;
+  pushToFirebase();
+};
+
+window.eliminaHof = function(id) {
+  if (!DATA.hof?.[id]) return;
+  delete DATA.hof[id];
+  pushToFirebase(); renderHof();
+};
+
+updateTitles();
   if(name==='calendario') renderCalendar();
   else if(name==='iscritti') renderIscritti();
   else if(name==='risultati') renderResults();
@@ -802,7 +965,140 @@ window.setCategory=function(cat){
   currentCategory=cat;
   document.querySelectorAll('.cat-tab').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===cat));
   const sel=document.getElementById('sportSelect'); if(sel) sel.value='';
-  updateTitles(); renderAll();
+  
+// ── HALL OF FAME ──
+function renderHof() {
+  const container = document.getElementById('hofContainer');
+  const form = document.getElementById('hofAddForm');
+  if (!container) return;
+  if (form) form.style.display = isAdmin ? 'block' : 'none';
+
+  const atleti = Object.entries(DATA.hof || {})
+    .map(([id, a]) => ({ id, ...a }))
+    .sort((a, b) => {
+      const totB = (b.y2024?.gold||0)+(b.y2024?.silver||0)+(b.y2024?.bronze||0)+(b.y2025?.gold||0)+(b.y2025?.silver||0)+(b.y2025?.bronze||0)+(b.y2026?.gold||0)+(b.y2026?.silver||0)+(b.y2026?.bronze||0);
+      const totA = (a.y2024?.gold||0)+(a.y2024?.silver||0)+(a.y2024?.bronze||0)+(a.y2025?.gold||0)+(a.y2025?.silver||0)+(a.y2025?.bronze||0)+(a.y2026?.gold||0)+(a.y2026?.silver||0)+(a.y2026?.bronze||0);
+      return totB - totA || (b.y2024?.gold||0)+(b.y2025?.gold||0)+(b.y2026?.gold||0) - ((a.y2024?.gold||0)+(a.y2025?.gold||0)+(a.y2026?.gold||0));
+    });
+
+  if (!atleti.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div><div class="empty-title">Nessun atleta ancora</div><div class="empty-sub">' + (isAdmin ? 'Usa il form sopra per aggiungere atleti' : 'La Hall of Fame apparirà qui') + '</div></div>';
+    return;
+  }
+
+  const years = ['y2024','y2025','y2026'];
+  const yLabels = {'y2024':'2024','y2025':'2025','y2026':'2026'};
+
+  const rows = atleti.map((a, i) => {
+    const totGold   = years.reduce((s,y) => s + (a[y]?.gold||0), 0);
+    const totSilver = years.reduce((s,y) => s + (a[y]?.silver||0), 0);
+    const totBronze = years.reduce((s,y) => s + (a[y]?.bronze||0), 0);
+    const totAll    = totGold + totSilver + totBronze;
+    const catBadge  = `<span class="badge badge-${a.cat||'open'}">${catLabel(a.cat||'open')}</span>`;
+
+    const yearCols = years.map(y => {
+      const med = a[y] || {};
+      if (isAdmin) {
+        return `
+          <td style="text-align:center;padding:6px 4px">
+            <div style="display:flex;gap:3px;justify-content:center;flex-wrap:wrap">
+              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#fff9e6" title="Oro" value="${med.gold||''}" placeholder="🥇" onchange="updateHof('${a.id}','${y}','gold',this.value)">
+              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#f5f5f5" title="Argento" value="${med.silver||''}" placeholder="🥈" onchange="updateHof('${a.id}','${y}','silver',this.value)">
+              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#fdf0e6" title="Bronzo" value="${med.bronze||''}" placeholder="🥉" onchange="updateHof('${a.id}','${y}','bronze',this.value)">
+            </div>
+          </td>`;
+      } else {
+        const g = med.gold||0, s = med.silver||0, b = med.bronze||0;
+        if (!g && !s && !b) return `<td style="text-align:center;color:var(--text-muted);font-size:13px">—</td>`;
+        return `<td style="text-align:center;font-size:13px">
+          ${g ? `<span style="color:#b8860b;font-weight:700">🥇${g}</span> ` : ''}
+          ${s ? `<span style="color:#708090;font-weight:700">🥈${s}</span> ` : ''}
+          ${b ? `<span style="color:var(--bronze);font-weight:700">🥉${b}</span>` : ''}
+        </td>`;
+      }
+    }).join('');
+
+    return `<tr>
+      <td style="font-weight:700;color:${i===0?'var(--gold)':i===1?'var(--silver)':i===2?'var(--bronze)':'var(--text-muted)'}font-family:'Bebas Neue',sans-serif;font-size:20px">${i+1}</td>
+      <td style="font-weight:600;white-space:nowrap">
+        ${isAdmin
+          ? `<input class="score-input" style="width:170px;text-align:left" value="${a.nome||''}" onchange="updateHofField('${a.id}','nome',this.value)">`
+          : `<span>${a.nome||'—'}</span>`}
+      </td>
+      <td style="text-align:center">
+        ${isAdmin
+          ? `<select onchange="updateHofField('${a.id}','cat',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none">
+              <option value="open" ${(a.cat||'open')==='open'?'selected':''}>Open</option>
+              <option value="espoir" ${a.cat==='espoir'?'selected':''}>Espoir</option>
+              <option value="junior" ${a.cat==='junior'?'selected':''}>Junior</option>
+            </select>`
+          : catBadge}
+      </td>
+      ${yearCols}
+      <td style="text-align:center;font-weight:700;color:#b8860b">${totGold||'—'}</td>
+      <td style="text-align:center;font-weight:700;color:#708090">${totSilver||'—'}</td>
+      <td style="text-align:center;font-weight:700;color:var(--bronze)">${totBronze||'—'}</td>
+      <td style="text-align:center;font-weight:700;font-size:16px;color:var(--ocean)">${totAll}</td>
+      ${isAdmin ? `<td><button onclick="eliminaHof('${a.id}')" style="background:none;border:none;cursor:pointer;font-size:15px">🗑</button></td>` : ''}
+    </tr>`;
+  }).join('');
+
+  const adminYearHeader = isAdmin
+    ? years.map(y => `<th style="text-align:center;min-width:110px">${yLabels[y]}<br><span style="font-size:9px;opacity:0.7">🥇 🥈 🥉</span></th>`).join('')
+    : years.map(y => `<th style="text-align:center">${yLabels[y]}</th>`).join('');
+
+  container.innerHTML = `
+    <div style="overflow-x:auto">
+    <table class="results-table" style="min-width:700px">
+      <thead><tr>
+        <th style="width:40px">#</th>
+        <th style="min-width:160px">Atleta</th>
+        <th style="width:80px;text-align:center">Cat.</th>
+        ${adminYearHeader}
+        <th style="text-align:center">🥇 Tot</th>
+        <th style="text-align:center">🥈 Tot</th>
+        <th style="text-align:center">🥉 Tot</th>
+        <th style="text-align:center;min-width:60px">Totale</th>
+        ${isAdmin ? '<th style="width:40px"></th>' : ''}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+window.aggiungiHof = function() {
+  const nome = document.getElementById('hofNome').value.trim();
+  const cat  = document.getElementById('hofCat').value;
+  if (!nome) { showToast('⚠️ Inserisci un nome'); return; }
+  if (!DATA.hof) DATA.hof = {};
+  const id = 'hof_' + Date.now();
+  DATA.hof[id] = { nome, cat, y2024:{gold:'',silver:'',bronze:''}, y2025:{gold:'',silver:'',bronze:''}, y2026:{gold:'',silver:'',bronze:''} };
+  document.getElementById('hofNome').value = '';
+  pushToFirebase(); renderHof();
+  showToast('🏆 Atleta aggiunto!');
+};
+
+window.updateHof = function(id, year, field, val) {
+  if (!DATA.hof?.[id]) return;
+  if (!DATA.hof[id][year]) DATA.hof[id][year] = {};
+  DATA.hof[id][year][field] = val ? parseInt(val)||0 : '';
+  pushToFirebase();
+  // Refresh solo il container senza perdere focus
+  setTimeout(renderHof, 800);
+};
+
+window.updateHofField = function(id, field, val) {
+  if (!DATA.hof?.[id]) return;
+  DATA.hof[id][field] = val;
+  pushToFirebase();
+};
+
+window.eliminaHof = function(id) {
+  if (!DATA.hof?.[id]) return;
+  delete DATA.hof[id];
+  pushToFirebase(); renderHof();
+};
+
+updateTitles(); renderAll();
 };
 window.setGender=function(g){
   lastSelectedSport='';
@@ -1220,12 +1516,19 @@ function renderMedal(){
   const medA = {};
   const podioDataCat = DATA.podio?.[cat] || {};
   Object.entries(podioDataCat).forEach(([sportId, podio]) => {
-    [[podio['1'],0],[podio['2'],1],[podio['3'],2]].forEach(([nome, i]) => {
-      if (!nome || !nome.trim()) return;
-      if (!medA[nome]) medA[nome] = {gold:0, silver:0, bronze:0};
-      if (i===0) medA[nome].gold++;
-      if (i===1) medA[nome].silver++;
-      if (i===2) medA[nome].bronze++;
+    // Per ogni posizione gestisci anche il partner (calciobalilla)
+    [
+      [podio['1'], podio['1b'], 0],
+      [podio['2'], podio['2b'], 1],
+      [podio['3'], podio['3b'], 2],
+    ].forEach(([nome, partner, i]) => {
+      [nome, partner].forEach(n => {
+        if (!n || !n.trim()) return;
+        if (!medA[n]) medA[n] = {gold:0, silver:0, bronze:0};
+        if (i===0) medA[n].gold++;
+        if (i===1) medA[n].silver++;
+        if (i===2) medA[n].bronze++;
+      });
     });
   });
 
@@ -1234,14 +1537,20 @@ function renderMedal(){
   CATEGORIES.forEach(c => {
     const podioData = DATA.podio?.[c] || {};
     Object.entries(podioData).forEach(([sportId, podio]) => {
-      [[podio['1'],0],[podio['2'],1],[podio['3'],2]].forEach(([nome, i]) => {
-        if (!nome || !nome.trim()) return;
-        const sq = atSq[nome] || '';
-        if (!sq) return;
-        if (!medS[sq]) medS[sq] = {gold:0, silver:0, bronze:0};
-        if (i===0) medS[sq].gold++;
-        if (i===1) medS[sq].silver++;
-        if (i===2) medS[sq].bronze++;
+      [
+        [podio['1'], podio['1b'], 0],
+        [podio['2'], podio['2b'], 1],
+        [podio['3'], podio['3b'], 2],
+      ].forEach(([nome, partner, i]) => {
+        [nome, partner].forEach(n => {
+          if (!n || !n.trim()) return;
+          const sq = atSq[n] || '';
+          if (!sq) return;
+          if (!medS[sq]) medS[sq] = {gold:0, silver:0, bronze:0};
+          if (i===0) medS[sq].gold++;
+          if (i===1) medS[sq].silver++;
+          if (i===2) medS[sq].bronze++;
+        });
       });
     });
   });
@@ -1332,7 +1641,8 @@ window.salvaRecord=function(){
   if(!nome||!valore){showToast('⚠️ Inserisci nome e valore');return;}
   const key=`${sportId}_${genere}`;
   if(!DATA.records) DATA.records={};
-    if(!DATA.podio) DATA.podio={};if(!DATA.records[cat]) DATA.records[cat]={};
+    if(!DATA.podio) DATA.podio={};
+    if(!DATA.hof) DATA.hof={};if(!DATA.records[cat]) DATA.records[cat]={};
   DATA.records[cat][key]={nome,squadra,valore,um};
   pushToFirebase();renderRecord();showToast('🏆 Record salvato!');
   document.getElementById('recNome').value='';document.getElementById('recSquadra').value='';document.getElementById('recValore').value='';
@@ -1617,6 +1927,139 @@ window.doLogin=function(){
 };
 window.closeModal=function(){document.getElementById('loginModal').classList.remove('open');document.getElementById('loginError').style.display='none';};
 document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')window.doLogin();});
+
+// ── HALL OF FAME ──
+function renderHof() {
+  const container = document.getElementById('hofContainer');
+  const form = document.getElementById('hofAddForm');
+  if (!container) return;
+  if (form) form.style.display = isAdmin ? 'block' : 'none';
+
+  const atleti = Object.entries(DATA.hof || {})
+    .map(([id, a]) => ({ id, ...a }))
+    .sort((a, b) => {
+      const totB = (b.y2024?.gold||0)+(b.y2024?.silver||0)+(b.y2024?.bronze||0)+(b.y2025?.gold||0)+(b.y2025?.silver||0)+(b.y2025?.bronze||0)+(b.y2026?.gold||0)+(b.y2026?.silver||0)+(b.y2026?.bronze||0);
+      const totA = (a.y2024?.gold||0)+(a.y2024?.silver||0)+(a.y2024?.bronze||0)+(a.y2025?.gold||0)+(a.y2025?.silver||0)+(a.y2025?.bronze||0)+(a.y2026?.gold||0)+(a.y2026?.silver||0)+(a.y2026?.bronze||0);
+      return totB - totA || (b.y2024?.gold||0)+(b.y2025?.gold||0)+(b.y2026?.gold||0) - ((a.y2024?.gold||0)+(a.y2025?.gold||0)+(a.y2026?.gold||0));
+    });
+
+  if (!atleti.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div><div class="empty-title">Nessun atleta ancora</div><div class="empty-sub">' + (isAdmin ? 'Usa il form sopra per aggiungere atleti' : 'La Hall of Fame apparirà qui') + '</div></div>';
+    return;
+  }
+
+  const years = ['y2024','y2025','y2026'];
+  const yLabels = {'y2024':'2024','y2025':'2025','y2026':'2026'};
+
+  const rows = atleti.map((a, i) => {
+    const totGold   = years.reduce((s,y) => s + (a[y]?.gold||0), 0);
+    const totSilver = years.reduce((s,y) => s + (a[y]?.silver||0), 0);
+    const totBronze = years.reduce((s,y) => s + (a[y]?.bronze||0), 0);
+    const totAll    = totGold + totSilver + totBronze;
+    const catBadge  = `<span class="badge badge-${a.cat||'open'}">${catLabel(a.cat||'open')}</span>`;
+
+    const yearCols = years.map(y => {
+      const med = a[y] || {};
+      if (isAdmin) {
+        return `
+          <td style="text-align:center;padding:6px 4px">
+            <div style="display:flex;gap:3px;justify-content:center;flex-wrap:wrap">
+              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#fff9e6" title="Oro" value="${med.gold||''}" placeholder="🥇" onchange="updateHof('${a.id}','${y}','gold',this.value)">
+              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#f5f5f5" title="Argento" value="${med.silver||''}" placeholder="🥈" onchange="updateHof('${a.id}','${y}','silver',this.value)">
+              <input class="score-input" style="width:32px;padding:3px;font-size:12px;background:#fdf0e6" title="Bronzo" value="${med.bronze||''}" placeholder="🥉" onchange="updateHof('${a.id}','${y}','bronze',this.value)">
+            </div>
+          </td>`;
+      } else {
+        const g = med.gold||0, s = med.silver||0, b = med.bronze||0;
+        if (!g && !s && !b) return `<td style="text-align:center;color:var(--text-muted);font-size:13px">—</td>`;
+        return `<td style="text-align:center;font-size:13px">
+          ${g ? `<span style="color:#b8860b;font-weight:700">🥇${g}</span> ` : ''}
+          ${s ? `<span style="color:#708090;font-weight:700">🥈${s}</span> ` : ''}
+          ${b ? `<span style="color:var(--bronze);font-weight:700">🥉${b}</span>` : ''}
+        </td>`;
+      }
+    }).join('');
+
+    return `<tr>
+      <td style="font-weight:700;color:${i===0?'var(--gold)':i===1?'var(--silver)':i===2?'var(--bronze)':'var(--text-muted)'}font-family:'Bebas Neue',sans-serif;font-size:20px">${i+1}</td>
+      <td style="font-weight:600;white-space:nowrap">
+        ${isAdmin
+          ? `<input class="score-input" style="width:170px;text-align:left" value="${a.nome||''}" onchange="updateHofField('${a.id}','nome',this.value)">`
+          : `<span>${a.nome||'—'}</span>`}
+      </td>
+      <td style="text-align:center">
+        ${isAdmin
+          ? `<select onchange="updateHofField('${a.id}','cat',this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none">
+              <option value="open" ${(a.cat||'open')==='open'?'selected':''}>Open</option>
+              <option value="espoir" ${a.cat==='espoir'?'selected':''}>Espoir</option>
+              <option value="junior" ${a.cat==='junior'?'selected':''}>Junior</option>
+            </select>`
+          : catBadge}
+      </td>
+      ${yearCols}
+      <td style="text-align:center;font-weight:700;color:#b8860b">${totGold||'—'}</td>
+      <td style="text-align:center;font-weight:700;color:#708090">${totSilver||'—'}</td>
+      <td style="text-align:center;font-weight:700;color:var(--bronze)">${totBronze||'—'}</td>
+      <td style="text-align:center;font-weight:700;font-size:16px;color:var(--ocean)">${totAll}</td>
+      ${isAdmin ? `<td><button onclick="eliminaHof('${a.id}')" style="background:none;border:none;cursor:pointer;font-size:15px">🗑</button></td>` : ''}
+    </tr>`;
+  }).join('');
+
+  const adminYearHeader = isAdmin
+    ? years.map(y => `<th style="text-align:center;min-width:110px">${yLabels[y]}<br><span style="font-size:9px;opacity:0.7">🥇 🥈 🥉</span></th>`).join('')
+    : years.map(y => `<th style="text-align:center">${yLabels[y]}</th>`).join('');
+
+  container.innerHTML = `
+    <div style="overflow-x:auto">
+    <table class="results-table" style="min-width:700px">
+      <thead><tr>
+        <th style="width:40px">#</th>
+        <th style="min-width:160px">Atleta</th>
+        <th style="width:80px;text-align:center">Cat.</th>
+        ${adminYearHeader}
+        <th style="text-align:center">🥇 Tot</th>
+        <th style="text-align:center">🥈 Tot</th>
+        <th style="text-align:center">🥉 Tot</th>
+        <th style="text-align:center;min-width:60px">Totale</th>
+        ${isAdmin ? '<th style="width:40px"></th>' : ''}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+window.aggiungiHof = function() {
+  const nome = document.getElementById('hofNome').value.trim();
+  const cat  = document.getElementById('hofCat').value;
+  if (!nome) { showToast('⚠️ Inserisci un nome'); return; }
+  if (!DATA.hof) DATA.hof = {};
+  const id = 'hof_' + Date.now();
+  DATA.hof[id] = { nome, cat, y2024:{gold:'',silver:'',bronze:''}, y2025:{gold:'',silver:'',bronze:''}, y2026:{gold:'',silver:'',bronze:''} };
+  document.getElementById('hofNome').value = '';
+  pushToFirebase(); renderHof();
+  showToast('🏆 Atleta aggiunto!');
+};
+
+window.updateHof = function(id, year, field, val) {
+  if (!DATA.hof?.[id]) return;
+  if (!DATA.hof[id][year]) DATA.hof[id][year] = {};
+  DATA.hof[id][year][field] = val ? parseInt(val)||0 : '';
+  pushToFirebase();
+  // Refresh solo il container senza perdere focus
+  setTimeout(renderHof, 800);
+};
+
+window.updateHofField = function(id, field, val) {
+  if (!DATA.hof?.[id]) return;
+  DATA.hof[id][field] = val;
+  pushToFirebase();
+};
+
+window.eliminaHof = function(id) {
+  if (!DATA.hof?.[id]) return;
+  delete DATA.hof[id];
+  pushToFirebase(); renderHof();
+};
+
 updateTitles();
 
 </script>
