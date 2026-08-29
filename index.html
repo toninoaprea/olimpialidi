@@ -807,6 +807,7 @@ function renderAll() {
   else if(sec==='medagliere') renderMedal();
   else if(sec==='tornei') renderTornei();
   else if(sec==='record') renderRecord();
+  else if(sec==='hof') renderHof();
   else if(sec==='iscritti') renderIscritti();
   else renderCalendar();
 }
@@ -1923,6 +1924,7 @@ window.doLogin=function(){
     document.getElementById('adminBtn').classList.add('logged');document.getElementById('adminBtn').textContent='🔓 Esci';document.getElementById('adminBtnMobile').textContent='🔓 Esci';
     document.getElementById('loginError').style.display='none';document.getElementById('loginUser').value='';document.getElementById('loginPass').value='';
     renderAll();renderIscritti();
+    if(document.getElementById('sec-hof')?.classList.contains('active')) renderHof();
   } else document.getElementById('loginError').style.display='block';
 };
 window.closeModal=function(){document.getElementById('loginModal').classList.remove('open');document.getElementById('loginError').style.display='none';};
