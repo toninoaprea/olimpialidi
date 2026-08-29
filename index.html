@@ -819,7 +819,16 @@ window.showSection=function(name){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+name).classList.add('active');
   document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('active',NAV_SECTIONS[i]===name));
-  
+  updateTitles();
+  if(name==='calendario') renderCalendar();
+  else if(name==='iscritti') renderIscritti();
+  else if(name==='risultati') renderResults();
+  else if(name==='medagliere') renderMedal();
+  else if(name==='tornei') renderTornei();
+  else if(name==='record') renderRecord();
+  else if(name==='hof') renderHof();
+};
+
 // ── HALL OF FAME ──
 function renderHof() {
   const container = document.getElementById('hofContainer');
